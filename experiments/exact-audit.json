@@ -93,6 +93,12 @@
       }
     }
   ],
+  "template_ceiling": {
+    "key_multiplicity": 2,
+    "balance_supremum": "1/2",
+    "flip_exponent_supremum": "1/3",
+    "coefficient_supremum": "1/24"
+  },
   "negative_controls_rejected": 8,
   "half_open_band_test_cases": 26180,
   "profile_exact_test_cases": 10000,

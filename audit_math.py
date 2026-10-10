@@ -79,6 +79,17 @@ p=dict(config['sharpened_proposals'][-1]);p['c']='1/24';assert not sharpened_val
 # Supremum check: with b<a, 2a+b<1 the rich gap forces c<gamma*b/4<(1/2)(1/3)/4=1/24.
 assert all(Q(p['gamma'])*Q(p['b'])/4<Q(1,24) for p in config['sharpened_proposals'])
 
+# Template ceiling (barrier-note.md): maximize b subject to b<=a, 2a+b<=1 by
+# linear programming, then multiply by the balance supremum 1/2 and the factor
+# 1/(2*mu) with key multiplicity mu=2. The LP value is confirmed exactly.
+from scipy.optimize import linprog
+lp=linprog(c=[0,-1],A_ub=[[-1,1],[2,1]],b_ub=[0,1],bounds=[(0,1),(0,1)],method='highs')
+assert lp.success and abs(lp.x[1]-1/3)<1e-9 and abs(lp.x[0]-1/3)<1e-9
+b_sup=Q(1,3);assert b_sup<=Q(1,3) and 2*Q(1,3)+b_sup==1
+mu=2;template_ceiling=Q(1,2)*b_sup/(2*mu)
+assert template_ceiling==Q(1,24)
+assert all(Q(p['c'])<template_ceiling for p in config['sharpened_proposals'])
+
 # Independent finite tests of the exact half-open norm-band lemma. The proof
 # is analytic; these tests include unit-distance equality and t=0 cases.
 points=[Q(i,4) for i in range(-20,21)];band_cases=0
@@ -108,6 +119,7 @@ for a in range(1,101):
 
 out={'scope':'Exact algebra and finite checks only; not an independent formal proof of upstream results',
      'parameter_certificates':checks,'sharpened_parameter_certificates':sharpened,
+     'template_ceiling':{'key_multiplicity':mu,'balance_supremum':'1/2','flip_exponent_supremum':str(b_sup),'coefficient_supremum':str(template_ceiling)},
      'negative_controls_rejected':8,
      'half_open_band_test_cases':band_cases,'profile_exact_test_cases':tripling_cases,
      'symbolic_identities':'passed'}
