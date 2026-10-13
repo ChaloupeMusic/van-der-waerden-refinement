@@ -54,6 +54,7 @@ for point, dx, dy, ha in ((openai, 0.5, 1.9, 'left'),
                           (repo[0], -0.6, 0.6, 'right'),
                           (repo[1], -0.3, 0.22, 'right'),
                           (repo[2], -0.6, 0.45, 'right'),
+                          (repo[3], 2.9, 0.33, 'right'),
                           (repo[-1], -0.5, 1.9, 'right')):
     t, c = parse(point)
     ax.annotate(point['label'], (t, c),
@@ -81,7 +82,7 @@ fig.text(0.07, 0.95, 'Coefficient $c$ in $W_r(k) > k^{\\,c\\,k\\lfloor\\log_2 r\
 fig.text(0.07, 0.895, 'Log scale. Repository values are conditional on the upstream OpenAI lemmas and '
          'not independently reviewed.\nBefore Sept 23, 2026 no bound of this form was known (c = 0).',
          fontsize=8.5, color=INK2, va='top', linespacing=1.4)
-fig.text(0.97, 0.02, 'Latest repository value is 6250× the OpenAI coefficient (and 1.5625× the previous 1/25)',
+fig.text(0.97, 0.02, 'Latest repository value is 8000× the OpenAI coefficient (and 1.28× the previous 1/16)',
          fontsize=9, color=INK, ha='right', va='bottom')
 ax.legend(loc='upper left', frameon=False, fontsize=9, labelcolor=INK)
 ax.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())

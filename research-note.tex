@@ -18,8 +18,10 @@ parameter region, and, after sharpening the balance demanded of the
 outer coloring and shortening the dilation, every $c<1/24$ with the
 explicit choice $c=1/25$. A rank-split cover of rich events, building on
 an unmerged upstream repeated-key argument, then admits every $c<1/15$
-with the explicit choice $c=1/16$, versus the manuscript's $10^{-5}$, subject
-to the upstream geometric and counting arguments.
+with the explicit choice $c=1/16$. A digit-rank sharpening of that cover
+admits every $c<1/12$ with the explicit choice $c=2/25$, versus the
+manuscript's $10^{-5}$, subject to the upstream geometric and counting
+arguments.
 The latter is a limitation of the abstract inequalities, not a lower bound
 on the actual matrix multiplication exponent. These are research drafts:
 neither literature priority nor independent formal verification is claimed.
@@ -375,6 +377,60 @@ $2\gamma b/5-c=857/500000$, and coefficient ratio $6250$ to $10^{-5}$.
 the identities, and $2{,}000$ exact digit-pinning instances. It rejects
 five boundary controls, including $c=1/15$. As before, no finite coloring
 or runtime gain is claimed.
+
+\subsection{The digit rank: repeated keys cost nothing}\label{sec:digit-rank}
+In Lemma~\ref{lem:rank-counts} the certificate paid $2\log q$ per
+direction of $V=\operatorname{span}\{m_a-m_{a_0}\}$, while the count saved
+only $\log q$ per direction. For $v\in\mathbb Z^D$ let $S_1v$ and $S_2v$ be the
+coefficient vectors $l\mapsto v_{l+1}$ and $l\mapsto v_{l+2}$ on digit
+positions, and let
+\[
+ R=\dim_{\mathbb Q}(S_1V+S_2V),\qquad \rho\le R\le\min(2\rho,D).
+\]
+Let $y_l$ be the balanced base-$q$ digits of the start point and $e_l$
+those of the step return $\beta$. Then
+\[
+ q^2\langle Y_{a_0},v\rangle=q\langle S_1v,y\rangle+\langle S_2v,y\rangle
+ +O(|v|_1)
+\]
+(exactly, since $q$ is odd), and the same expansion holds for
+$q^2\langle v,\beta\rangle$ in the $e_l$ with an error below one.
+\begin{lemma}\label{lem:digit-rank}
+With $o(\cdot)$ uniform in $R$, the key sets carried by collision
+classes number at most $q^{R}e^{o(k\log k)}$. The progressions of digit
+rank $R$ number at most $q^{2D-R}e^{o(k\log k)}$.
+\end{lemma}
+\begin{proof}[Outline]
+For the certificate, the band in a collision class depends on the start
+point only through three global reals, the $R$ integer forms
+$\langle u,y\rangle$ with $u\in S_1V+S_2V$, $\rho$ bounded reals, and one
+bounded scalar per class. A two-level arrangement count gives the first
+bound.
+
+For the progressions, each vertex constraint fixes $q^2\langle m_a-m_{a_0},\beta\rangle$
+to within $3$. This fixes $\langle S_1(m_a-m_{a_0}),e\rangle$ exactly and
+$\langle S_2(m_a-m_{a_0}),e\rangle$ up to nine values. These forms span
+$S_1V+S_2V$ and determine $R$ of the $D$ step digits.
+\end{proof}
+\begin{proposition}\label{prop:digit-rank}
+Replace the last inequality of Proposition~\ref{prop:sharpened} by
+$2c<\gamma b$. Then, conditional on the same imported arguments,
+$W_r(k)>k^{ck\lfloor\log_2r\rfloor}$ for all sufficiently large $k$ and every
+integer $r\ge2$, with a threshold independent of $r$. Every fixed $c<1/12$
+is admitted.
+\end{proposition}
+\begin{proof}
+For each $R$ the certificate and count costs are $R/D$ and $2-R/D$ in units
+of $ck\log k$, summing to $2$. The split of Proposition~\ref{prop:rank}
+with $\kappa=R/D$ and $\nu=2-R/D$ applies whenever $2c<\gamma b$. Finally
+$c<\gamma b/2<(1/2)(1/3)/2=1/12$.
+\end{proof}
+With the parameters of Section~\ref{sec:sharpened} and $c=2/25$ the margin
+is $\gamma b/2-c=107/400000$, and the coefficient ratio to $10^{-5}$ is
+$8000$. \texttt{audit\_math.py} checks the margins and the digit
+decompositions on exact instances. It rejects five boundary controls,
+including $c=1/12$. Details are in
+\texttt{digit-rank-proof.md}.
 
 \section{An obstruction for the matrix profile inequalities}
 The matrix paper defines a symmetric positive profile $P(a,b)$ with
