@@ -1,6 +1,6 @@
 {
   "quantity": "Coefficient c in the conditional lower bound W_r(k) > k^{c k floor(log2 r)}",
-  "note": "Repository entries are conditional on the upstream OpenAI geometric and counting lemmas and have not been independently reviewed. The 1/16 and 2/25 entries build on the unmerged upstream proposal rohanarun/van-der-waerden-refinement#4 (c < 1/18). Before 2026-09-23 no bound of this k^{ck} form was known (c = 0), so that era does not appear on the log scale.",
+  "note": "Repository entries are conditional on the upstream OpenAI geometric and counting lemmas and have not been independently reviewed. The 1/16, 2/25, and 1/9 entries build on the unmerged upstream proposal rohanarun/van-der-waerden-refinement#4 (c < 1/18). Before 2026-09-23 no bound of this k^{ck} form was known (c = 0), so that era does not appear on the log scale.",
   "series": [
     {
       "name": "OpenAI (Sept 23, 2026 preprint)",
@@ -46,6 +46,12 @@
           "date": "2026-10-13T20:00:00Z",
           "c": "2/25",
           "label": "2/25 (digit rank: repeated keys cost nothing; sup 1/12)",
+          "ref": "PR #7"
+        },
+        {
+          "date": "2026-10-14T04:00:00Z",
+          "c": "1/9",
+          "label": "1/9 (short-period runs; sup 1/8)",
           "ref": "PR #7"
         }
       ]

@@ -219,6 +219,40 @@ for _ in range(200):
 vs=[[int(i==j) for i in range(8)] for j in range(3)]
 assert s.Matrix([dshift(v,1) for v in vs]+[dshift(v,2) for v in vs]).rank()==3  # block e_1..e_3: R=rho
 
+# Short-period runs (short-period-runs-proof.md): the estimate for non-rich
+# progressions no longer counts full label words, so 2a<1-b is replaced by
+# a+b<1 (run code D log^3 k = o(pk)); the rich condition stays 2c<gamma*b.
+def sp_margins(p):
+    a,m,b,d,e,er,g,c=(Q(p[k]) for k in ('a','m','b','delta','eps','eps_reg','gamma','c'));ds=Q(p['delta_s'])
+    return {'dimension_grows':a,'short_period_cutoff_below_M':m-a,'global_entropy_less_than_M':m-2*a,
+            'M_sublinear':1-m,'flip_probability_decays':b,'run_code_entropy_gap':1-a-b,
+            'affine_norm_entropy_gap':a-b,'balance_tolerance_positive':e,'balance_tolerance_below_half':Q(1,2)-e,
+            'nonregular_fraction_positive':er,'nonregular_fraction_at_most_half':Q(1,2)-er,
+            'light_threshold_positive':d,'run_light_threshold_positive':ds,'run_light_threshold_below_one':1-ds,
+            'outer_color_margin':(Q(1,2)-e)*(1-er)*(1-d)-g,
+            'digit_rank_rich_gap':g*b/2-c,'drift_less_than_eta_gap':3-m-a}
+def sp_valid(p):
+    ms=sp_margins(p)
+    return all(v>=0 if k=='nonregular_fraction_at_most_half' else v>0 for k,v in ms.items())
+short=[]
+for p in config['short_period_proposals']:
+    assert sp_valid(p),p
+    a_,b_,g,c=(Q(p[k]) for k in ('a','b','gamma','c'))
+    old_gap=1-b_-2*a_
+    assert old_gap<0 and not digit_valid(p)  # outside the digit-rank region
+    short.append({'name':p['name'],'factor_over_release':str(c/Q(config['baseline_c'])),
+                  'old_affine_global_gap':str(old_gap),'margins':{k:str(v) for k,v in sp_margins(p).items()}})
+p=dict(config['short_period_proposals'][-1]);p['b']=p['a'];assert not sp_valid(p)
+p=dict(config['short_period_proposals'][-1]);p['m']=str(2*Q(p['a']));assert not sp_valid(p)
+p=dict(config['short_period_proposals'][-1]);p['c']=str(Q(p['gamma'])*Q(p['b'])/2);assert not sp_valid(p)
+p=dict(config['short_period_proposals'][-1]);p['gamma']=str((Q(1,2)-Q(p['eps']))*(1-Q(p['eps_reg']))*(1-Q(p['delta'])));assert not sp_valid(p)
+p=dict(config['short_period_proposals'][-1]);p['c']='1/8';assert not sp_valid(p)
+# Supremum: b<a, 2a<m<1 give b<1/2 (LP), and gamma<1/2, so c<gamma*b/2<1/8.
+from scipy.optimize import linprog
+lp=linprog(c=[0,0,-1],A_ub=[[-1,0,1],[2,-1,0],[0,1,0]],b_ub=[0,0,1],bounds=[(0,1)]*3,method='highs')
+assert lp.success and abs(-lp.fun-0.5)<1e-9
+assert Q(1,2)*Q(1,2)/2==Q(1,8) and all(Q(p['gamma'])*Q(p['b'])/2<Q(1,8) for p in config['short_period_proposals'])
+
 # Independent finite tests of the exact half-open norm-band lemma. The proof
 # is analytic; these tests include unit-distance equality and t=0 cases.
 points=[Q(i,4) for i in range(-20,21)];band_cases=0
@@ -252,7 +286,9 @@ out={'scope':'Exact algebra and finite checks only; not an independent formal pr
      'rank_split':{'worst_cost_sum':str(worst),'worst_rank_fraction':'1/2','coefficient_supremum':'1/15','digit_test_cases':digit_cases},
      'digit_rank_parameter_certificates':digit,
      'digit_rank':{'cost_sum_every_rank':'2','coefficient_supremum':'1/12','start_digit_cases':start_cases,'step_digit_cases':step_cases},
-     'negative_controls_rejected':18,
+     'short_period_parameter_certificates':short,
+     'short_period':{'flip_exponent_supremum':'1/2','coefficient_supremum':'1/8'},
+     'negative_controls_rejected':23,
      'half_open_band_test_cases':band_cases,'profile_exact_test_cases':tripling_cases,
      'symbolic_identities':'passed'}
 (ROOT/'experiments'/'exact-audit.json').write_text(json.dumps(out,indent=2))

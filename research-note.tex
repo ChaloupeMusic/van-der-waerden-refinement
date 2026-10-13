@@ -19,9 +19,10 @@ outer coloring and shortening the dilation, every $c<1/24$ with the
 explicit choice $c=1/25$. A rank-split cover of rich events, building on
 an unmerged upstream repeated-key argument, then admits every $c<1/15$
 with the explicit choice $c=1/16$. A digit-rank sharpening of that cover
-admits every $c<1/12$ with the explicit choice $c=2/25$, versus the
-manuscript's $10^{-5}$, subject to the upstream geometric and counting
-arguments.
+admits every $c<1/12$ with the explicit choice $c=2/25$, and an estimate
+for short-period progressions that avoids counting label words admits
+every $c<1/8$ with the explicit choice $c=1/9$, versus the manuscript's
+$10^{-5}$, subject to the upstream geometric and counting arguments.
 The latter is a limitation of the abstract inequalities, not a lower bound
 on the actual matrix multiplication exponent. These are research drafts:
 neither literature priority nor independent formal verification is claimed.
@@ -431,6 +432,56 @@ $8000$. \texttt{audit\_math.py} checks the margins and the digit
 decompositions on exact instances. It rejects five boundary controls,
 including $c=1/12$. Details are in
 \texttt{digit-rank-proof.md}.
+
+\subsection{Short-period runs: the affine count without label words}\label{sec:short-period}
+The digit-rank region keeps the inequality $2a<1-b$ of
+Proposition~\ref{prop:sharpened}. It comes from paying
+$\log T_{\mathrm{glob}}=O(k^{2a}\log^3k)$ for the full label word in the
+estimate for progressions that are not $\gamma$-rich. By the sharpened
+dichotomy those progressions have a heavy label whose closest return
+satisfies $h\le h_0$, so their first coordinates rotate with period $h$
+and a small drift, and their second coordinates are affine. Call such
+label words \emph{short-period}, and put $M_s=D\lceil\log k\rceil^2$.
+\begin{lemma}\label{lem:runs}
+In a short-period progression the occurrences of each full label form a
+single run: one residue class modulo $h$, consecutive within that class.
+Moreover, at most $e^{O(D\log k)}$ short-period label words pass through
+any one label.
+\end{lemma}
+The second statement lets the asymmetric local lemma balance a third
+family of events: for each short-period word, the labels of multiplicity
+at most $k/M_s$ are asked to carry a $(1/2-\varepsilon)$ fraction of each
+bit whenever they fill at least $\delta_sk$ positions. The weight
+$e^{-\varepsilon^2\delta_sM_s}$ of these events beats their count, and
+the criteria of the first two families are unchanged.
+\begin{proposition}\label{prop:short-period}
+Replace the inequality $2a<1-b$ in the region of
+Proposition~\ref{prop:digit-rank} by $a+b<1$. Then, conditional on the
+same imported arguments, $W_r(k)>k^{ck\lfloor\log_2r\rfloor}$ for all
+sufficiently large $k$ and every integer $r\ge2$, with a threshold
+independent of $r$. Every fixed $c<1/8$ is admitted.
+\end{proposition}
+\begin{proof}[Outline]
+Rich progressions are covered as in Proposition~\ref{prop:digit-rank}.
+For a progression that is not $\gamma$-rich, its key word takes at most
+$e^{6\log q+O(D\log k)}$ values. If light labels fill at least $\delta_sk$
+positions, the third family forces $\Theta(k)$ distinct flipped keys, and
+the event is covered by the key word alone with probability
+$e^{-\Omega(k\log k)}$. Otherwise at most $M_s$ heavy labels cover all but
+$\delta_sk$ positions; by Lemma~\ref{lem:runs} each is one run, so they
+are encoded in $e^{O(D\log^3k)}$ ways and fix the color word on at least
+$(1-\delta_s)k/2$ distinct keys. The total is
+$e^{6\log q+O(D\log^3k)}\bigl(e^{-\Omega(k\log k)}+e^{-(1-\delta_s)pk/2}\bigr)=o(1)$
+when $b<a$ and $a+b<1$. Since $b<a$ and $2a<m<1$ give $b<1/2$, and
+$\gamma<1/2$, we get $c<\gamma b/2<1/8$.
+\end{proof}
+The choice $a=49/100$, $m=99/100$, $b=97/200$,
+$\delta=\varepsilon=\varepsilon_{\mathrm{reg}}=1/200$, $\gamma=97/200$,
+$c=1/9$ has margin $\gamma b/2-c=4681/720000$ and violates the old gap,
+$1-b-2a=-93/200$. Its coefficient ratio to $10^{-5}$ is
+$100000/9\approx11{,}111$. \texttt{audit\_math.py} checks the margins and
+rejects five boundary controls, including $c=1/8$. Details are in
+\texttt{short-period-runs-proof.md}.
 
 \section{An obstruction for the matrix profile inequalities}
 The matrix paper defines a symmetric positive profile $P(a,b)$ with
