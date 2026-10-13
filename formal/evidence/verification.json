@@ -1,7 +1,7 @@
 {
   "scope": "Partial formal verification of explicitly listed obligations; not the complete van der Waerden theorems",
   "lean_version": "Lean (version 4.21.0, arm64-apple-darwin23.6.0, commit 6741444a63ee, Release)",
-  "theorems": 81,
+  "theorems": 84,
   "axiom_dependencies": {
     "weak_entropy_ceiling": [
       "propext",
@@ -154,6 +154,21 @@
       "Quot.sound"
     ],
     "pr9_literal_PR7": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "translated_intervals_separated": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "short_path_uses_one_lift": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "affine_interval_run": [
       "propext",
       "Classical.choice",
       "Quot.sound"
@@ -404,6 +419,7 @@
     "Vdw/Digits.lean": "582fbaff3eac2cef4fff9ddb337a5680e8160e4dc7f62958d520ad469df4f5c7",
     "Vdw/Geometry.lean": "0ddee7a2e280ea5b33a629b39c44315cff9d78a57692d37eeb643467c3a0732a",
     "Vdw/Parameters.lean": "dfe6ab47a7353966b7299c7ca80a2777f89d38d5becb21df0ee4dc14b7829d46",
+    "Vdw/Runs.lean": "21f59741c521a9146272fc122e37cecec1e7c9f95832045a60c1ab298d2d67eb",
     "Vdw/Thresholds.lean": "600987f418e2b6255b1fae4263fc4fd3cc9db3c15136607ef206cf19331423b0",
     "Vdw/Transfer.lean": "da308d31b46ff1c8d62aba306e442d119508bee1216eb8d5b1aba9fb58029ac9"
   },

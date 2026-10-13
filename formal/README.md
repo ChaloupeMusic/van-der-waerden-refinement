@@ -1,6 +1,6 @@
 # Partial formal verification of the van der Waerden PRs
 
-Lean 4.21.0 checks **81 named theorems** in this package. They cover selected
+Lean 4.21.0 checks **84 named theorems** in this package. They cover selected
 universal lemmas, exact parameter regions, and all 42 recorded dyadic threshold
 comparisons. **This is not a formal proof of the complete van der Waerden
 construction or of any PR's headline lower bound.**
@@ -9,6 +9,10 @@ The local build, transitive axiom audit, and four rejection controls passed.
 The portable results are in [evidence/verification.json](evidence/verification.json)
 and [evidence/axioms.txt](evidence/axioms.txt). The GitHub workflow produces fresh
 receipts separately; the checked-in local receipt is not evidence of remote CI.
+
+For a source-review verdict conditional on the pinned OpenAI construction, see
+[CONDITIONAL-REVIEW.md](CONDITIONAL-REVIEW.md). Its acceptance boundary differs
+from the full-formal-proof boundary below.
 
 ## Exact scope by PR
 
@@ -41,6 +45,8 @@ merge of all branches.
   and the finite weighted floor-sum bound.
 - [Digits.lean](Vdw/Digits.lean): arbitrary-length digit recurrence, the exact
   two-leading-digit identity, balanced tails, return-digit bounds, and span recovery.
+- [Runs.lean](Vdw/Runs.lean): separation of integer interval lifts, uniqueness
+  of a lift along a small path, and consecutiveness within an affine interval.
 - [Transfer.lean](Vdw/Transfer.lean): existence of a nonzero digit place, progression
   digit identity, cyclic-to-product non-monochromatic witness, and positive-mass existence.
 - [Parameters.lean](Vdw/Parameters.lean), [Thresholds.lean](Vdw/Thresholds.lean):
