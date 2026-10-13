@@ -90,6 +90,29 @@ mu=2;template_ceiling=Q(1,2)*b_sup/(2*mu)
 assert template_ceiling==Q(1,24)
 assert all(Q(p['c'])<template_ceiling for p in config['sharpened_proposals'])
 
+# A weak label-entropy exponent condition still gives the strict ceiling:
+# 1-3b = (1-2a-b) + 2(a-b), including the boundary 2a+b=1.
+template_a,template_b=s.symbols('template_a template_b')
+assert s.expand(1-3*template_b-(1-2*template_a-template_b)-2*(template_a-template_b))==0
+edge_a,edge_b=Q(2,5),Q(1,5)
+assert edge_b<edge_a and 2*edge_a+edge_b==1 and edge_b<Q(1,3)
+
+# Check the dilation bounds using integers, without rounding logarithms:
+# (2M)^pi(h0) <= lambda^2 and lambda <= (2M)^pi(h0).
+dilation_cases=0
+for M_test in range(2,65):
+    primes=set(s.primerange(2,2*M_test+1));dilation=1;prime_count=0
+    for h_test in range(1,2*M_test+1):
+        if h_test in primes:
+            prime_count+=1;primary=h_test
+            while primary*h_test<=2*M_test:primary*=h_test
+            dilation*=primary
+        bound=(2*M_test)**prime_count
+        assert bound<=dilation*dilation and dilation<=bound
+        if (M_test,h_test)==(5,3):
+            assert dilation==72 and bound==100 and dilation<bound
+        dilation_cases+=1
+
 # Independent finite tests of the exact half-open norm-band lemma. The proof
 # is analytic; these tests include unit-distance equality and t=0 cases.
 points=[Q(i,4) for i in range(-20,21)];band_cases=0
@@ -119,7 +142,8 @@ for a in range(1,101):
 
 out={'scope':'Exact algebra and finite checks only; not an independent formal proof of upstream results',
      'parameter_certificates':checks,'sharpened_parameter_certificates':sharpened,
-     'template_ceiling':{'key_multiplicity':mu,'balance_supremum':'1/2','flip_exponent_supremum':str(b_sup),'coefficient_supremum':str(template_ceiling)},
+     'template_ceiling':{'key_multiplicity':mu,'balance_supremum':'1/2','flip_exponent_supremum':str(b_sup),'coefficient_supremum':str(template_ceiling),
+                         'weak_label_entropy_boundary':'passed','dilation_bound_test_cases':dilation_cases},
      'negative_controls_rejected':8,
      'half_open_band_test_cases':band_cases,'profile_exact_test_cases':tripling_cases,
      'symbolic_identities':'passed'}

@@ -41,7 +41,10 @@ the sharpened region, `mu = 2`, `gamma -> 1/2`, `b -> 1/3`, `c -> 1/24`.
 places at most half of the positions on the minority color, so
 `gamma <= 1/2`. (T4) needs `6 log q = 6 c k^{1-a} log k (1 + o(1))`
 to be `o(k^{1-b})`, hence `b < a`, and needs `k^{2a+o(1)} = o(k^{1-b})`,
-hence `2a + b < 1`. Together `b < 1/3`. So
+hence `2a + b <= 1`. Equality is not excluded by the unspecified `o(1)`:
+for example, `k^{2a}/log k` is `k^{2a+o(1)}` and is `o(k^{1-b})`
+when `2a+b=1`. Nevertheless, `b < a` gives
+`3b < 2a+b <= 1`, so `b < 1/3`. Thus
 `c < (1/2)(1/3)/4 = 1/24`. The supremum is approached, not attained,
 exactly as in the sharpened region. ∎
 
@@ -83,15 +86,29 @@ counting words at the natural resolutions `1/k^2`, `1/k`, `1` gives
 Any post-processing `g(band)` with fibers of size `F` keeps the same
 arrangement bound while raising `mu` to about `2F`.
 
-**`2a + b < 1` (the `k^{2a}` label entropy).** `log T_glob` is dominated
+**`2a + b <= 1` (the necessary label-entropy exponent condition).** The
+sharpened sufficient region still uses `2a+b<1` to absorb its logarithmic
+factors; the template's unspecified `o(1)` only forces the weak inequality.
+`log T_glob` is dominated
 by `2D log lambda`, two real parameters per first-system coordinate at
 mesh scale `H/lambda`. That mesh scale is what certifies that the
 second-system rational step is a multiple of `lambda`; coarsening it
 produces coordinates whose rotation denominators can be as small as 2,
 and then up to half the positions of a block are nonregular in that
 coordinate. The dilation itself needs the full `l`-primary part of every
-period up to `2M` for every prime `l <= h_0`, so
-`log lambda >= pi(h_0) log 2M`, and `h_0 >= D/epsilon` is forced by the
+period up to `2M` for every prime `l <= h_0`. Since `h_0 <= 2M`,
+each such prime has `x = log(2M)/log l >= 1`, and
+`x/2 <= floor(x) <= x`. Therefore the exact sum and its bounds are
+
+```math
+\log\lambda
+=\sum_{\substack{\ell\le h_0\\\ell\ \mathrm{prime}}}
+\left\lfloor\frac{\log(2M)}{\log\ell}\right\rfloor\log\ell,
+\qquad
+\frac12\pi(h_0)\log(2M)\le\log\lambda\le\pi(h_0)\log(2M).
+```
+
+Also `h_0 >= D/epsilon` is forced by the
 nonregular fraction `sum_i 1/s_i` over up to `D` rotating coordinates.
 Hence `log T_glob >= D * h_0 / log h_0 >= D^{2 - o(1)}`.
 
