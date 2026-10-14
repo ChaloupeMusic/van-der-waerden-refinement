@@ -2,7 +2,7 @@
 
 This research draft proposes a stronger coefficient in the released van der Waerden lower bound, together with an elementary geometric lemma and a parameter-transfer argument. It also gives an abstract obstruction for a selected set of matrix-multiplication profile inequalities.
 
-**Status:** AI-generated mathematical research prepared with Codex. The main refinement is conditional on the upstream geometric and counting arguments; it has not received independent mathematical review or formal verification. This repository does not claim a verified world record or a new matrix-multiplication algorithm. It is an independent follow-up, not an official OpenAI publication. The rank-split refinement ($c=1/16$) was prepared with assistance from Claude (Anthropic) and builds on an unmerged upstream proposal, credited below.
+**Status:** AI-generated mathematical research prepared with Codex. The main refinements are conditional on their stated upstream inputs. They have not received independent human mathematical review or formal verification; the AI-assisted source reviews recorded for them are not a substitute for either. This repository does not claim a verified world record or a new matrix-multiplication algorithm. It is an independent follow-up, not an official OpenAI publication. The rank-split refinement was prepared with assistance from Claude (Anthropic).
 
 Read the full argument in **[research-note.tex](research-note.tex)**. Exact checks, parameter choices, and experimental records are included below.
 
@@ -17,6 +17,8 @@ W_r(k)>k^{c k\lfloor\log_2 r\rfloor}
 with $c=1/100000$, for sufficiently large $k$ and every integer $r\ge2$. Our conditional parameter-transfer argument admits **$c=1/16$**, with the threshold independent of $r$, and every fixed $c\lt1/15$ in the rank-split region below.
 
 That is a **6250-fold increase in the coefficient inside the exponent** (and $25/16=1.5625$ times the previous explicit choice $1/25$). The earlier $1/25$, $1/193$, and $1/200$ choices remain included for comparison. No explicit finite coloring record or runtime improvement follows. The threshold may be very large and is not made explicit here.
+
+The earlier [repeated-key certificate cover](#repeated-key-certificate-cover-conditional-119) admits $c=1/19$, a factor $100000/19\approx5263$ over the source.
 
 ### Progress over time
 
@@ -84,11 +86,48 @@ so $b\lt1/3$, $\gamma\lt1/2$, and $c\lt\gamma b/4\lt1/24$; every fixed $c\lt1/24
 |---|---|---|---|---|---|---|---|---|---|
 | Sharpened explicit choice | 333/1000 | 4/5 | 331/1000 | 1/200 | 1/200 | 1/200 | 97/200 | 1/25 | 4000 |
 
-Its decisive margins are $\gamma b/2-2c=107/400000$, $1-b-2a=3/1000$, $a-b=1/500$, and $(1/2-\varepsilon)(1-\varepsilon_{\rm r})(1-\delta)-\gamma=40499/8000000$. The full argument and margin table are in [sharpened-region-proof.md](sharpened-region-proof.md); `audit_math.py` checks them exactly and rejects five boundary controls, including $c=1/24$ itself.
+Its decisive margins are $\gamma b/2-2c=107/400000$, $1-b-2a=3/1000$, $a-b=1/500$, and $(1/2-\varepsilon)(1-\varepsilon_{\rm r})(1-\delta)-\gamma=40499/8000000$. The full argument and margin table are in [sharpened-region-proof.md](sharpened-region-proof.md); `audit_math.py` checks them exactly and rejects five boundary controls, including $c=1/24$ itself. Those controls test the earlier condition $2c\lt\gamma b/2$; the new certificate-cover region below is not yet checked by `audit_math.py`.
+
+## Repeated-key certificate cover: conditional 1/19
+
+The separate [repeated-key certificate note](repeated-key-certificate-proof.md)
+adds a new counting and probability argument to the sharpened construction
+above. It bounds literal sets of repeated keys with leading entropy $q^D$,
+then covers rich monochromatic events by certificates requiring only their
+selected repeated keys to flip. Different full prescriptions remain
+different events; the proof uses containment of their union.
+
+The sufficient rich-event inequalities become
+
+```math
+2c\lt b(\gamma-\tau),\qquad c\lt b\tau,\qquad 0\lt\tau\lt\gamma.
+```
+
+Choosing $\tau=\gamma/3$ gives $c\lt\gamma b/3$. With the unchanged
+sharpened outer input, the note derives **$c=1/19$** and admits every fixed
+$0\lt c\lt1/18$, for sufficiently large $k$ with a threshold independent of
+integer $r\ge2$. This remains conditional on the precisely stated global
+outer-color dichotomy. The note includes the full new geometry, certificate
+count, event cover, exact rational parameter choice, affine count, and
+digit transfer; finite tests are not premises of the proof.
+
+The initial argument is attributed to a ChatGPT Pro research response by
+GPT-6 Pro (internal run label "O1"), captured on October 10, 2026; the
+publication draft was assembled with Codex. Prior source authors and this repository's existing refinements
+retain their attribution. No literature-priority, formal-verification,
+explicit coloring, or practical threshold claim is made. The earlier
+progress chart and parameter tables above document their original stages
+and have not been regenerated for this separate proof note.
+
+### Why $1/24$ is a ceiling of this architecture
+
+Every argument here, and the source manuscript, follows one template: a label-based outer coloring that balances every non-affine progression, keys with at most $\mu$ occurrences per progression carrying Bernoulli($k^{-b}$) flips, a union bound over the $N^2$ progressions for the balanced case, and a union bound over affine signatures for the affine case. [barrier-note.md](barrier-note.md) proves that within this template with $\mu=2$, affine key-word entropy $(6+o(1))\log q$, and label entropy $k^{2a+o(1)}$, every admissible coefficient satisfies $c\lt1/24$: the rich bound gives $c\lt\gamma b/4$, balance gives $\gamma\le1/2$, and the affine bound forces $b\lt a$ and $2a+b\le1$, so $3b\lt2a+b\le1$ and $b\lt1/3$.
+
+The note then records, feature by feature, why the three hypotheses resist change: the two-point multiplicity is the reflection symmetry of any quadratic band along a line, and distinguishing the pair costs about $D$ functionals worth $2\log q$ each; the $6\log q$ is tight for floor-words of quadratics; the $k^{2a}$ comes from $2D\log\lambda$ with $\log\lambda\gtrsim h_0\gtrsim D$ forced by the nonregular fraction; and a local-lemma pass over the flips reproduces the $N^2$ union bound because a key's fiber has about $Nk^{-2D}$ elements. AND-ing two flip layers, modular or widened bands, deterministic band parities, and coloring bands in the outer layer are each shown to fail. These explanations are not theorems. `audit_math.py` confirms the ceiling $1/24$ exactly (`template_ceiling`). Going further needs a different construction, not different parameters.
 
 ### Past $1/24$: a rank-split cover of rich events
 
-The sharpened region's last binding inequality, $2c\lt\gamma b/2$, comes from a union bound over all $q^{2D}$ progressions in which each repeated key contributes only one flip. An unmerged upstream proposal, [rohanarun/van-der-waerden-refinement#4](https://github.com/rohanarun/van-der-waerden-refinement/pull/4), observed that repeated keys can be certified with entropy about $q^D$. That gives $c\lt\gamma b/3$ and every $c\lt1/18$. [rank-certificate-proof.md](rank-certificate-proof.md) restates its repeated-key facts with credit, then splits rich events by the **carry rank** $\rho$ of the residue classes that contain repeated keys:
+The sharpened region's last binding inequality, $2c\lt\gamma b/2$, comes from a union bound over all $q^{2D}$ progressions in which each repeated key contributes only one flip. The merged repeated-key proposal, [rohanarun/van-der-waerden-refinement#4](https://github.com/rohanarun/van-der-waerden-refinement/pull/4), observed that repeated keys can be certified with entropy about $q^D$. That gives $c\lt\gamma b/3$ and every $c\lt1/18$. [rank-certificate-proof.md](rank-certificate-proof.md) restates its repeated-key facts with credit, then splits rich events by the **carry rank** $\rho$ of the residue classes that contain repeated keys:
 
 1. **Start-free certificate.** Every key in those classes, singles included, is fixed by $3+\rho$ real projections. These key sets therefore number $q^{2\rho+o(D)}$, and also $q^{D+o(D)}$ by the anchored count.
 2. **Rank count.** Each such class pins an integer linear form in the base-$q$ digits of the step. Progressions of rank $\rho$ therefore number at most $q^{2D-\rho+o(D)}$.
@@ -159,6 +198,7 @@ Do not run with `-O` or `PYTHONOPTIMIZE`: the verification scripts use assertion
 | Four parameter proposals | Exact rational margins for four choices; three invalid boundary controls rejected | Validates inequalities, not the imported lemmas |
 | Sharpened region, $c=1/25$ | Exact rational margins for the explicit choice; five boundary controls rejected, including $c=1/24$ | Validates inequalities, not the modified local-lemma transfer |
 | Rank-split region, $c=1/16$ | Exact margins; worst rank $\rho=D/2$; symbolic identities; 2,000 exact digit-pinning instances; five boundary controls rejected, including $c=1/15$ | Validates inequalities and identities, not the counting lemmas or the imported structure |
+| Template ceiling $1/24$ | Linear program for $\sup b$ and exact product $\tfrac12\cdot\tfrac13\cdot\tfrac14$ | A statement about the proof template, not about van der Waerden numbers |
 | Norm-band lemma | Displayed proof plus 26,180 finite rational cases | Finite cases supplement the proof |
 | Abstract matrix profile | Symbolic identities plus 10,000 exact cube comparisons | No tensor realizability claim |
 | Released Sidorenko baseline | Independent reconstruction; duplicate-face and incomplete-exposure controls rejected | Finite combinatorial hypotheses only |
@@ -175,4 +215,6 @@ Exploratory scripts provide `--help`: [search_complex.py](search_complex.py), [w
 
 ## What still needs review
 
-The main outstanding work is independent verification of the complete van der Waerden parameter transfer, including uniform constants and all imported hypotheses. The sharpened region additionally relies on the three modifications in Section 4 of the note (shorter dilation, $(1/2-\varepsilon)$-balance in the local lemma, and the separate balancing of light positions outside heavy blocks); each is argued in [sharpened-region-proof.md](sharpened-region-proof.md) but has not been independently reviewed. The rank-split region further relies on Lemmas A–C of [rank-certificate-proof.md](rank-certificate-proof.md), and on the repeated-key structure of the unmerged upstream proposal #4, which is restated there. Neither has been independently reviewed. Pushing past $1/15$ would need a better trade-off between the rank count and the projection certificate (for instance, pinning more than one digit form per collision class) or a new idea for the two-point key multiplicity. Literature priority has not been established. For matrix multiplication, progress requires additional valid tensor constraints or a different construction. Any smaller Sidorenko finite object would still need the full analytic transfer before it could be called a new counterexample.
+The main outstanding work is independent verification of the complete van der Waerden parameter transfer, including uniform constants and all imported hypotheses. The sharpened region additionally relies on the three modifications in Section 4 of the note (shorter dilation, $(1/2-\varepsilon)$-balance in the local lemma, and the separate balancing of light positions outside heavy blocks); each is argued in [sharpened-region-proof.md](sharpened-region-proof.md) but has not been independently reviewed. The rank-split region further relies on Lemmas A–C of [rank-certificate-proof.md](rank-certificate-proof.md), and on the repeated-key structure of the merged proposal #4, which is restated there. Neither has been independently reviewed. Pushing past $1/15$ would need a better trade-off between the rank count and the projection certificate (for instance, pinning more than one digit form per collision class) or a new idea for the two-point key multiplicity. Literature priority has not been established. For matrix multiplication, progress requires additional valid tensor constraints or a different construction. Any smaller Sidorenko finite object would still need the full analytic transfer before it could be called a new counterexample.
+
+The [barrier note](barrier-note.md) applies to the earlier full-progression rich-event template. The certificate covers change that template and are consistent with its stated barrier.

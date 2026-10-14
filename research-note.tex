@@ -42,6 +42,19 @@ This independent follow-up is not an official OpenAI publication.
 The parameter transfer below has been audited in source; it has not been
 formalized in Lean. Finite algebra checks are supplementary evidence.
 
+\paragraph{Companion certificate-cover refinement.}
+The separate repeated-key
+certificate note (\texttt{repeated-key-certificate-proof.md}) retains the
+sharpened outer input of this article and proves a new rich-event cover with sufficient condition $c<\gamma b/3$.
+It derives the conditional choice $c=1/19$ and every fixed $0<c<1/18$,
+with the threshold independent of integer $r\ge2$. The companion note
+contains the new geometry, counting, probability, and parameter proofs;
+the earlier derivations below remain unchanged. Its initial argument is
+attributed to a ChatGPT Pro research response by GPT-6 Pro (internal run
+label O1), captured on October 10, 2026, with a Codex-prepared publication draft, and retains the original
+authors' and this article's attribution. No priority or formal-verification
+claim is made.
+
 \section{A sharper norm-band multiplicity}
 The van der Waerden construction uses keys comprising a coordinate box
 and an integer squared-norm band. Its affinity and separation lemmas put
@@ -303,6 +316,53 @@ exactly $4000$. These are verified by \texttt{audit\_math.py} together
 with rejection controls at $b=a$, $b=1-2a$, zero rich exponent, the
 exact balance bound, and $c=1/24$. The threshold is not explicit and
 may be very large; no finite coloring or runtime gain is claimed.
+
+\subsection{A ceiling for the key-flip template}
+The number $1/24$ is a property of the proof template rather than of
+its parameters. Call an argument a \emph{key-flip template} if it has
+the shape of the source: an outer coloring factoring through a label
+word of entropy $\log T_{\rm glob}$, chosen so that every progression is
+balanced (at least $\gamma k$ of each outer color) or affine; a key map
+with at most $\mu$ occurrences per progression and an independent
+Bernoulli($p=k^{-b}$) flip per key; a rich bound
+$R_k\le2q^{2D}p^{\gamma k/\mu}$; and an affine bound
+$A_k\le2T_{\rm aff}(1-p)^{k/\mu}$ with $\log T_{\rm aff}$ containing
+$\log T_{\rm glob}$ and the key-word entropy along affine progressions.
+\begin{proposition}\label{prop:ceiling}
+In a key-flip template with $\mu=2$, key-word entropy
+$(6+o(1))\log q$ along affine progressions, and
+$\log T_{\rm glob}=k^{2a+o(1)}$, every admissible $c$ satisfies
+$c<1/24$.
+\end{proposition}
+\begin{proof}
+The rich bound gives $c<\gamma b/4$ and $\gamma\le1/2$ trivially. The
+affine bound needs $6c\,k^{1-a}\log k=o(k^{1-b})$, so $b<a$, and
+$k^{2a+o(1)}=o(k^{1-b})$, so $2a+b\le1$. Equality is possible for
+the entropy $k^{2a}/\log k$; the unspecified $o(1)$ does not exclude it.
+But $b<a$ gives $3b<2a+b\le1$, hence $b<1/3$ and
+$c<(1/2)(1/3)/4=1/24$.
+\end{proof}
+The companion file \texttt{barrier-note.md} explains why each of the
+three hypotheses resists change: the two-point multiplicity comes from
+the reflection symmetry of any quadratic band along a line, and
+distinguishing the two points costs about $D$ functionals, each adding
+$2\log q$ of entropy; the $6\log q$ is tight for floor-words of
+quadratics at the realized resolutions; the $k^{2a}$ comes from
+$2D\log\lambda$ with $\log\lambda\gtrsim h_0\gtrsim D$ forced by the
+nonregular fraction. More precisely, for $h_0\le2M$ the exact dilation
+sum obeys
+\[
+ \tfrac12\pi(h_0)\log(2M)
+ \le\log\lambda
+ =\sum_{\substack{\ell\le h_0\\\ell\ \mathrm{prime}}}
+   \left\lfloor\frac{\log(2M)}{\log\ell}\right\rfloor\log\ell
+ \le\pi(h_0)\log(2M),
+\]
+using $x/2\le\lfloor x\rfloor\le x$ for $x\ge1$.
+It also records that a local-lemma pass over the
+flips reproduces the $N^2$ union bound, because a key's fiber has about
+$Nk^{-2D}$ elements. These explanations are not theorems. A coefficient
+above $1/24$ needs a change of construction.
 
 \section{A rank-split cover of rich events}\label{sec:rank}
 In Proposition~\ref{prop:sharpened} the condition $2c<\gamma b/2$ comes
