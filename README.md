@@ -2,7 +2,7 @@
 
 This research draft proposes a stronger coefficient in the released van der Waerden lower bound, together with an elementary geometric lemma and a parameter-transfer argument. It also gives an abstract obstruction for a selected set of matrix-multiplication profile inequalities.
 
-**Status:** AI-generated mathematical research prepared with Codex. The main refinement is conditional on the upstream geometric and counting arguments; it has not received independent mathematical review or formal verification. This repository does not claim a verified world record or a new matrix-multiplication algorithm. It is an independent follow-up, not an official OpenAI publication.
+**Status:** AI-generated mathematical research prepared with Codex. The main refinements are conditional on their stated upstream inputs. They have not received independent human mathematical review or formal verification; the AI-assisted source reviews recorded for them are not a substitute for either. This repository does not claim a verified world record or a new matrix-multiplication algorithm. It is an independent follow-up, not an official OpenAI publication.
 
 Read the full argument in **[research-note.tex](research-note.tex)**. Exact checks, parameter choices, and experimental records are included below.
 
@@ -16,7 +16,9 @@ W_r(k)>k^{c k\lfloor\log_2 r\rfloor}
 
 with $c=1/100000$, for sufficiently large $k$ and every integer $r\ge2$. Our conditional parameter-transfer argument admits **$c=1/25$**, with the threshold independent of $r$, and every fixed $c\lt1/24$ in the same sharpened region.
 
-That is a **4000-fold increase in the coefficient inside the exponent** (and $193/25\approx7.72$ times the previous explicit choice $1/193$). The earlier $1/193$ and $1/200$ choices remain included for comparison. No explicit finite coloring record or runtime improvement follows. The threshold may be very large and is not made explicit here.
+The choice $c=1/25$ is a **4000-fold increase in the coefficient inside the exponent** (and $193/25\approx7.72$ times the previous explicit choice $1/193$). The earlier $1/193$ and $1/200$ choices remain included for comparison. No explicit finite coloring record or runtime improvement follows. The threshold may be very large and is not made explicit here.
+
+Under the same imported outer input, the separate [repeated-key certificate cover below](#repeated-key-certificate-cover-conditional-119) further admits $c=1/19$, a factor $100000/19\approx5263$ over the original coefficient, and every fixed $0\lt c\lt1/18$.
 
 ### Progress over time
 
@@ -84,7 +86,38 @@ so $b\lt1/3$, $\gamma\lt1/2$, and $c\lt\gamma b/4\lt1/24$; every fixed $c\lt1/24
 |---|---|---|---|---|---|---|---|---|---|
 | Sharpened explicit choice | 333/1000 | 4/5 | 331/1000 | 1/200 | 1/200 | 1/200 | 97/200 | 1/25 | 4000 |
 
-Its decisive margins are $\gamma b/2-2c=107/400000$, $1-b-2a=3/1000$, $a-b=1/500$, and $(1/2-\varepsilon)(1-\varepsilon_{\rm r})(1-\delta)-\gamma=40499/8000000$. The full argument and margin table are in [sharpened-region-proof.md](sharpened-region-proof.md); `audit_math.py` checks them exactly and rejects five boundary controls, including $c=1/24$ itself.
+Its decisive margins are $\gamma b/2-2c=107/400000$, $1-b-2a=3/1000$, $a-b=1/500$, and $(1/2-\varepsilon)(1-\varepsilon_{\rm r})(1-\delta)-\gamma=40499/8000000$. The full argument and margin table are in [sharpened-region-proof.md](sharpened-region-proof.md); `audit_math.py` checks them exactly and rejects five boundary controls, including $c=1/24$ itself. Those controls test the earlier condition $2c\lt\gamma b/2$; the new certificate-cover region below is not yet checked by `audit_math.py`.
+
+## Repeated-key certificate cover: conditional 1/19
+
+The separate [repeated-key certificate note](repeated-key-certificate-proof.md)
+adds a new counting and probability argument to the sharpened construction
+above. It bounds literal sets of repeated keys with leading entropy $q^D$,
+then covers rich monochromatic events by certificates requiring only their
+selected repeated keys to flip. Different full prescriptions remain
+different events; the proof uses containment of their union.
+
+The sufficient rich-event inequalities become
+
+```math
+2c\lt b(\gamma-\tau),\qquad c\lt b\tau,\qquad 0\lt\tau\lt\gamma.
+```
+
+Choosing $\tau=\gamma/3$ gives $c\lt\gamma b/3$. With the unchanged
+sharpened outer input, the note derives **$c=1/19$** and admits every fixed
+$0\lt c\lt1/18$, for sufficiently large $k$ with a threshold independent of
+integer $r\ge2$. This remains conditional on the precisely stated global
+outer-color dichotomy. The note includes the full new geometry, certificate
+count, event cover, exact rational parameter choice, affine count, and
+digit transfer; finite tests are not premises of the proof.
+
+The initial argument is attributed to a ChatGPT Pro research response by
+GPT-6 Pro (internal run label "O1"), captured on October 10, 2026; the
+publication draft was assembled with Codex. Prior source authors and this repository's existing refinements
+retain their attribution. No literature-priority, formal-verification,
+explicit coloring, or practical threshold claim is made. The earlier
+progress chart and parameter tables above document their original stages
+and have not been regenerated for this separate proof note.
 
 ### Why $1/24$ is a ceiling of this architecture
 
@@ -152,4 +185,6 @@ Exploratory scripts provide `--help`: [search_complex.py](search_complex.py), [w
 
 ## What still needs review
 
-The main outstanding work is independent verification of the complete van der Waerden parameter transfer, including uniform constants and all imported hypotheses. The sharpened region additionally relies on the three modifications in Section 4 of the note (shorter dilation, $(1/2-\varepsilon)$-balance in the local lemma, and the separate balancing of light positions outside heavy blocks); each is argued in [sharpened-region-proof.md](sharpened-region-proof.md) but has not been independently reviewed. Pushing past $1/24$ would need a new idea for the $q^{2D}$ union bound over progressions or the two-point key multiplicity; [barrier-note.md](barrier-note.md) explains why the obvious variants fail and lists what a new construction would have to supply. Literature priority has not been established. For matrix multiplication, progress requires additional valid tensor constraints or a different construction. Any smaller Sidorenko finite object would still need the full analytic transfer before it could be called a new counterexample.
+The main outstanding work is independent verification of the complete van der Waerden parameter transfer, including uniform constants and all imported hypotheses. The sharpened region additionally relies on the three modifications in Section 4 of the note (shorter dilation, $(1/2-\varepsilon)$-balance in the local lemma, and the separate balancing of light positions outside heavy blocks); each is argued in [sharpened-region-proof.md](sharpened-region-proof.md) and remains an explicit imported input for the certificate-cover refinement. The [repeated-key certificate note](repeated-key-certificate-proof.md) now proposes a new cover of rich events that passes the earlier $1/24$ sufficient-region limit while retaining two-point key multiplicity; its complete proof and imported outer input require mathematical review together. Literature priority has not been established. For matrix multiplication, progress requires additional valid tensor constraints or a different construction. Any smaller Sidorenko finite object would still need the full analytic transfer before it could be called a new counterexample.
+
+The [barrier note](barrier-note.md) applies to the earlier full-progression rich-event template. The repeated-key certificate cover changes that template, so its larger coefficient is consistent with the stated barrier.
