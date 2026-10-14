@@ -64,6 +64,13 @@ for point, dx, dy, ha in ((openai, 0.5, 1.9, 'left'),
                 arrowprops=dict(arrowstyle='-', color='#c9c8c3', lw=0.8,
                                 shrinkA=0, shrinkB=5))
 
+ceiling = data.get('ceiling')
+if ceiling:
+    cval = float(Fraction(ceiling['c']))
+    ax.axhline(cval, color=INK2, linewidth=1, linestyle=(0, (4, 4)), zorder=2)
+    ax.text(start + timedelta(hours=12), cval * 0.86, 'c = 1/24: ' + ceiling['label'],
+            fontsize=8.5, color=INK2, va='top')
+
 ax.set_yscale('log')
 ax.set_ylim(3e-6, 2e-1)
 ax.set_xlim(start, end)
@@ -80,12 +87,12 @@ ax.tick_params(colors=INK2, labelsize=9, length=0)
 
 fig.text(0.07, 0.95, 'Coefficient $c$ in $W_r(k) > k^{\\,c\\,k\\lfloor\\log_2 r\\rfloor}$ over time',
          fontsize=13, color=INK, va='top')
-fig.text(0.07, 0.895, 'Log scale. Repository values are conditional on the upstream OpenAI lemmas and '
-         'not independently reviewed.\nBefore Sept 23, 2026 no bound of this form was known (c = 0).',
+fig.text(0.07, 0.895, 'Log scale. Repository values are conditional on the upstream OpenAI lemmas and\n'
+         'reviewed refinements. Source review and selected Lean proofs are not end-to-end formal verification.',
          fontsize=8.5, color=INK2, va='top', linespacing=1.4)
 fig.text(0.97, 0.02, 'Latest repository value is about 11,111× the OpenAI coefficient (and 1.39× the previous 2/25)',
          fontsize=9, color=INK, ha='right', va='bottom')
-ax.legend(loc='upper left', frameon=False, fontsize=9, labelcolor=INK)
+ax.legend(loc='center left', bbox_to_anchor=(0.0, 0.42), frameon=False, fontsize=9, labelcolor=INK)
 ax.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())
 
 fig.subplots_adjust(left=0.11, right=0.97, top=0.80, bottom=0.14)
