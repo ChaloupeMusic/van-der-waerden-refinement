@@ -61,6 +61,13 @@ for point, dx, dy, ha in ((openai, 0.5, 1.9, 'left'),
                 arrowprops=dict(arrowstyle='-', color='#c9c8c3', lw=0.8,
                                 shrinkA=0, shrinkB=5))
 
+ceiling = data.get('ceiling')
+if ceiling:
+    cval = float(Fraction(ceiling['c']))
+    ax.axhline(cval, color=INK2, linewidth=1, linestyle=(0, (4, 4)), zorder=2)
+    ax.text(start + timedelta(hours=12), cval * 0.86, 'c = 1/24: ' + ceiling['label'],
+            fontsize=8.5, color=INK2, va='top')
+
 ax.set_yscale('log')
 ax.set_ylim(3e-6, 2e-1)
 ax.set_xlim(start, end)
@@ -82,7 +89,7 @@ fig.text(0.07, 0.895, 'Log scale. Repository values are conditional on the upstr
          fontsize=8.5, color=INK2, va='top', linespacing=1.4)
 fig.text(0.97, 0.02, 'Latest repository value is 4000× the OpenAI coefficient (and 7.7× the previous 1/193)',
          fontsize=9, color=INK, ha='right', va='bottom')
-ax.legend(loc='upper left', frameon=False, fontsize=9, labelcolor=INK)
+ax.legend(loc='center left', bbox_to_anchor=(0.0, 0.42), frameon=False, fontsize=9, labelcolor=INK)
 ax.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())
 
 fig.subplots_adjust(left=0.11, right=0.97, top=0.80, bottom=0.14)
