@@ -119,6 +119,12 @@ explicit coloring, or practical threshold claim is made. The earlier
 progress chart and parameter tables above document their original stages
 and have not been regenerated for this separate proof note.
 
+### Why $1/24$ is a ceiling of this architecture
+
+Every argument here, and the source manuscript, follows one template: a label-based outer coloring that balances every non-affine progression, keys with at most $\mu$ occurrences per progression carrying Bernoulli($k^{-b}$) flips, a union bound over the $N^2$ progressions for the balanced case, and a union bound over affine signatures for the affine case. [barrier-note.md](barrier-note.md) proves that within this template with $\mu=2$, affine key-word entropy $(6+o(1))\log q$, and label entropy $k^{2a+o(1)}$, every admissible coefficient satisfies $c\lt1/24$: the rich bound gives $c\lt\gamma b/4$, balance gives $\gamma\le1/2$, and the affine bound forces $b\lt a$ and $2a+b\le1$, so $3b\lt2a+b\le1$ and $b\lt1/3$.
+
+The note then records, feature by feature, why the three hypotheses resist change: the two-point multiplicity is the reflection symmetry of any quadratic band along a line, and distinguishing the pair costs about $D$ functionals worth $2\log q$ each; the $6\log q$ is tight for floor-words of quadratics; the $k^{2a}$ comes from $2D\log\lambda$ with $\log\lambda\gtrsim h_0\gtrsim D$ forced by the nonregular fraction; and a local-lemma pass over the flips reproduces the $N^2$ union bound because a key's fiber has about $Nk^{-2D}$ elements. AND-ing two flip layers, modular or widened bands, deterministic band parities, and coloring bands in the outer layer are each shown to fail. These explanations are not theorems. `audit_math.py` confirms the ceiling $1/24$ exactly (`template_ceiling`). Going further needs a different construction, not different parameters.
+
 ## Original work and attribution
 
 All comparisons refer to **OpenAI's manuscripts at commit [`fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`](https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb)**, not to a claim about the latest literature.
@@ -162,6 +168,7 @@ Do not run with `-O` or `PYTHONOPTIMIZE`: the verification scripts use assertion
 |---|---|---|
 | Four parameter proposals | Exact rational margins for four choices; three invalid boundary controls rejected | Validates inequalities, not the imported lemmas |
 | Sharpened region, $c=1/25$ | Exact rational margins for the explicit choice; five boundary controls rejected, including $c=1/24$ | Validates inequalities, not the modified local-lemma transfer |
+| Template ceiling $1/24$ | Linear program for $\sup b$ and exact product $\tfrac12\cdot\tfrac13\cdot\tfrac14$ | A statement about the proof template, not about van der Waerden numbers |
 | Norm-band lemma | Displayed proof plus 26,180 finite rational cases | Finite cases supplement the proof |
 | Abstract matrix profile | Symbolic identities plus 10,000 exact cube comparisons | No tensor realizability claim |
 | Released Sidorenko baseline | Independent reconstruction; duplicate-face and incomplete-exposure controls rejected | Finite combinatorial hypotheses only |
@@ -179,3 +186,5 @@ Exploratory scripts provide `--help`: [search_complex.py](search_complex.py), [w
 ## What still needs review
 
 The main outstanding work is independent verification of the complete van der Waerden parameter transfer, including uniform constants and all imported hypotheses. The sharpened region additionally relies on the three modifications in Section 4 of the note (shorter dilation, $(1/2-\varepsilon)$-balance in the local lemma, and the separate balancing of light positions outside heavy blocks); each is argued in [sharpened-region-proof.md](sharpened-region-proof.md) and remains an explicit imported input for the certificate-cover refinement. The [repeated-key certificate note](repeated-key-certificate-proof.md) now proposes a new cover of rich events that passes the earlier $1/24$ sufficient-region limit while retaining two-point key multiplicity; its complete proof and imported outer input require mathematical review together. Literature priority has not been established. For matrix multiplication, progress requires additional valid tensor constraints or a different construction. Any smaller Sidorenko finite object would still need the full analytic transfer before it could be called a new counterexample.
+
+The [barrier note](barrier-note.md) applies to the earlier full-progression rich-event template. The repeated-key certificate cover changes that template, so its larger coefficient is consistent with the stated barrier.
