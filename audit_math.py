@@ -161,7 +161,7 @@ from scipy.optimize import linprog
 lp=linprog(c=[0,-1],A_ub=[[-1,1],[2,1]],b_ub=[0,1],bounds=[(0,1),(0,1)],method='highs')
 assert lp.success and abs(lp.x[1]-1/3)<1e-9 and abs(lp.x[0]-1/3)<1e-9
 b_sup=Q(1,3);assert b_sup<=Q(1,3) and 2*Q(1,3)+b_sup==1
-mu=2;template_ceiling=Q(1,2)*b_sup/(2*mu)
+template_key_multiplicity=2;template_ceiling=Q(1,2)*b_sup/(2*template_key_multiplicity)
 assert template_ceiling==Q(1,24)
 assert all(Q(p['c'])<template_ceiling for p in config['sharpened_proposals'])
 
@@ -187,6 +187,104 @@ for M_test in range(2,65):
         if (M_test,h_test)==(5,3):
             assert dilation==72 and bound==100 and dilation<bound
         dilation_cases+=1
+
+# Digit-rank refinement (digit-rank-proof.md): the certificate and the
+# progression count share R=dim(S1 V+S2 V) and cost R and 2D-R (units of
+# log q), so the rich condition becomes 2c<gamma*b for every R.
+def digit_margins(p):
+    ms=sharpened_margins(p);del ms['rich_union_bound_gap']
+    g,b,c=(Q(p[k]) for k in ('gamma','b','c'))
+    ms['digit_rank_rich_gap']=g*b/2-c
+    return ms
+def digit_valid(p):
+    ms=digit_margins(p)
+    return all(v>=0 if k=='nonregular_fraction_at_most_half' else v>0 for k,v in ms.items())
+digit=[]
+for p in config['digit_rank_proposals']:
+    assert digit_valid(p),p
+    g,b,c=(Q(p[k]) for k in ('gamma','b','c'));mu=(g*b-2*c)/2
+    for i in range(1001):
+        x=Q(i,1000);kap,nuR=x,2-x
+        theta=(kap*c+g*b-nuR*c)/(2*b)
+        assert kap+nuR==2 and 0<theta<g and b*theta-kap*c==mu==b*(g-theta)-nuR*c>0
+    assert c>=2*g*b/5  # outside the rank-split region of rank-certificate-proof.md
+    digit.append({'name':p['name'],'factor_over_release':str(c/Q(config['baseline_c'])),
+                  'group_margin_mu':str(mu),'margins':{k:str(v) for k,v in digit_margins(p).items()}})
+p=dict(config['digit_rank_proposals'][-1]);p['b']=p['a'];assert not digit_valid(p)
+p=dict(config['digit_rank_proposals'][-1]);p['b']=str(1-2*Q(p['a']));assert not digit_valid(p)
+p=dict(config['digit_rank_proposals'][-1]);p['c']=str(Q(p['gamma'])*Q(p['b'])/2);assert not digit_valid(p)
+p=dict(config['digit_rank_proposals'][-1]);p['gamma']=str((Q(1,2)-Q(p['eps']))*(1-Q(p['eps_reg']))*(1-Q(p['delta'])));assert not digit_valid(p)
+p=dict(config['digit_rank_proposals'][-1]);p['c']='1/12';assert not digit_valid(p)
+assert all(Q(p['gamma'])*Q(p['b'])/2<Q(1,12) for p in config['digit_rank_proposals'])
+
+# Decompositions (5) and (6) on exact instances, and rho<=R<=min(2rho,D).
+dshift=lambda v,j:[v[l+j-1] if l+j-1<len(v) else 0 for l in range(len(v))]
+def balanced(n,qq,D):
+    n%=qq**D;out=[]
+    for _ in range(D):
+        r=n%qq;r=r-qq if r>qq//2 else r;out.append(r);n=(n-r)//qq
+    return out
+start_cases=step_cases=0
+while start_cases<1500:
+    qq=rng.choice((101,1009,10007));D=rng.randint(2,7);h=rng.randint(1,60);n=rng.randrange(qq**D)
+    Yv=[centered(Q(n%qq**i,qq**i)) for i in range(1,D+1)];y=balanced(n,qq,D)
+    ep=[Yv[i-1]-sum(Q(y[l],qq**(i-l)) for l in range(i)) for i in range(1,D+1)]
+    Fv=[sum(Q(y[l],qq**(i-l-2)) for l in range(i-2)) for i in range(1,D+1)]
+    assert all(x==0 for x in ep) and all(abs(x)<=1 for x in Fv)  # q odd: no centering correction
+    v=[rng.randint(-h,h) for _ in range(D)]
+    assert qq*qq*dot(v,Yv)==qq*dot(dshift(v,1),y)+dot(dshift(v,2),y)+dot(v,Fv)+qq*qq*dot(v,ep)
+    start_cases+=1
+while step_cases<1500:
+    qq=rng.choice((1009,10007,100003));D=rng.randint(2,6);k=rng.randint(8,80);h=rng.randint(1,k-1)
+    if 32*D*(k+2)>=k*k:continue
+    lim=int(2*qq/(k*k));e=[rng.randint(-lim,lim) for _ in range(D)]
+    beta=[sum(Q(e[l],qq**(i+1-l)) for l in range(i+1)) for i in range(D)]
+    if any(abs(x)>Q(2,k*k) for x in beta):continue
+    dmv=[rng.randint(-h,h) for _ in range(D)]
+    X=qq*qq*dot(dmv,beta)+Q(rng.randint(-2999,2999),1000)
+    n1,n2=dot(dshift(dmv,1),e),dot(dshift(dmv,2),e)
+    assert round(X/qq)==n1 and abs(X-qq*n1-n2)<4 and abs(n2)<Q(qq,8)
+    step_cases+=1
+for _ in range(200):
+    D=rng.randint(2,9);vs=[[rng.randint(-3,3) for _ in range(D)] for _ in range(rng.randint(1,D))]
+    rho=s.Matrix(vs).rank();R=s.Matrix([dshift(v,1) for v in vs]+[dshift(v,2) for v in vs]).rank()
+    assert rho<=R<=min(2*rho,D)
+vs=[[int(i==j) for i in range(8)] for j in range(3)]
+assert s.Matrix([dshift(v,1) for v in vs]+[dshift(v,2) for v in vs]).rank()==3  # block e_1..e_3: R=rho
+
+# Short-period runs (short-period-runs-proof.md): the estimate for non-rich
+# progressions no longer counts full label words, so 2a<1-b is replaced by
+# a+b<1 (run code D log^3 k = o(pk)); the rich condition stays 2c<gamma*b.
+def sp_margins(p):
+    a,m,b,d,e,er,g,c=(Q(p[k]) for k in ('a','m','b','delta','eps','eps_reg','gamma','c'));ds=Q(p['delta_s'])
+    return {'dimension_grows':a,'short_period_cutoff_below_M':m-a,'global_entropy_less_than_M':m-2*a,
+            'M_sublinear':1-m,'flip_probability_decays':b,'run_code_entropy_gap':1-a-b,
+            'affine_norm_entropy_gap':a-b,'balance_tolerance_positive':e,'balance_tolerance_below_half':Q(1,2)-e,
+            'nonregular_fraction_positive':er,'nonregular_fraction_at_most_half':Q(1,2)-er,
+            'light_threshold_positive':d,'run_light_threshold_positive':ds,'run_light_threshold_below_one':1-ds,
+            'outer_color_margin':(Q(1,2)-e)*(1-er)*(1-d)-g,
+            'digit_rank_rich_gap':g*b/2-c,'drift_less_than_eta_gap':3-m-a}
+def sp_valid(p):
+    ms=sp_margins(p)
+    return all(v>=0 if k=='nonregular_fraction_at_most_half' else v>0 for k,v in ms.items())
+short=[]
+for p in config['short_period_proposals']:
+    assert sp_valid(p),p
+    a_,b_,g,c=(Q(p[k]) for k in ('a','b','gamma','c'))
+    old_gap=1-b_-2*a_
+    assert old_gap<0 and not digit_valid(p)  # outside the digit-rank region
+    short.append({'name':p['name'],'factor_over_release':str(c/Q(config['baseline_c'])),
+                  'old_affine_global_gap':str(old_gap),'margins':{k:str(v) for k,v in sp_margins(p).items()}})
+p=dict(config['short_period_proposals'][-1]);p['b']=p['a'];assert not sp_valid(p)
+p=dict(config['short_period_proposals'][-1]);p['m']=str(2*Q(p['a']));assert not sp_valid(p)
+p=dict(config['short_period_proposals'][-1]);p['c']=str(Q(p['gamma'])*Q(p['b'])/2);assert not sp_valid(p)
+p=dict(config['short_period_proposals'][-1]);p['gamma']=str((Q(1,2)-Q(p['eps']))*(1-Q(p['eps_reg']))*(1-Q(p['delta'])));assert not sp_valid(p)
+p=dict(config['short_period_proposals'][-1]);p['c']='1/8';assert not sp_valid(p)
+# Supremum: b<a, 2a<m<1 give b<1/2 (LP), and gamma<1/2, so c<gamma*b/2<1/8.
+from scipy.optimize import linprog
+lp=linprog(c=[0,0,-1],A_ub=[[-1,0,1],[2,-1,0],[0,1,0]],b_ub=[0,0,1],bounds=[(0,1)]*3,method='highs')
+assert lp.success and abs(-lp.fun-0.5)<1e-9
+assert Q(1,2)*Q(1,2)/2==Q(1,8) and all(Q(p['gamma'])*Q(p['b'])/2<Q(1,8) for p in config['short_period_proposals'])
 
 # Independent finite tests of the exact half-open norm-band lemma. The proof
 # is analytic; these tests include unit-distance equality and t=0 cases.
@@ -219,8 +317,12 @@ out={'scope':'Exact algebra and finite checks only; not an independent formal pr
      'parameter_certificates':checks,'sharpened_parameter_certificates':sharpened,
      'rank_certificate_parameter_certificates':rank,
      'rank_split':{'worst_cost_sum':str(worst),'worst_rank_fraction':'1/2','coefficient_supremum':'1/15','digit_test_cases':digit_cases},
-     'negative_controls_rejected':13,
-     'template_ceiling':{'key_multiplicity':mu,'balance_supremum':'1/2','flip_exponent_supremum':str(b_sup),'coefficient_supremum':str(template_ceiling),
+     'digit_rank_parameter_certificates':digit,
+     'digit_rank':{'cost_sum_every_rank':'2','coefficient_supremum':'1/12','start_digit_cases':start_cases,'step_digit_cases':step_cases},
+     'short_period_parameter_certificates':short,
+     'short_period':{'flip_exponent_supremum':'1/2','coefficient_supremum':'1/8'},
+     'negative_controls_rejected':23,
+     'template_ceiling':{'key_multiplicity':template_key_multiplicity,'balance_supremum':'1/2','flip_exponent_supremum':str(b_sup),'coefficient_supremum':str(template_ceiling),
                          'weak_label_entropy_boundary':'passed','dilation_bound_test_cases':dilation_cases},
      'half_open_band_test_cases':band_cases,'profile_exact_test_cases':tripling_cases,
      'symbolic_identities':'passed'}

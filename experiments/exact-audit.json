@@ -123,7 +123,67 @@
     "coefficient_supremum": "1/15",
     "digit_test_cases": 2000
   },
-  "negative_controls_rejected": 13,
+  "digit_rank_parameter_certificates": [
+    {
+      "name": "digit-rank-8000x",
+      "factor_over_release": "8000",
+      "group_margin_mu": "107/400000",
+      "margins": {
+        "dimension_grows": "333/1000",
+        "short_period_cutoff_below_M": "467/1000",
+        "global_entropy_less_than_M": "67/500",
+        "M_sublinear": "1/5",
+        "flip_probability_decays": "331/1000",
+        "affine_global_entropy_gap": "3/1000",
+        "affine_norm_entropy_gap": "1/500",
+        "balance_tolerance_positive": "1/200",
+        "balance_tolerance_below_half": "99/200",
+        "nonregular_fraction_positive": "1/200",
+        "nonregular_fraction_at_most_half": "99/200",
+        "light_threshold_positive": "1/200",
+        "outer_color_margin": "40499/8000000",
+        "drift_less_than_eta_gap": "1867/1000",
+        "digit_rank_rich_gap": "107/400000"
+      }
+    }
+  ],
+  "digit_rank": {
+    "cost_sum_every_rank": "2",
+    "coefficient_supremum": "1/12",
+    "start_digit_cases": 1500,
+    "step_digit_cases": 1500
+  },
+  "short_period_parameter_certificates": [
+    {
+      "name": "short-period-runs-11111x",
+      "factor_over_release": "100000/9",
+      "old_affine_global_gap": "-93/200",
+      "margins": {
+        "dimension_grows": "49/100",
+        "short_period_cutoff_below_M": "1/2",
+        "global_entropy_less_than_M": "1/100",
+        "M_sublinear": "1/100",
+        "flip_probability_decays": "97/200",
+        "run_code_entropy_gap": "1/40",
+        "affine_norm_entropy_gap": "1/200",
+        "balance_tolerance_positive": "1/200",
+        "balance_tolerance_below_half": "99/200",
+        "nonregular_fraction_positive": "1/200",
+        "nonregular_fraction_at_most_half": "99/200",
+        "light_threshold_positive": "1/200",
+        "run_light_threshold_positive": "1/2",
+        "run_light_threshold_below_one": "1/2",
+        "outer_color_margin": "40499/8000000",
+        "digit_rank_rich_gap": "4681/720000",
+        "drift_less_than_eta_gap": "38/25"
+      }
+    }
+  ],
+  "short_period": {
+    "flip_exponent_supremum": "1/2",
+    "coefficient_supremum": "1/8"
+  },
+  "negative_controls_rejected": 23,
   "template_ceiling": {
     "key_multiplicity": 2,
     "balance_supremum": "1/2",

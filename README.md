@@ -2,7 +2,9 @@
 
 This research draft proposes a stronger coefficient in the released van der Waerden lower bound, together with an elementary geometric lemma and a parameter-transfer argument. It also gives an abstract obstruction for a selected set of matrix-multiplication profile inequalities.
 
-**Status:** AI-generated mathematical research prepared with Codex. The main refinements are conditional on their stated upstream inputs. They have not received independent human mathematical review or formal verification; the AI-assisted source reviews recorded for them are not a substitute for either. This repository does not claim a verified world record or a new matrix-multiplication algorithm. It is an independent follow-up, not an official OpenAI publication. The rank-split refinement was prepared with assistance from Claude (Anthropic).
+**Status:** AI-generated mathematical research prepared with Codex. The main refinements are conditional on their stated upstream inputs. They have not received independent human mathematical review or formal verification; the AI-assisted source reviews recorded for them are not a substitute for either. This repository does not claim a verified world record or a new matrix-multiplication algorithm. It is an independent follow-up, not an official OpenAI publication. The rank-split, digit-rank, and short-period refinements were prepared with assistance from Claude (Anthropic).
+
+The [conditional review and selected Lean proofs](https://github.com/rohanarun/van-der-waerden-refinement/pull/10) record the review scope and imported assumptions. They do not constitute end-to-end formal verification.
 
 Read the full argument in **[research-note.tex](research-note.tex)**. Exact checks, parameter choices, and experimental records are included below.
 
@@ -14,9 +16,9 @@ The original manuscript establishes a bound of the form
 W_r(k)>k^{c k\lfloor\log_2 r\rfloor}
 ```
 
-with $c=1/100000$, for sufficiently large $k$ and every integer $r\ge2$. Our conditional parameter-transfer argument admits **$c=1/16$**, with the threshold independent of $r$, and every fixed $c\lt1/15$ in the rank-split region below.
+with $c=1/100000$, for sufficiently large $k$ and every integer $r\ge2$. Our conditional parameter-transfer argument admits **$c=1/9$**, with the threshold independent of $r$, and every fixed $c\lt1/8$ in the short-period region below.
 
-That is a **6250-fold increase in the coefficient inside the exponent** (and $25/16=1.5625$ times the previous explicit choice $1/25$). The earlier $1/25$, $1/193$, and $1/200$ choices remain included for comparison. No explicit finite coloring record or runtime improvement follows. The threshold may be very large and is not made explicit here.
+That is a **$100000/9\approx11{,}111$-fold increase in the coefficient inside the exponent** (and $25/18\approx1.39$ times the previous explicit choice $2/25$). The earlier $2/25$, $1/16$, $1/25$, $1/193$, and $1/200$ choices remain included for comparison. No explicit finite coloring record or runtime improvement follows. The threshold may be very large and is not made explicit here.
 
 The earlier [repeated-key certificate cover](#repeated-key-certificate-cover-conditional-119) admits $c=1/19$, a factor $100000/19\approx5263$ over the source.
 
@@ -154,6 +156,57 @@ The exponents and balance constants are those of the $1/25$ choice; only the coe
 
 It also rejects five boundary controls, including $c=1/15$. The value $1/16$ lies outside both earlier rich conditions, so it is not a reparametrization of them.
 
+### Repeated keys cost nothing: the digit rank
+
+The rank-split argument paid $2\log q$ per direction of the carry span $V$ in its certificate, but saved only $\log q$ per direction in its progression count. [digit-rank-proof.md](digit-rank-proof.md) observes that both sides are made of base-$q$ digits in the same pattern:
+
+- **Start side.** $q^2\langle Y_{a_0},v\rangle$ is fixed, up to a bounded tail, by two integer forms in the start point's digits.
+- **Step side.** Each repeated pair fixes the same two forms in the step's digits: the first exactly, the second up to nine values.
+
+Both counts are therefore governed by one **digit rank** $R=\dim(S_1V+S_2V)$. The certificate costs $R\log q$ and the progression count $(2D-R)\log q$, so their sum is $2D$ for **every** $R$. The rich condition becomes
+
+```math
+2c\lt\gamma b,
+```
+
+which is what the union bound gives when no key repeats at all. Every other inequality of the sharpened region is unchanged, so every fixed $c\lt\gamma b/2\lt1/12$ is admitted.
+
+| Choice | $a$ | $m$ | $b$ | $\delta$ | $\varepsilon$ | $\varepsilon_{\rm r}$ | $\gamma$ | $c$ | Coefficient ratio |
+|---|---|---|---|---|---|---|---|---|---|
+| Digit-rank explicit choice | 333/1000 | 4/5 | 331/1000 | 1/200 | 1/200 | 1/200 | 97/200 | 2/25 | 8000 |
+
+These are again the exponents and balance constants of the $1/25$ choice. The decisive margin is $\gamma b/2-c=107/400000$, the same margin that certified $1/25$ under $2c\lt\gamma b/2$; the coefficient doubles. `audit_math.py` checks:
+
+- every margin, in exact fractions;
+- $\kappa+\nu=2$ for every digit rank;
+- both group margins on a grid of ranks;
+- the digit decompositions, on 3,000 exact instances;
+- $\rho\le R\le\min(2\rho,D)$, on random carry spans.
+
+It also rejects five boundary controls, including $c=1/12$. On the rich side, $2c\lt\gamma b$ is also what progressions with no repeated key give on their own. Going past $1/12$ would therefore need $\gamma$ above $1/2$, $b$ above $1/3$, or a new idea for those progressions.
+
+### Past $1/12$: short-period runs
+
+The digit-rank region still carries the sharpened region's affine inequality $2a\lt1-b$, which caps $b$ at $1/3$. It comes from paying for the full label word, $\log T_{\rm glob}=O(k^{2a}\log^3k)$, in the estimate for progressions that are not $\gamma$-rich. [short-period-runs-proof.md](short-period-runs-proof.md) observes that those progressions are short-period, so their color word is much cheaper to pin down:
+
+1. **Runs.** In a short-period progression, the occurrences of each full label form one run: one residue class modulo the period, consecutive within it.
+2. **A third local-lemma family.** Only $e^{O(D\log k)}$ short-period label words pass through a given label, so the local lemma can also balance their light positions (multiplicity at most $k/M_s$, with $M_s=D\lceil\log k\rceil^2$).
+3. **Two cases.** If light positions fill at least $\delta_sk$ of the progression, about half of them need a flip, and the event is covered by the key word alone. Otherwise at most $M_s$ heavy runs fix the color word, at a cost of $e^{O(D\log^3k)}$.
+
+No full label word is counted, so $2a\lt1-b$ becomes $a+b\lt1$, which already follows from $b\lt a\lt1/2$. The binding constraints are now $2a\lt m\lt1$ and $b\lt a$, so $b\lt1/2$. With the rich condition $2c\lt\gamma b$, every fixed $c\lt\gamma b/2\lt1/8$ is admitted.
+
+| Choice | $a$ | $m$ | $b$ | $\delta$ | $\varepsilon$ | $\varepsilon_{\rm r}$ | $\gamma$ | $c$ | Coefficient ratio |
+|---|---|---|---|---|---|---|---|---|---|
+| Short-period explicit choice | 49/100 | 99/100 | 97/200 | 1/200 | 1/200 | 1/200 | 97/200 | 1/9 | 100000/9 |
+
+The light-run threshold is $\delta_s=1/2$. The decisive margin is $\gamma b/2-c=4681/720000$, and $m-2a$, $1-m$, $a-b$, $1-a-b$ are $1/100$, $1/100$, $1/200$, $1/40$. The old affine gap $1-b-2a=-93/200$ fails on purpose, so this choice lies outside the digit-rank region. `audit_math.py` checks:
+
+- every margin, in exact fractions;
+- that the old affine gap fails;
+- the supremum $b\lt1/2$, by linear programming.
+
+It also rejects five boundary controls, including $c=1/8$.
+
 ## Original work and attribution
 
 All comparisons refer to **OpenAI's manuscripts at commit [`fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`](https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb)**, not to a claim about the latest literature.
@@ -198,12 +251,14 @@ Do not run with `-O` or `PYTHONOPTIMIZE`: the verification scripts use assertion
 | Four parameter proposals | Exact rational margins for four choices; three invalid boundary controls rejected | Validates inequalities, not the imported lemmas |
 | Sharpened region, $c=1/25$ | Exact rational margins for the explicit choice; five boundary controls rejected, including $c=1/24$ | Validates inequalities, not the modified local-lemma transfer |
 | Rank-split region, $c=1/16$ | Exact margins; worst rank $\rho=D/2$; symbolic identities; 2,000 exact digit-pinning instances; five boundary controls rejected, including $c=1/15$ | Validates inequalities and identities, not the counting lemmas or the imported structure |
+| Digit-rank region, $c=2/25$ | Exact margins; $\kappa+\nu=2$ for every digit rank; 3,000 exact digit-decomposition instances; five boundary controls rejected, including $c=1/12$ | Validates inequalities and identities, not the counting lemmas or the imported structure |
+| Short-period region, $c=1/9$ | Exact margins; the old affine gap $1-b-2a$ fails as intended; supremum $b\lt1/2$ by linear programming; five boundary controls rejected, including $c=1/8$ | Validates inequalities, not the run lemmas, the third local-lemma family, or the imported structure |
 | Template ceiling $1/24$ | Linear program for $\sup b$ and exact product $\tfrac12\cdot\tfrac13\cdot\tfrac14$ | A statement about the proof template, not about van der Waerden numbers |
 | Norm-band lemma | Displayed proof plus 26,180 finite rational cases | Finite cases supplement the proof |
 | Abstract matrix profile | Symbolic identities plus 10,000 exact cube comparisons | No tensor realizability claim |
 | Released Sidorenko baseline | Independent reconstruction; duplicate-face and incomplete-exposure controls rejected | Finite combinatorial hypotheses only |
 
-Saved outputs are [exact-audit.json](experiments/exact-audit.json) and [baseline-independent-check.json](experiments/baseline-independent-check.json). The LaTeX source was successfully compiled in the Codex document editor, and the current version also compiles with pdflatex (TeX Live 2023) without warnings; no compiled PDF is included.
+Saved outputs are [exact-audit.json](experiments/exact-audit.json) and [baseline-independent-check.json](experiments/baseline-independent-check.json). Earlier LaTeX revisions were compiled; compilation of those revisions does not certify the merged mathematical argument. No compiled PDF is included.
 
 To retrieve the exact upstream source files (optional for the checks above):
 
@@ -215,6 +270,6 @@ Exploratory scripts provide `--help`: [search_complex.py](search_complex.py), [w
 
 ## What still needs review
 
-The main outstanding work is independent verification of the complete van der Waerden parameter transfer, including uniform constants and all imported hypotheses. The sharpened region additionally relies on the three modifications in Section 4 of the note (shorter dilation, $(1/2-\varepsilon)$-balance in the local lemma, and the separate balancing of light positions outside heavy blocks); each is argued in [sharpened-region-proof.md](sharpened-region-proof.md) but has not been independently reviewed. The rank-split region further relies on Lemmas A–C of [rank-certificate-proof.md](rank-certificate-proof.md), and on the repeated-key structure of the merged proposal #4, which is restated there. Neither has been independently reviewed. Pushing past $1/15$ would need a better trade-off between the rank count and the projection certificate (for instance, pinning more than one digit form per collision class) or a new idea for the two-point key multiplicity. Literature priority has not been established. For matrix multiplication, progress requires additional valid tensor constraints or a different construction. Any smaller Sidorenko finite object would still need the full analytic transfer before it could be called a new counterexample.
+The main outstanding work is independent verification of the complete van der Waerden parameter transfer, including uniform constants and all imported hypotheses. The sharpened region additionally relies on the three modifications in Section 4 of the note (shorter dilation, $(1/2-\varepsilon)$-balance in the local lemma, and the separate balancing of light positions outside heavy blocks); each is argued in [sharpened-region-proof.md](sharpened-region-proof.md) but has not been independently reviewed by a human. The rank-split region further relies on Lemmas A–C of [rank-certificate-proof.md](rank-certificate-proof.md), and on the repeated-key structure of the merged proposal #4, which is restated there. Neither has been independently reviewed by a human. The digit-rank region replaces those lemmas with Lemmas A\* and C\* of [digit-rank-proof.md](digit-rank-proof.md), also not independently reviewed by a human. The short-period region further relies on Lemmas 1 and 2 and the third local-lemma family of [short-period-runs-proof.md](short-period-runs-proof.md), likewise not independently reviewed by a human. Pushing past $1/8$ would need $\gamma$ above $1/2$, $b$ above $1/2$ (which $b\lt a$ and $2a\lt m\lt1$ forbid for these keys and this outer coloring), or a new idea for rich progressions without repeated keys. Literature priority has not been established. For matrix multiplication, progress requires additional valid tensor constraints or a different construction. Any smaller Sidorenko finite object would still need the full analytic transfer before it could be called a new counterexample.
 
-The [barrier note](barrier-note.md) applies to the earlier full-progression rich-event template. The certificate covers change that template and are consistent with its stated barrier.
+The [barrier note](barrier-note.md) applies to the earlier full-progression rich-event template. The later certificate and short-period arguments change that template and are consistent with its stated barrier.
