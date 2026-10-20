@@ -216,17 +216,25 @@ def check_bookkeeping(a=Q(49, 100), b=Q(97, 200), c=Q(13, 100), theta=Q(13, 100)
     logN = cc * k * L                                        # N >= k^{ck}
     logp = -bb * L
     s0 = int((4 - 2 / L) * D / bb)
+    # ln(2/k^2 + 1/q) = ln(2/k^2) + ln(1 + k^2/(2q)) <= ln(2/k^2) + k^2/(2q), and
+    # k^2/(2q) <= e^{-230} < 1e-99 here (checked), so 1e-99 is a safe stand-in
+    assert logq - 2 * L - Decimal(2).ln() > 230
+    box = (Decimal(2) / (k * k)).ln() + Decimal("1e-99")      # >= ln(2/k^2 + 1/q)
     # regime 1: 4k (2/k^2 + 1/q)^D <= p
-    r1 = (4 * k).ln() + D * ((Decimal(2) / (k * k)).ln()) <= logp
+    r1 = (4 * k).ln() + D * box <= logp
     # regime 2: 4k^2 (2/k^2 + 1/q)^{2D} <= p^{s0-1}
-    r2 = (4 * k * k).ln() + 2 * D * ((Decimal(2) / (k * k)).ln()) <= (s0 - 1) * logp
+    r2 = (4 * k * k).ln() + 2 * D * box <= (s0 - 1) * logp
+    # support of nu: progressions with a repeated V-box are at most
+    # k N^2 (4/k^2 + 1/q)^D, a fraction far below 3/4
+    rep = L + D * ((Decimal(4) / (k * k)).ln() + Decimal("1e-99"))   # log of the fraction
+    r0 = rep <= (Decimal(3) / 4).ln()
     # regime 3: 4 k^{s0}(k+2)^{D s0}(1+4q sqrt D)^{theta D} / N^2 <= p^{k/2}
     lhs3 = Decimal(4).ln() + s0 * L + D * s0 * (k + 2).ln() \
         + th * D * (logq + (4 * D.sqrt()).ln() + Decimal(1)) - 2 * logN
     r3 = lhs3 <= k / 2 * logp
-    assert r1 and r2 and r3
+    assert r0 and r1 and r2 and r3
     return {"a": str(a), "b": str(b), "c": str(c), "theta": str(theta), "log10_k": log10k,
-            "regime1": r1, "regime2": r2, "regime3": r3,
+            "repeated_box_fraction_below_3/4": r0, "regime1": r1, "regime2": r2, "regime3": r3,
             "regime3_margin_in_units_of_k_log_k": str(((k / 2 * logp - lhs3) / (k * L)).quantize(Decimal("1e-6")))}
 
 def main():

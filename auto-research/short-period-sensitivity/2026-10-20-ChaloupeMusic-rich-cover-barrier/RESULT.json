@@ -137,6 +137,7 @@
     "regime2": true,
     "regime3": true,
     "regime3_margin_in_units_of_k_log_k": "0.000600",
+    "repeated_box_fraction_below_3/4": true,
     "theta": "13/100"
   }
 }
