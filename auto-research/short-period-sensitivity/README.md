@@ -14,3 +14,4 @@ Related: `barrier-note.md` (rigidity of `6 log q` in the earlier template).
 | Date | Handle | Result | Status | PR |
 |---|---|---|---|---|
 | 2026-10-20 | erwan | `b < a` is the only single lever; relaxing `2a<m` or `a+b<1` alone gains nothing | research note (exact LP sensitivity) | – |
+| 2026-10-20 | ChaloupeMusic | Rich side: every cover bound with these keys needs `c ≤ b/4`, conditional on the rank statement (G_θ); linear band rigidity refuted by an exact Dirichlet certificate | research note (conditional barrier) | – |
