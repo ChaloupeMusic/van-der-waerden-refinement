@@ -36,7 +36,9 @@ python3 -B auto-research/matrix-profile/2026-10-20-ChaloupeMusic-least-admissibl
 ```
 
 Expected: exit 0, `"status": "passed"`, and stdout equal to `RESULT.json` (the script checks
-this itself). Standard library only, exact rational arithmetic, no network, no files written,
+this itself). Run it inside a full checkout of the base: it reads and hashes
+`research-note.tex`, `profile_lp.py` and `experiments/matrix-profile.json` at the repository
+root, so a copy of this folder alone fails its provenance checks. Standard library only, exact rational arithmetic, no network, no files written,
 about one second. It is equally effective under `python3 -O` (no `assert`).
 
 ## Which direction is "stronger"
