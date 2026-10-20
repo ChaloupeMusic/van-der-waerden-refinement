@@ -7,6 +7,3 @@ This track studies uniform error terms and finite thresholds near the coefficien
 2026-10-15, `1337isnot1337`: [Logarithmic endpoint loss](2026-10-15-1337isnot1337-logarithmic-loss/README.md).
 Status: conditional proof draft with exact checks. Independent review is pending.
 Related sources: the main repository's digit-rank and short-period arguments, and PR #9's finite encoding factors.
-
-2026-10-20, `ChaloupeMusic`: [Retuned endpoint constants](2026-10-20-ChaloupeMusic-endpoint-constants/README.md).
-Status: conditional proof draft with exact all-larger-`t` checks, building on the 2026-10-15 contribution. Constant `e^{9/2}` in place of `e^{20}`, coefficient 1/9 from `k >= 2^1169`. Independent review is pending.

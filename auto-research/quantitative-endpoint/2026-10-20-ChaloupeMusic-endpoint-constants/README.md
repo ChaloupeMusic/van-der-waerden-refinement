@@ -71,7 +71,7 @@ second.
   corresponding certificate to fail.
 
 `RESULT.json` is the output of `verify.py --json`. `MANIFEST.json`
-authenticates the package files and the track index. It excludes itself.
+authenticates the package files. It excludes itself.
 
 These checks do not formally verify the local lemma or the imported
 geometric and digit-rank encodings.
@@ -80,5 +80,15 @@ geometric and digit-rank encodings.
 
 Base: `63bef9ca996786a41169de4a0c3d6b3b47b0fe96`, with PR #12 at
 `029431bb29f2bc64bf3f6dd150ddd15bbdf7c7d5`. All changes are new files under
-`auto-research/quantitative-endpoint/`, plus one entry in the track index.
+`auto-research/quantitative-endpoint/2026-10-20-ChaloupeMusic-endpoint-constants/`.
 No PR is open for this package.
+
+The track index `auto-research/quantitative-endpoint/README.md` is left
+unchanged on purpose: PR #12's `MANIFEST.json` authenticates it, so editing it
+would break PR #12's verifier. The proposed index entry, to add once the two
+packages are merged in order, is:
+
+```
+2026-10-20, `ChaloupeMusic`: [Retuned endpoint constants](2026-10-20-ChaloupeMusic-endpoint-constants/README.md).
+Status: conditional proof draft with exact all-larger-`t` checks, building on the 2026-10-15 contribution. Constant `e^{9/2}` in place of `e^{20}`, coefficient 1/9 from `k >= 2^1169`. Independent review is pending.
+```
