@@ -5,7 +5,7 @@
     "pr12_head": "029431bb29f2bc64bf3f6dd150ddd15bbdf7c7d5"
   },
   "class_product_cases": 44850,
-  "conclusion": "W_r(k) > (k^(1/8) / (e^C (log k)^(7/8)))^(k floor(log2 r)) for k >= 2^739, with C = 71/20 under Lemma D'' (c = 1/9 from 2^961), C = 403/100 under Lemma D' alone (from 2^1016), C = 35/8 under N1a's Lemma D alone (from 2^1055); conditional on the interfaces of PR #12, Section 2, and PR #9's displayed factors",
+  "conclusion": "W_r(k) > (k^(1/8) / (e^C (log k)^(7/8)))^(k floor(log2 r)) for k >= 2^739, with C = 71/20 under Lemma D'' (c = 1/9 from 2^960), C = 403/100 under Lemma D' alone (from 2^1015), C = 35/8 under N1a's Lemma D alone (from 2^1054); conditional on the interfaces of PR #12, Section 2, and PR #9's displayed factors",
   "decimal_replay": {
     "checks": 1980,
     "failures": 0,
@@ -297,9 +297,8 @@
       "thresholds": {
         "coefficient_at_2^1024_lower": "0.11074",
         "one_ninth_from": {
-          "k": "2^1055",
-          "margin_lower": "0.007666",
-          "t": 731
+          "k": "2^1054",
+          "margin_lower": "0.002299"
         }
       }
     },
@@ -314,9 +313,8 @@
       "thresholds": {
         "coefficient_at_2^1024_lower": "0.11122",
         "one_ninth_from": {
-          "k": "2^1016",
-          "margin_lower": "0.010596",
-          "t": 704
+          "k": "2^1015",
+          "margin_lower": "0.004835"
         }
       }
     },
@@ -331,9 +329,8 @@
       "thresholds": {
         "coefficient_at_2^1024_lower": "0.11190",
         "one_ninth_from": {
-          "k": "2^961",
-          "margin_lower": "0.011371",
-          "t": 666
+          "k": "2^960",
+          "margin_lower": "0.004094"
         }
       }
     }

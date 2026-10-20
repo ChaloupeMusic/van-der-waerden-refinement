@@ -37,11 +37,11 @@ BASE = {"AD": AD, "BH": BH, "AS": AS, "AP": AP, "E2": E2, "G": G, "TAIL": TAIL}
 # Three tiers, F = k (t/8 - (7/8) log t - C). The class product of PR #9 Section 8.3 step 4 is bounded by
 # base^(exp k): D'' (collision classes have K_a >= 2) 45^(k/2); D' 19^k; N1a's Lemma D 37^k.
 TIERS = [
-    {"name": "D2", "label": "Lemma D'': 45^(k/2)", "C": Q(71, 20), "base": 45, "exp": Q(1, 2), "t9": 666, "n9": 961,
+    {"name": "D2", "label": "Lemma D'': 45^(k/2)", "C": Q(71, 20), "base": 45, "exp": Q(1, 2), "n9": 960,
      "coeff1024": Q(1119, 10000)},
-    {"name": "D1", "label": "Lemma D': 19^k", "C": Q(403, 100), "base": 19, "exp": Q(1), "t9": 704, "n9": 1016,
+    {"name": "D1", "label": "Lemma D': 19^k", "C": Q(403, 100), "base": 19, "exp": Q(1), "n9": 1015,
      "coeff1024": Q(1112, 10000)},
-    {"name": "D0", "label": "N1a's Lemma D: 37^k", "C": Q(35, 8), "base": 37, "exp": Q(1), "t9": 731, "n9": 1055,
+    {"name": "D0", "label": "N1a's Lemma D: 37^k", "C": Q(35, 8), "base": 37, "exp": Q(1), "n9": 1054,
      "coeff1024": Q(1107, 10000)},
 ]
 
@@ -201,13 +201,12 @@ def budgets(p, tier):
                 Lx = T / 2 - Q(7, 2) * A - B
                 rhs = T / 8 - Q(7, 8) * A - B / 4 - G / 4 + Q(7, 4) * G * A / T + G / 2 * B / T
                 require(gamma * Lx / 2 == rhs, "gamma L / 2 expansion")
-    # errors from PR #9's displayed factors (D <= sqrt k, D + 4 <= 2 sqrt k, J <= k^6)
-    Dc_c = L9 + 2 * ln_up(7) + ln_up(3) + ln_up(6) + ln_up(19)            # D-constant in E_c
-    Dc_p = L9 + 2 * ln_up(7) + L9                                         # D-constant in E_p
-    c_c = ln_up(16) + 3 * ln_up(3) + 2 * 2 * L2up + 3 * ln_up(6) + 3 * ln_up(19)
-    c_p = ln_up(100)
-    require(Dc_c <= Q(1193, 100) and Dc_p <= Q(829, 100) and c_c <= Q(231, 10) and c_p <= Q(461, 100),
-            "error constants")
+    # errors from PR #9's displayed factors, recomputed factor by factor (PROOF.md Section 7 table)
+    ec, ep = error_bounds()
+    require(ec == {"Q": 6, "Dt": Q(51, 2), "t": 30} | {x: ec[x] for x in ("D", "1")}, "E_c coefficients")
+    require(ep == {"Q": 4, "Dt": 17, "t": 2} | {x: ep[x] for x in ("D", "1")}, "E_p coefficients")
+    require(ec["D"] <= Q(1193, 100) and ec["1"] <= Q(231, 10), "E_c constants above the stated bound")
+    require(ep["D"] <= Q(829, 100) and ep["1"] <= Q(461, 100), "E_p constants above the stated bound")
     k_class = tier["exp"] * ln_up(tier["base"])                          # class product <= base^(exp k)
     k_ebar = (L2up + k_class + ln_up(5)) / 2                              # E_c: log 2 + class + (1/2) log 5; E_p: (1/2) log 5
     kappa = Cv - L36 / 4 - G / 4 - k_ebar
@@ -227,23 +226,59 @@ def budgets(p, tier):
     # Lemma C tail: 4(D+1) e^{-log 64 - t/2} <= 8 sqrt(k) e^{-t/2}/64 = 1/8, and 2 e^{-2 Gamma} <= 1/8 needs
     # Gamma >= log 4, which holds because Gamma >= Ebar + log 64 + t/2 >= log 64
     require(Q(8, 64) + Q(1, 8) <= Q(1, 4) and ln_lo(64) >= ln_up(4), "Lemma C tail")
-    # error coefficients in t (PR #9 factors, see PROOF.md Section 7)
-    require(1 + 16 + Q(3, 2) + 3 + 4 == Q(51, 2) and 1 + 16 == 17 and 1 + 6 + 2 + 9 + 12 == 30, "error t-coefficients")
     # thresholds
     require(739 * L2lo >= T0, "k >= 2^739 gives t >= 512")
     return r
 
 
+def error_bounds():
+    """PR #9 Sections 7.3, 7.12, 8.2, 8.3: each factor's logarithm as a linear form in Q = log q, D t, D, t
+    and 1, using J <= k^6 (so 6 k^2 J + 1 <= 7 k^8), D <= sqrt(k), D + 4 <= 2 sqrt(k), s_G + 1 <= 3 k^2 q^2,
+    s_phi + 1 <= 6 k^3, s_x + 1 <= 19 k^4. The k-linear terms (pairs, classes, subsets) are tier-dependent
+    and handled in budgets()."""
+    L2 = ln2_bounds()[1]
+
+    def form(**c):
+        return {x: Q(c.get(x, 0)) for x in ("Q", "Dt", "D", "t", "1")}
+
+    discrete = form(Dt=1 + 16, D=ln_up(9) + 2 * ln_up(7), t=1)          # k^{D+1} T_aug: (D+1) t + D(log 9 + 2 log 7k^8)
+    factors_c = {
+        "discrete data (7.7)": discrete,
+        "integer projections (8.8): D log(3Dk)": form(Dt=Q(3, 2), D=ln_up(3)),
+        "first arrangement: 16 (s_G+1)^3": form(Q=6, t=6, **{"1": ln_up(16) + 3 * ln_up(3)}),
+        "tail arrangement: (D+4)^2 (s_phi+1)^(D+3)": form(Dt=3, D=ln_up(6), t=1 + 9, **{"1": 2 * L2 + 3 * ln_up(6)}),
+        "crossing arrangement: (D+4)^2 (s_x+1)^(D+3)": form(Dt=4, D=ln_up(19), t=1 + 12,
+                                                            **{"1": 2 * L2 + 3 * ln_up(19)}),
+    }
+    factors_p = {
+        "discrete data (7.7)": discrete,
+        "cells (7.12): 100 D^2 q^4": form(Q=4, t=1, **{"1": ln_up(100)}),
+        "second forms (8.5): 9^D": form(D=ln_up(9)),
+    }
+
+    def total(fs):
+        out = form()
+        for f in fs.values():
+            for x in out:
+                out[x] += f[x]
+        return out
+
+    return total(factors_c), total(factors_p)
+
+
 def thresholds(tier):
     L2lo, L2up = ln2_bounds()
-    Cv, t9, n9 = tier["C"], tier["t9"], tier["n9"]
-    g9 = Q(t9, 72) - Q(7, 8) * ln_up(t9) - Cv
-    require(g9 > 0 and t9 > 63 and n9 * L2lo >= t9, "1/9 threshold")
-    require(Q(t9 - 1, 72) - Q(7, 8) * ln_lo(t9 - 1) - Cv < 0, "1/9 threshold is not minimal at this integer t")
+    # g(t) = t/72 - (7/8) log t - C increases for t > 63; k >= 2^n gives t >= n log 2 >= n L2lo
+    Cv, n9 = tier["C"], tier["n9"]
+    t9 = n9 * L2lo
+    g9 = t9 / 72 - Q(7, 8) * ln_up(t9) - Cv
+    require(g9 > 0 and t9 > 63, "1/9 threshold")
+    tm = (n9 - 1) * L2up                                                  # k = 2^(n-1) has t <= (n-1) L2up
+    require(tm / 72 - Q(7, 8) * ln_lo(tm) - Cv < 0, "1/9 threshold is not minimal in the exponent n")
     t1024 = 1024 * L2lo                                                   # coefficient increases in t
     coeff = Q(1, 8) - (Q(7, 8) * ln_up(t1024) + Cv) / t1024
     require(coeff >= tier["coeff1024"], "coefficient at 2^1024")
-    return {"one_ninth_from": {"t": t9, "k": f"2^{n9}", "margin_lower": dec_floor(g9)},
+    return {"one_ninth_from": {"k": f"2^{n9}", "margin_lower": dec_floor(g9)},
             "coefficient_at_2^1024_lower": dec_floor(coeff, 5)}
 
 
@@ -435,8 +470,8 @@ def main():
         "decimal_replay": decimal_replay(),
         "integrity_files": integrity(),
         "conclusion": "W_r(k) > (k^(1/8) / (e^C (log k)^(7/8)))^(k floor(log2 r)) for k >= 2^739, with "
-                      "C = 71/20 under Lemma D'' (c = 1/9 from 2^961), C = 403/100 under Lemma D' alone "
-                      "(from 2^1016), C = 35/8 under N1a's Lemma D alone (from 2^1055); conditional on the "
+                      "C = 71/20 under Lemma D'' (c = 1/9 from 2^960), C = 403/100 under Lemma D' alone "
+                      "(from 2^1015), C = 35/8 under N1a's Lemma D alone (from 2^1054); conditional on the "
                       "interfaces of PR #12, Section 2, and PR #9's displayed factors",
     }
     text = json.dumps(report, indent=2, sort_keys=True) + "\n"

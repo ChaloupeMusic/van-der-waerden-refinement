@@ -14,9 +14,9 @@ step 4). Each tier is proved and certified separately:
 
 | tier | assumption | `C` | `c = 1/9` from | coefficient at `2^1024` |
 |---|---|---:|---|---:|
-| D″ | Lemma D″: collision classes have at least two positions, so the product is `<= 45^{k/2}` | `71/20` | `2^961` | `> 0.1119` |
-| D′ | Lemma D′ alone: `<= 19^k` | `403/100` | `2^1016` | `> 0.1112` |
-| D | N1a's Lemma D alone: `<= 37^k` | `35/8` | `2^1055` | `> 0.1107` |
+| D″ | Lemma D″: collision classes have at least two positions, so the product is `<= 45^{k/2}` | `71/20` | `2^960` | `> 0.1119` |
+| D′ | Lemma D′ alone: `<= 19^k` | `403/100` | `2^1015` | `> 0.1112` |
+| D | N1a's Lemma D alone: `<= 37^k` | `35/8` | `2^1054` | `> 0.1107` |
 
 Comparison with the earlier bounds on `W_2(k)^{1/k}`:
 
@@ -25,7 +25,7 @@ Comparison with the earlier bounds on `W_2(k)^{1/k}`:
 | PR #12 | `k^{1/8} / (e^{20} log k)` | `2^1024` | `2^4096` |
 | `2026-10-20-ChaloupeMusic-endpoint-constants` (N1a) | `k^{1/8} / (e^{9/2} log k)` | `2^1024` | `2^1163` |
 | `2026-10-20-ChaloupeMusic-seven-eighths` (N1b) | `k^{1/8} / (e^{35/2} (log k)^{7/8})` | `2^739` | `2^2504` |
-| this note, tier D″ | `k^{1/8} / (e^{71/20} (log k)^{7/8})` | `2^739` | `2^961` |
+| this note, tier D″ | `k^{1/8} / (e^{71/20} (log k)^{7/8})` | `2^739` | `2^960` |
 
 Every tier beats every earlier bound on that bound's own range, even before the `(log k)^{1/8}` factor.
 No coefficient above `1/8` is claimed.
@@ -44,7 +44,8 @@ No coefficient above `1/8` is claimed.
     PROOF.md, Section 2.
 - **Eligibility threshold.** The anchored patterns of N1b's (I2) are asked to have at least
   `(1 − ε_reg)ℓ` regular positions instead of `ℓ/2`. Canonical blocks satisfy this by N1b's Lemma 5.2.
-  It halves the second-family tail exponent, so `h_0 = ⌈5Dt^3⌉` suffices.
+  It doubles the second-family tail exponent, from `h/(2t^2)` to `(1 − ε_reg)h/t^2`, so `h_0 = ⌈5Dt^3⌉`
+  suffices.
 
 ## Reproduce
 

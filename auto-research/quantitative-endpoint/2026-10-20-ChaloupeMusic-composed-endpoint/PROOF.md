@@ -27,18 +27,18 @@ The three tiers are proved and checked separately, so contesting one does not af
 
 | tier | class product | `C` | `c = 1/9` from | coefficient at `2^1024` |
 |---|---|---:|---|---:|
-| D″ (this note, reading of Section 2) | `45^{k/2}` | `71/20` | `2^961` | `> 0.1119` |
-| D′ (this note) | `19^k` | `403/100` | `2^1016` | `> 0.1112` |
-| D (N1a) | `37^k` | `35/8` | `2^1055` | `> 0.1107` |
+| D″ (this note, reading of Section 2) | `45^{k/2}` | `71/20` | `2^960` | `> 0.1119` |
+| D′ (this note) | `19^k` | `403/100` | `2^1015` | `> 0.1112` |
+| D (N1a) | `37^k` | `35/8` | `2^1054` | `> 0.1107` |
 
 | | constant | power of `log k` | range | `c = 1/9` from |
 |---|---:|---:|---|---|
 | #12 | `e^{20}` | 1 | `2^1024` | `2^4096` |
 | N1a | `e^{9/2}` | 1 | `2^1024` | `2^1163` |
 | N1b | `e^{35/2}` | 7/8 | `2^739` | `2^2504` |
-| here, tier D″ | `e^{71/20}` | 7/8 | `2^739` | `2^961` |
-| here, tier D′ | `e^{403/100}` | 7/8 | `2^739` | `2^1016` |
-| here, tier D | `e^{35/8}` | 7/8 | `2^739` | `2^1055` |
+| here, tier D″ | `e^{71/20}` | 7/8 | `2^739` | `2^960` |
+| here, tier D′ | `e^{403/100}` | 7/8 | `2^739` | `2^1015` |
+| here, tier D | `e^{35/8}` | 7/8 | `2^739` | `2^1054` |
 
 Every tier of (1) beats each of #12, N1a and N1b on that bound's own range (`k >= 2^1024` for #12 and
 N1a, `k >= 2^739` for N1b). This holds even without the `(log k)^{1/8}` factor, since
@@ -163,7 +163,7 @@ nonincreasing on `[512, ∞)`. `verify.py` certifies each from its value at `t =
 * `J <= k^6`.
 * `4MH/k <= 1/(8k^2) <= η`.
 * The nonregular fraction of a canonical block is at most
-  `D(12η + 3/h_0) = 1/(128t) + 3/(5t^3) <= ε_reg` (N1b Lemma 5.2).
+  `D(12η + 3/h_0) <= 1/(128t) + 3/(5t^3) <= ε_reg` (N1b Lemma 5.2), since `h_0 >= 5Dt^3`.
 * `B_0 D >= 16/η + 4` and `B_0 D >= 49`, as (I1) requires.
 
 These are the conditions of N1b, Section 5, at the new constants.
@@ -238,9 +238,24 @@ block.
 
 so `Γ >= k(C − (1/4) log 36 − g/4) − D(2t + log 2)`.
 
-**The errors.** These are PR #9's displayed factors, as tabulated in #12's Appendix A, with Lemma D for
-the pairs, at `J <= k^6`, `D <= sqrt(k)`, `D + 4 <= 2 sqrt(k)`. Write `ℓ_cls` for the logarithm per position
-of the class product: `(1/2) log 45` under D″, `log 19` under D′, `log 37` under D. Then
+**The errors.** These are PR #9's displayed factors, as tabulated in #12's Appendix A, at `J <= k^6`,
+`D <= sqrt(k)`, `D + 4 <= 2 sqrt(k)`, `s_G + 1 <= 3k^2q^2`, `s_φ + 1 <= 6k^3`, `s_× + 1 <= 19k^4`. Each
+factor's logarithm is a linear form in `Q`, `Dt`, `D`, `t` and `1`. `verify.py` (`error_bounds`) recomputes
+the table from these formulas:
+
+| factor (PR #9) | `Q` | `Dt` | `D` | `t` | `1` | in |
+|---|---:|---:|---:|---:|---:|---|
+| discrete data `k^{D+1} T_aug` (7.6)–(7.7) | | 17 | `log 9 + 2 log 7` | 1 | | `E_c`, `E_p` |
+| integer projections `(3Dk)^D` (8.8) | | 3/2 | `log 3` | | | `E_c` |
+| first arrangement `16(s_G+1)^3` | 6 | | | 6 | `log 16 + 3 log 3` | `E_c` |
+| tail arrangement `(D+4)^2(s_φ+1)^{D+3}` | | 3 | `log 6` | 10 | `2 log 2 + 3 log 6` | `E_c` |
+| crossing arrangement `(D+4)^2(s_×+1)^{D+3}` | | 4 | `log 19` | 13 | `2 log 2 + 3 log 19` | `E_c` |
+| cells `100 D^2 q^4` (7.12) | 4 | | | 1 | `log 100` | `E_p` |
+| second forms `9^D` (8.5) | | | `log 9` | | | `E_p` |
+
+The `k`-linear factors come on top: the pairs `Π(1 + K_a^2) <= 5^{k/2}` (Lemma D) in both errors, the
+subsets `2^k` in `E_c`, and the class product in `E_c`. Write `ℓ_cls` for the logarithm per position of the
+class product: `(1/2) log 45` under D″, `log 19` under D′, `log 37` under D. Summing the table,
 
 ```math
  E_c\le6Q+k\bigl(\log2+\ell_{\rm cls}+\tfrac12\log5\bigr)+D(25.5t+11.93)+30t+23.1,
@@ -286,11 +301,13 @@ includes every `k >= 2^739`.
 
 ## 9. Thresholds
 
-* `F >= kt/9` iff `t/72 − (7/8) log t − C >= 0`. The left side increases for `t > 63`.
-  - With `C = 71/20` it is positive at `t = 666`, and `961 log 2 > 666.1`.
-  - With `C = 403/100` it is positive at `t = 704`, and `1016 log 2 > 704.2`.
-  - With `C = 35/8` it is positive at `t = 731`, and `1055 log 2 > 731.2`.
-  `verify.py` also checks that each of these is the first integer `t` that works.
+* `F >= kt/9` iff `g(t) := t/72 − (7/8) log t − C >= 0`. `g` increases for `t > 63`, and `k >= 2^n`
+  gives `t >= n log 2`. With certified rational bounds for `log 2`:
+  - `C = 71/20`: `g(960 log 2) > 0.0040`, so `c = 1/9` holds from `k >= 2^960`;
+  - `C = 403/100`: `g(1015 log 2) > 0.0047`, from `k >= 2^1015`;
+  - `C = 35/8`: `g(1054 log 2) > 0.0022`, from `k >= 2^1054`.
+  `verify.py` also checks `g((n − 1) log 2) < 0` in each tier, so the exponent `n` cannot be lowered by
+  this argument.
 * The coefficient `1/8 − ((7/8) log t + C)/t` increases for `t >= 1`. At `t = 1024 log 2` it exceeds
   `0.1119`, `0.1112` and `0.1107` in the three tiers.
 
