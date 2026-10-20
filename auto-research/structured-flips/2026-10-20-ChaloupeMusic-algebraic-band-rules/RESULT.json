@@ -1,0 +1,100 @@
+{
+  "base_commit": "63bef9ca996786a41169de4a0c3d6b3b47b0fe96",
+  "finite_checks": {
+    "algebra_band_points": 2783,
+    "algebra_instances": 31,
+    "disjoint_block_pairs": 1984,
+    "negative_controls_rejected": 7,
+    "u_phase_pairs": 200
+  },
+  "theorem": {
+    "band_polynomial": "Q_tau(j) = (sigma_0 + 2 tau + j lam e)^2 + b_f j + I_0 + tau, b_f = lam e/2 + L0",
+    "class": "X_s on word W = {t : F_W(t mod L0, (1[t mod l in T_l])_l) = 1}, F_W arbitrary",
+    "consequence": "every sub-prescription union bound >= K (1-p)^k; P(no mono) <= exp(-K (1-p)^k)",
+    "discriminant": "K_0 + 8 lam e L0 tau",
+    "hypotheses": [
+      "L0 | lam e/2",
+      "primes odd, not dividing lam e L0",
+      "S1: 8 L0 (M + 1) <= lam e",
+      "S2: (6k+12) lam e + 8 <= q H/32 - 2",
+      "S3: 32 k lam e < q"
+    ],
+    "per_prime_hypothesis": [
+      "G(i): T_l - squares != Z/l",
+      "G(ii): 2k|T_l| < l"
+    ],
+    "unsplit_blocks_at_least": "(k^2/2 - 4)^(D-1) * W, W = floor((qH/32 - 2)/((k+2) lam e)) - 4 >= 2"
+  },
+  "toy_instance": {
+    "D": 3,
+    "W": 7,
+    "e": 262144,
+    "k": 24,
+    "l_big": 1000000007,
+    "lam": 720720,
+    "largest_single_label_step_below": 55210352,
+    "q": "1009^6",
+    "rules": [
+      {
+        "L0": 1,
+        "hypotheses": [
+          "G(i)"
+        ],
+        "modulus": 1000000007,
+        "primes": [
+          1000000007
+        ],
+        "rule": "quadratic character mod a prime above the P2 range",
+        "unsplit_blocks_checked": 32
+      },
+      {
+        "L0": 77,
+        "hypotheses": [
+          "G(i)",
+          "G(i)",
+          "G(i)",
+          "G(i)"
+        ],
+        "modulus": 16588957,
+        "primes": [
+          17,
+          19,
+          23,
+          29
+        ],
+        "rule": "arbitrary Boolean rule on (t mod 77, four per-prime indicators)",
+        "unsplit_blocks_checked": 32
+      },
+      {
+        "L0": 1,
+        "hypotheses": [
+          "G(i)",
+          "G(i)"
+        ],
+        "modulus": 1201003603,
+        "primes": [
+          1201,
+          1000003
+        ],
+        "rule": "cubic condition mod 1201 OR character mod a prime near 10^6",
+        "unsplit_blocks_checked": 32
+      },
+      {
+        "L0": 1,
+        "hypotheses": [
+          "G(i)",
+          "G(i)",
+          "G(i)"
+        ],
+        "modulus": 7429,
+        "primes": [
+          17,
+          19,
+          23
+        ],
+        "rule": "CRT union {t = 0 mod l}, l = 17, 19, 23",
+        "unsplit_blocks_checked": 32
+      }
+    ]
+  }
+}
