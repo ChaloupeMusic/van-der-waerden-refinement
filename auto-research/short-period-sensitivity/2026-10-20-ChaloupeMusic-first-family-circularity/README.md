@@ -35,20 +35,25 @@ Then `x_{v+1}(n) − x_{v+1}(n′) ≡ u/q (mod 1)`, which is at circle distance
 least `1/q > H_x` from 0. Two points of one interval of length `H_x` are
 closer than `H_x`, so the labels differ in coordinate `v+1`. ∎
 
-More generally, a fibre of the x-label has at most `(2qH_x + 1)^D`
-elements: each base-`q` digit of `n − n′` has at most `2qH_x + 1` admissible
-values.
+More generally, a fibre of the x-label has at most `(⌊qH_x⌋ + 1)^D`
+elements: once the lower digits are fixed, each base-`q` digit of `n` lies in
+an interval of length `qH_x`. The set `Δ` of differences between two
+elements of one fibre has at most `(2qH_x + 1)^D` elements.
 
-**Lemma 2 (when Lemma 1 applies).** Take any `h_0 ≥ D`, which covers the
-sharpened choice `h_0 = D⌈log k⌉²`, and `λ = ∏_{ℓ ≤ h_0} ℓ^{⌊log 2M/log ℓ⌋}`.
+**Lemma 2 (when Lemma 1 applies).** Take any `h_0` with `D ≤ h_0 ≤ 2M`,
+which covers the sharpened choice `h_0 = D⌈log k⌉²` (the construction
+already needs `h_0 < 2M`), and `λ = ∏_{ℓ ≤ h_0} ℓ^{⌊log 2M/log ℓ⌋}`.
 
 - For fixed `a > 1/2`, `0 < c`, `a < m < 1`, we have `qH_x → 0`.
 - For fixed `a < 1/2` and the sharpened `h_0`, we have `q ≥ 400k³λ` for
   large `k`.
 
-*Proof.* `⌊x⌋ ≥ x/2` for `x ≥ 1` gives
-`log λ ≥ ½ π(h_0) log 2M`, and `π(x) > x/log x` for `x ≥ 17` (Rosser). So
-`log λ ≥ (m/2)(D/log D) log k`, which is at least `k^{a}/(3a)` for large `k`.
+*Proof.* Since `h_0 ≤ 2M`, every prime `ℓ ≤ h_0` has
+`log 2M/log ℓ ≥ 1`, and `⌊x⌋ ≥ x/2` for `x ≥ 1` gives
+`log λ ≥ ½ π(h_0) log 2M`. For `D ≥ 17`, `π(h_0) ≥ π(D) > D/log D`
+(Rosser), and `log D ≤ a log k + k^{−a}`. So
+`log λ ≥ (m/(2a))·k^a·(1 − o(1))`, which is at least `k^a/(4a)` for large
+`k` because `m > a > 1/2`.
 Meanwhile `log q ≤ c k^{1−a} log k + log(2k²)`, by the choice of `q` in the
 source. For `a > 1/2` the ratio `k^a/(k^{1−a} log k)` diverges, so
 `log(qH_x) = log q − 2 log k − log λ → −∞`.
@@ -86,6 +91,15 @@ pattern for every rotation vector `t ∈ [0,h)^D` of order `h`, so the
    least `k(N−1)e^{−ε²k}`. That diverges, since `log N ≥ ck log k`, while the
    criterion needs it below `ε²/4`.
 
+   No other choice of weights helps. Each first-family event has
+   probability at least `exp(−k·I(ε) − O(log k))`, where
+   `I(ε) = log 2 − H(1/2 − ε) = 2ε² + O(ε⁴)` is the binomial large-deviation
+   rate. Each event has at least `d = k(N−1) − 1` neighbours. For an event
+   `E*` of minimal weight `z*`, the asymmetric criterion would give
+   `P(E*) ≤ z*(1 − z*)^d ≤ z* e^{−z* d} ≤ 1/(ed)`, which contradicts the
+   lower bound because `log N ≥ ck log k`. This strengthening was pointed out
+   in the adversarial pass.
+
 This does not show that no balanced colouring of `Z/N` exists. It shows that
 past `a = 1/2` the template requires an object stronger than its conclusion,
 and that its own tool does not supply it.
@@ -93,14 +107,16 @@ and that its own tool does not supply it.
 **Remark (the intermediate window).** Suppose `q/(400k³) < λ ≤ q/k²`, so
 that `1 ≤ qH_x < 400k`.
 
-- Fibres have at most `F_L = (800k+1)^D` elements.
-- A progression repeats a label only if `sd` lies in the fibre-difference
-  set for some `1 ≤ s < k`. Since `gcd(s, N) = 1`, at most `kF_L` steps `d`
-  do so.
-- At least `k(N − 1 − kF_L)` progressions through a given element therefore
-  have all labels distinct, and they give at least `k(N−1−kF_L)/F_L` words.
+- Fibres have at most `F_L = (400k+1)^D` elements, and the difference
+  set `Δ` at most `(800k+1)^D`.
+- A progression repeats a label only if `sd ∈ Δ` for some `1 ≤ s < k`.
+  Since `gcd(s, N) = 1`, at most `(k−1)|Δ|` steps `d` do so.
+- At least `k(N − 1 − (k−1)|Δ|)` progressions through a given element
+  therefore have all labels distinct. Within each position of that element,
+  a word fixes the next label and so at most `F_L` steps, which gives at
+  least `k(N−1−(k−1)|Δ|)/F_L` words.
 - The incident weight per label is then at least
-  `k(N−1−kF_L)F_L^{−1}e^{−ε²k}`, which diverges because
+  `k(N−1−(k−1)|Δ|)F_L^{−1}e^{−ε²k}`, which diverges because
   `D log(800k) + ε²k = o(ck log k)`.
 
 By Lemma 2, for fixed `a ≠ 1/2` this window is eventually empty.
@@ -117,7 +133,11 @@ contains a line. A coordinate plane of `(Z/3)^D` is a copy of `AG(2,3)`.
 
 Short-period blocks with periods 2 and 3 therefore cannot be balanced by any
 outer colouring when all their rotation directions occur, and the dilation
-must keep those primes. The plane statement stops at `h = 3`: `AG(2,5)` has a
+must keep those primes. Every direction `t/h` is realised by a step `d` with
+`|h x_i(d) − t_i| ≤ h/(2q)`: choose the base-`q` digits of `d` from the lowest
+up. This lies within the dichotomy's drift bound `2MH_x/k` when
+`λ ≤ 4Mq/(hk³)`. That the resulting blocks are eligible, with the shared
+base labels the lemma uses, is not checked here. The plane statement stops at `h = 3`: `AG(2,5)` has a
 line-free 2-colouring, stored in `verify.py` as a certificate.
 
 Whether some explicit colouring balances all rotation orbits of orders
@@ -148,7 +168,8 @@ verifier uses only the standard library and runs in under a second.
 Negative controls:
 
 - three `(q, D, λ)` with `qH_x ≥ 1` must collide, and do (largest fibres 8,
-  8 and 16, within `(2qH_x+1)^D`);
+  8 and 16, within `(⌊qH_x⌋+1)^D`, and difference sets within
+  `(2qH_x+1)^D`);
 - `a = 0.4` and `a = 0.45` must fail the injectivity condition and meet the
   single-label one;
 - `AG(2,5)` must admit a line-free colouring.

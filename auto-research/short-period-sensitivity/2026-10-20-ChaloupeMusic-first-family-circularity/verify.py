@@ -7,7 +7,8 @@ Base commit: 63bef9ca996786a41169de4a0c3d6b3b47b0fe96.
    x_i(n) = (n mod q^i)/q^i, U the partition of [0,1) into intervals of
    width H_x = 1/(k^2 lambda).  If q*H_x < 1 the x-label determines n.
    Checked exhaustively on small (q, D, k, lambda); controls with q*H_x >= 1
-   must collide, within the fibre bound (2 q H_x + 1)^D.  For an injective
+   must collide, within the fibre bound (floor(q H_x) + 1)^D, and the set of
+   in-fibre differences must stay within (2 q H_x + 1)^D.  For an injective
    case, the k(N-1) progressions through 0 must have distinct label words.
 2. Regime.  With D = ceil(k^a), M = ceil(k^m), h_0 = D or D*ceil(ln k)^2,
    lambda = prod_{l <= h_0} l^floor(ln 2M / ln l), and ln q <= c k^{1-a} ln k
@@ -47,6 +48,15 @@ def fibres(q, D, k, lam):
     return max(count.values()), q * Hx
 
 
+def difference_set(q, D, k, lam):
+    Hx = Fraction(1, k * k * lam)
+    N = q ** D
+    def close(t):              # circle distance of t in [0,1) to 0 is < H_x
+        return min(t, 1 - t) < Hx
+    return sum(1 for delta in range(N)
+               if all(close(Fraction(delta % q ** i, q ** i)) for i in range(1, D + 1)))
+
+
 def words_through_zero(q, D, k, lam):
     Hx = Fraction(1, k * k * lam)
     N = q ** D
@@ -67,14 +77,16 @@ def check_injectivity():
     out = {}
     for q, D, k, lam in INJECTIVE + CONTROLS:
         worst, qHx = fibres(q, D, k, lam)
-        bound = (2 * qHx + 1) ** D
-        assert worst <= bound, (q, D, k, lam)
+        assert worst <= (floor(qHx) + 1) ** D, (q, D, k, lam)
+        diffs = difference_set(q, D, k, lam)
+        assert diffs <= (2 * qHx + 1) ** D, (q, D, k, lam)
         if qHx < 1:
             assert worst == 1, ('label not injective although qH_x < 1', q, D, k, lam)
         else:
             assert worst > 1, ('control did not collide', q, D, k, lam)
         out[f'q={q},D={D},k={k},lambda={lam}'] = {
-            'qH_x': str(qHx), 'largest_fibre': worst, 'injective': worst == 1}
+            'qH_x': str(qHx), 'largest_fibre': worst, 'difference_set': diffs,
+            'injective': worst == 1}
     distinct, expected = words_through_zero(11, 3, 3, 2)
     assert distinct == expected
     out['words_through_0 (q=11,D=3,k=3,lambda=2)'] = {
