@@ -13,13 +13,17 @@ Pinned sources:
   Proposition 3.1 and Corollary 3.2;
 - PR #11 (`bbMisk:research/seed46-profile-family`, open) at
   `9c1f70f36e76eea7d152cede159185548950f694`, read to rule out overlap;
-- J. G. Wendel, "Note on the gamma function", *Amer. Math. Monthly* 55 (1948), 563-564, for the
-  bracket of the constant.
+- the reference value of `3/(2 Gamma(4/3))` used as an independent check of the constant's
+  bracket, computed with mpmath 1.3.0 at 60 digits from `Gamma(1/3) =
+  2.6789385347077476336556929409746776441286893779573...`.
 
 Credits: the profile constraints and the tensor constructions they come from are OpenAI's. The
 profile `P_*` and the obstruction theorem are in the repository's `research-note.tex` (Rohan
 Arun, prepared with Codex). The power-and-offset family is PR #11's (Hanson Sun with Codex,
-`bbMisk`). Their own AI-assistance disclosures apply to their work.
+`bbMisk`). Their own AI-assistance disclosures apply to their work. The example in
+Corollary 3 showing that a larger diagonal exponent is not necessary, and the request for an
+independent check of the constant, come from the sprint's referee, another Claude session that
+reviewed this package.
 
 AI assistance: this note, its proofs, its verifier and its text were prepared with Claude
 (Anthropic), one session among several Claude sessions coordinating on this repository, and

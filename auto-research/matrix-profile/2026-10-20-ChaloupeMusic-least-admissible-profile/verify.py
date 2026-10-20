@@ -18,7 +18,8 @@ positivity of explicit polynomials, and the explicit envelope witnesses), as lab
   Part C  Least-element evidence: diagonal values equal the growth-lemma bound, the
           repository LP minima equal L_a, and no single value of P_o can be lowered.
   Part D  The five additional valid families, checked exactly for P_o on finite grids.
-  Part E  Envelope witnesses above t = 3/4 and a certified bracket of the sharp constant.
+  Part E  Envelope witnesses above t = 3/4, a bracket of the sharp constant checked against an
+          independent value, and the referee's example for the scope of Corollary 3.
   Part F  Negative controls: each corrupted object must fail.
 """
 import hashlib
@@ -227,6 +228,21 @@ def part_b():
     # B8. Tripling is tight on the affine branch: P_o(a, 3h+a-1) = 3 P_o(a,h) for h >= a.
     out["B8_tripling_tight_for_h_ge_a"] = check(
         all(Po(a, 3 * h + a - 1) == 3 * Po(a, h) for a in range(1, 40) for h in range(a, 80)), "B8")
+    # B9. H_a^3 / a increases: (3a+1)^3 - 27a^2(a+1) = 9a+1  (degree 3). With B4, which says
+    #     that H_a^3 / (a - 1/3) decreases, this brackets the constant (Part E).
+    out["B9_lower_sequence_step"] = check(
+        all((3 * a + 1) ** 3 - 27 * a ** 2 * (a + 1) == 9 * a + 1 for a in range(0, 6)), "B9")
+    # B10. P_o is in no member of PR #11's family F(u)^s (v + lambda(u-1)). Row u = 2 forces
+    #      lambda = 1/2 and (5/2)^s = 4/3; row u = 3 then forces 4^s = 14/9. But
+    #      (5/2)^(6/19) > 4/3 gives s < 6/19, and 4^(6/19) < 14/9 gives 4^s < 14/9.
+    out["B10_not_in_pr11_family"] = check(
+        5 ** 6 * 3 ** 19 > 2 ** 6 * 4 ** 19 and 4 ** 6 * 9 ** 19 < 14 ** 19
+        and H[2] == Q(4, 3) and H[3] == Q(14, 9), "B10")
+    # B11. With K4' (P(a,2) <= 2a) and P(a,1) = a, the envelope at 3/4 cannot fail when
+    #      min(a,b) <= 2: (a+1)^4 - 8a^3 = (a^2-2a)^2 + 2a^2 + 4a + 1 > 0  (degree 4).
+    out["B11_rows_1_2_inside_envelope_under_K4prime"] = check(
+        all((a + 1) ** 4 - 8 * a ** 3 == (a * a - 2 * a) ** 2 + 2 * a * a + 4 * a + 1
+            for a in range(0, 6)), "B11")
     return out
 
 
@@ -327,23 +343,55 @@ def part_e():
     L2494 = Q(3 * 2494 - 1, 2) * H_big(2494)
     out["t_7_9_violation_a"] = 2494
     check(L2494 ** 7 > Q(2 * 2494 - 1) ** 9, "E: t=7/9 witness")
-    # Sharp constant kappa = lim L_a / a^(4/3) = 3/(2 Gamma(4/3)). With Wendel's inequality
-    # (x/(x+s))^(1-s) <= Gamma(x+s)/(x^s Gamma(x)) <= 1 at x = N, s = 1/3 and
-    # H_N = Gamma(N+1/3)/(Gamma(4/3) Gamma(N)):
-    #   (27/8) H_N^3 / N  <=  kappa^3  <=  (27/8) H_N^3 / N * ((3N+1)/(3N))^2.
+    # Sharp constant kappa = lim L_a / a^(4/3) = 3/(2 Gamma(4/3)), bracketed without any
+    # external inequality: H_a^3 / a increases (B9) and H_a^3 / (a - 1/3) decreases (B4); both
+    # tend to Gamma(4/3)^(-3), the name of the limit coming from H_a = Gamma(a+1/3)/(Gamma(4/3)
+    # Gamma(a)) and Gamma(a+1/3)/Gamma(a) ~ a^(1/3). Hence, for every N,
+    #   (27/8) H_N^3 / N  <=  kappa^3  <=  (81/8) H_N^3 / (3N - 1).
     N = 10000
-    lo3 = Q(27, 8) * H_big(N) ** 3 / N
-    hi3 = lo3 * Q(3 * N + 1, 3 * N) ** 2
+    HN3 = H_big(N) ** 3
+    lo3 = Q(27, 8) * HN3 / N
+    hi3 = Q(81, 8) * HN3 / (3 * N - 1)
     D = 6
     lo = floor_cuberoot_scaled(lo3, D)
     hi = floor_cuberoot_scaled(hi3, D) + 1
-    out["kappa_bracket_wendel_N_10000"] = [str(Q(lo, 10 ** D)), str(Q(hi, 10 ** D))]
+    out["kappa_bracket_N_10000"] = [str(Q(lo, 10 ** D)), str(Q(hi, 10 ** D))]
     check(Q(lo, 10 ** D) ** 3 <= lo3 and hi3 <= Q(hi, 10 ** D) ** 3, "E: kappa bracket")
+    # Independent value: 3/(2 Gamma(4/3)) with Gamma(1/3) = 2.67893853470774763365569294097...
+    # (computed with mpmath 1.3.0 at 60 digits, outside this package). The unrounded bracket
+    # must contain it with its 10^-47 error interval; this is what an error in either end
+    # would break (Part F, F9).
+    KAPPA_REF = Q("1.679769782583278527468576405904938474396352190868")
+    ref_lo3, ref_hi3 = (KAPPA_REF - Q(1, 10 ** 47)) ** 3, (KAPPA_REF + Q(1, 10 ** 47)) ** 3
+    out["kappa_reference_inside_unrounded_bracket"] = check(lo3 <= ref_lo3 and ref_hi3 <= hi3,
+                                                             "E: kappa reference")
     # P_* gives (3/2)^(4/3) = 1.7170713...; the bracket must lie strictly below it.
     check(Q(hi, 10 ** D) ** 3 < Q(3, 2) ** 4, "E: kappa below P_* constant")
     # kappa_a increases (B5) and stays below (3/2)^(4/3) (B4): a check at a = 2..400.
     kap3 = [L(a) ** 3 / Q(a) ** 4 for a in range(1, NMAX + 1)]   # kappa_a^3
     check(all(x < y for x, y in zip(kap3, kap3[1:])), "E: kappa increasing")
+    # Scope of Corollary 3 (example due to the referee): Pt = c P_o off the first row and
+    # column, Pt(1,b) = b, satisfies the listed constraints for every c >= 1 and keeps the
+    # diagonal exponent 4/3; with c = 81/56, Pt(3,3) = 9 > 5^(4/3). So a constraint forcing
+    # P(3,3) >= 9 would exclude t = 3/4 without raising the exponent.
+    c = Q(81, 56)
+
+    def Pt(a, b):
+        return Q(b) if a == 1 else Q(a) if b == 1 else c * Po(a, b)
+    viol = listed_violations(Pt, 40, 200)
+    out["referee_example_c_81_56"] = {
+        "listed_constraint_violations_rows_40_columns_200": len(viol),
+        "value_at_3_3": str(Pt(3, 3)),
+        "exceeds_envelope_at_3_3": Pt(3, 3) ** 3 > Q(5) ** 4,
+    }
+    check(not viol and Pt(3, 3) == 9 and Q(9) ** 3 > Q(5) ** 4, "E: referee example")
+    # Where a point outside the envelope must be sought: with K4', min(a,b) >= 3 (B11). There
+    # P_o sits below (a+b-1)^(4/3) by at least the factor at (3,3), 9 * 5^(4/3) / 56 = 1.374...
+    # (grid 3 <= a, b <= 120, exact).
+    ref = Po(3, 3) ** 3 / Q(5) ** 4
+    worse = [(a, b) for a in range(3, 121) for b in range(a, 121)
+             if Po(a, b) ** 3 / Q(a + b - 1) ** 4 > ref]
+    out["smallest_envelope_gap_min_ge_3_is_at_3_3_on_grid_120"] = check(not worse, "E: gap at (3,3)")
     return out
 
 
@@ -384,6 +432,16 @@ def part_f():
     #     same diagonal never fails on 1..400.
     out["F8_envelope_3_4_diagonal_holds_to_400"] = check(
         all(L(a) ** 3 <= Q(2 * a - 1) ** 4 for a in range(1, NMAX + 1)), "F8")
+    # F9. Two wrong brackets must miss the reference constant (they would have passed a check
+    #     of the rounded bracket alone): Wendel's upper factor ((3N+1)/(3N))^2 with exponent 1,
+    #     and the upper sequence taken at 3N instead of 3N - 1.
+    N = 10000
+    HN3 = H_big(N) ** 3
+    kref3 = Q("1.679769782583278527468576405904938474396352190868") ** 3
+    wendel_exp1 = Q(27, 8) * HN3 / N * Q(3 * N + 1, 3 * N)
+    upper_at_3N = Q(81, 8) * HN3 / (3 * N)
+    out["F9_wendel_exponent_1_misses_kappa"] = check(wendel_exp1 < kref3, "F9a")
+    out["F9_upper_sequence_at_3N_misses_kappa"] = check(upper_at_3N < kref3, "F9b")
     return out
 
 

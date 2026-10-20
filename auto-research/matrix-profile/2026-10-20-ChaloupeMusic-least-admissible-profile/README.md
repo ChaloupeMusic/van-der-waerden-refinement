@@ -13,14 +13,16 @@ Every profile satisfying the listed constraints dominates `P_o` pointwise, and `
 them and the rank envelope at `t = 3/4`. Three consequences:
 
 1. **Sharp finite values.** The least possible diagonal value is
-   `min P(a,a) = L_a = ((3a-1)/2) H_a` at every `a`: the paper's growth lemma is attained, at
-   every `a` simultaneously. For example `L_2 = 10/3`, `L_3 = 56/9`, `L_8 = 499928/19683`.
+   `min P(a,a) = L_a = ((3a-1)/2) H_a` at every `a`. This is the intermediate bound (5.2) in the
+   proof of the paper's growth lemma, attained at every `a` simultaneously; the lemma's stated
+   bound `a^(4/3)` is not attained (`L_2 = 10/3 > 2^(4/3)`). For example `L_2 = 10/3`,
+   `L_3 = 56/9`, `L_8 = 499928/19683`.
 2. **Sharp constant.** `L_a / a^(4/3)` increases strictly to
-   `kappa = 3/(2 Gamma(4/3)) = 1.67977...`, certified in `[1.679751, 1.679789]`. The repository's
+   `kappa = 3/(2 Gamma(4/3)) = 1.67977...`, certified in `[1.679751, 1.679770]`. The repository's
    profile `P_*` has `(3/2)^(4/3) = 1.71707...`; the paper's final inequality uses `1`.
 3. **A one-profile test for new constraints.** Adding further valid inequalities to the list can
    exclude `t = 3/4` (and so start to improve `omega <= 9/4` by this route) only if `P_o` violates
-   them. Five valid families that the paper does not use (Kronecker substitution, stride
+   them (Corollary 3 states the exact criterion). Five valid families that the paper does not use (Kronecker substitution, stride
    restriction, multiples, Clebsch-Gordan of order `k`, alternating sector chains) are proved
    here to hold for `P_o`. With all five added, `t = 3/4` is still admissible and `P_o` is still
    the least element: the 9/4 barrier of `research-note.tex` survives them.
@@ -76,8 +78,10 @@ Symmetry is not needed in (ii); this is what makes Theorem 4 (K1) work.
 **Corollary 2 (sharp numbers).** For every `a`, `min P(a,a) = L_a` over the profiles satisfying
 (S), (N), (C), (T), with or without (E_t) for any `t <= 3/4`. The sequence
 `kappa_a = L_a / a^(4/3)` is strictly increasing, below `(3/2)^(4/3)`, and tends to
-`kappa = 3/(2 Gamma(4/3))`; with Wendel's inequality at `N = 10^4`,
-`1.679751 <= kappa <= 1.679789` (exact rational comparison in `verify.py`).
+`kappa = 3/(2 Gamma(4/3))`. For every `N`,
+`(27/8) H_N^3/N <= kappa^3 <= (81/8) H_N^3/(3N-1)`; at `N = 10^4` this gives
+`1.679751 <= kappa <= 1.679770` (exact rational comparison in `verify.py`, which also checks
+that the unrounded bracket contains an independently computed value of `3/(2 Gamma(4/3))`).
 
 | `a` | `L_a` (exact) | `L_a` | `P_*(a,a) = ((3a-1)/2)^(4/3)` | `a^(4/3)` |
 |---|---|---|---|---|
@@ -92,8 +96,9 @@ Symmetry is not needed in (ii); this is what makes Theorem 4 (K1) work.
 
 The repository's exploratory LP (`experiments/matrix-profile.json`, grid `N = 100`) returned
 `25.39897...`, `65.85272...`, `114.14111...` at `a = 8, 16, 24`; these are `L_8, L_16, L_24`
-to relative error below `10^-12`. Theorem 1 explains the numbers: the finite LP was already
-tight, and its minimiser is the restriction of `P_o`.
+to relative error below `10^-12`. Theorem 1 explains the numbers: the restriction of `P_o` to
+the grid is feasible for that LP and attains `L_a`, so the finite LP was already tight. `P_o`
+is one minimiser; nothing says the LP's minimiser is unique.
 
 **Corollary 3 (scope of the barrier).** For each `t`, the profiles satisfying (S), (N), (C), (T)
 and (E_t) exist iff `P_o` satisfies (E_t), iff `t <= 3/4`; when they exist, `P_o` is the least.
@@ -106,9 +111,18 @@ For `t = 4/5` the diagonal envelope first fails at `a = 63`, for `t = 7/9` it fa
   bounds `P(a,b) <= U_t(a,b)` such as the envelope), then `X` excludes `t` **iff** `P_o`
   violates it;
 * for a **mixed** constraint relating values at different points (all five families below), a
-  violation by `P_o` would prove nothing by itself: the least element of the enlarged system
-  could move up without its diagonal exponent moving. To improve `9/4`, the enlarged system
-  must force a diagonal exponent above `4/3`.
+  violation by `P_o` proves nothing by itself. The exact criterion is: the enlarged system
+  excludes `t` iff none of its profiles stays inside (E_t); when it has a least element `P'`,
+  iff `P'(a,b) > (a+b-1)^(1/t)` at some point. A strict violation at one point at `t = 3/4`
+  excludes a whole interval of `t` below `3/4`, so improving `9/4` does **not** require a
+  diagonal exponent above `4/3`. Example (found by the sprint's referee):
+  `P~_c = c P_o` off the first row and column, with `P~_c(1,b) = b`, satisfies (S), (N), (C),
+  (T) for every `c >= 1` and has diagonal exponent `4/3`; with `c = 81/56`, `P~(3,3) = 9`
+  exceeds `5^(4/3) = 8.55`, so adding a valid constraint `P(3,3) >= 9`, if one existed, would
+  exclude every `t > ln 5/ln 9 = 0.7325`. With K4' in the system, rows and columns 1 and 2 can
+  never leave (E_{3/4}) (`P(a,2) <= 2a <= (a+1)^(4/3)`), so the point must have
+  `min(a,b) >= 3`; there `P_o` is below the envelope by a factor at least `1.374`, attained at
+  `(3,3)` (`9 * 5^(4/3)/56`; exact check on `3 <= a, b <= 120`).
 
 **Theorem 4 (five further valid families hold for `P_o`).** For every tensor character, the
 symmetrized profile satisfies the following, and so does `P_o`:
@@ -177,15 +191,25 @@ the argument above identifies it.
 denominators reads `(3a+1)^3(3a+2)^3 a - 27(3a-1)^3(a+1)^4 >= 0`; substituting `a = 1 + k`
 gives `4544 + 17936k + 27324k^2 + 20007k^3 + 7074k^4 + 972k^5`, all coefficients positive.
 `kappa_a < (3/2)^(4/3)` by `H_a^3 <= (3a-1)/2`. The limit: `H_a = Gamma(a+1/3)/(Gamma(4/3)Gamma(a))`
-and `Gamma(a+1/3)/Gamma(a) ~ a^(1/3)`. Wendel's inequality
-`(x/(x+s))^(1-s) <= Gamma(x+s)/(x^s Gamma(x)) <= 1` at `x = N`, `s = 1/3` gives
-`(27/8) H_N^3/N <= kappa^3 <= (27/8) H_N^3/N ((3N+1)/(3N))^2`; `verify.py` evaluates both
-sides exactly at `N = 10^4`.
+and `Gamma(a+1/3)/Gamma(a) ~ a^(1/3)`.
+The bracket needs no inequality on the Gamma function: `H_a^3/a` increases, since
+`(3a+1)^3 - 27a^2(a+1) = 9a+1`, and `H_a^3/(a-1/3)` decreases, since
+`27a^3(3a+2) - (3a+1)^3(3a-1) = 6a+1`. Both sequences tend to `Gamma(4/3)^(-3)`, so
+`(27/8) H_N^3/N <= kappa^3 <= (81/8) H_N^3/(3N-1)` for every `N`; `verify.py` evaluates both
+sides exactly at `N = 10^4`. The upper end is very close to `kappa` (relative gap about
+`10^-10`), the lower end within `1.2 * 10^-5`.
 
 **Corollary 3.** If `t <= 3/4`, `P_o` satisfies (E_t) because `(a+b-1)^(4/3) <= (a+b-1)^(1/t)`.
 If some profile satisfies (E_t), so does `P_o <= P`. If `t > 3/4`, `P_o(a,a) = L_a >= a^(4/3)`
-exceeds `(2a-1)^(1/t)` for large `a`. The two bullets on further constraints are immediate from
-`P_o` being least.
+exceeds `(2a-1)^(1/t)` for large `a`. The first two bullets on further constraints are
+immediate from `P_o` being least. For the third: (E_t) is a pure upper bound, so a system with
+least element `P'` is compatible with (E_t) iff `P'` is; and if `P'(a,b) > (a+b-1)^(4/3)` at one
+point, the same strict inequality holds with `1/t` in place of `4/3` for all `t` close to
+`3/4`, below it included, by continuity in `t`. For the referee's example: in a row `a >= 2`,
+the second difference centred at `b = 2` is `c` times that of `P_o` minus `(c-1)a`, hence
+`<= 0`; tripling at `h = 1` reads `c P_o(a,a+2) >= 3a`, true since `P_o(a,a+2) >= 3P_o(a,1)`;
+all other second differences and tripling inequalities of rows `a >= 2` are those of `P_o`
+multiplied by `c`, and row and column 1 are unchanged.
 
 **Theorem 4, tensor side.** Each `lambda_pi` is a character, hence multiplicative,
 restriction-monotone and degeneration-monotone (paper, Lemma 2.3), and restrictions commute
@@ -263,7 +287,8 @@ All in exact rationals. Labels match `RESULT.json`.
   polynomial vanishing there is zero): the interior and seam second differences, the tripling
   ratio step, the cube step `6u+1`, the coefficients of the `kappa` step, the comparison
   `81/16 <= 10^6/186624`, the growth recursion `L_a = L_{a-1} + H_{a-1} + H_a` (`a <= 400`),
-  and tightness of tripling for `h >= a`.
+  tightness of tripling for `h >= a`, the lower-sequence step `9a+1`, the two integer
+  comparisons excluding PR #11's family, and `(a+1)^4 - 8a^3 = (a^2-2a)^2 + 2a^2 + 4a + 1`.
 * **C, least-element evidence.** `L_1..L_10` exactly; the repository LP minima against `L_8,
   L_16, L_24`; lowering any single symmetric pair of values of `P_o` by `10^-6` breaks a listed
   constraint at all 78 points of `a <= b <= 12`. This is consistent with Theorem 1 and does not
@@ -272,11 +297,19 @@ All in exact rationals. Labels match `RESULT.json`.
   (9,000), K4 (7,600), K5 (39,050 chains, `m <= 5`): no violation, with the number of
   equalities.
 * **E.** The envelope witnesses at `t = 4/5` (first failure `a = 63`, all `a < 63` checked) and
-  `t = 7/9` (`a = 2494`), and the `kappa` bracket at `N = 10^4`.
+  `t = 7/9` (`a = 2494`); the `kappa` bracket at `N = 10^4`, which must contain, unrounded, the
+  value of `3/(2 Gamma(4/3))` computed independently with mpmath to 48 decimals (the upper end
+  is within about `2 * 10^-10` of `kappa`, so the check needs ten correct digits; an error of
+  `10^-9` in the reference is detected); the referee's
+  example `P~_{81/56}` (listed constraints on rows `<= 40`, columns `<= 200`, and
+  `P~(3,3) = 9 > 5^(4/3)`); the envelope gap at `(3,3)` is the smallest on `3 <= a, b <= 120`.
 * **F, negative controls, each required to fail.** Lowered `H_2`; growth factor
   `1 + 1/(3m+1)`; offset `1/2 +- 1/100`; one diagonal value lowered by 1%; a corrupted
-  identity; the K1 and K2 checkers on `2P_o` and `P_o/2`. Also `P_o(a,a)^3 <= (2a-1)^4` up to
-  `a = 400` as a positive control for the envelope at `3/4`.
+  identity; the K1 and K2 checkers on `2P_o` and `P_o/2`; two wrong brackets for `kappa`
+  (Wendel's upper factor with exponent 1 instead of 2, and the upper sequence at `3N` instead
+  of `3N-1`) must miss the reference value, which shows that the reference check catches
+  them. Also `P_o(a,a)^3 <= (2a-1)^4` up to `a = 400` as a positive control for the envelope
+  at `3/4`.
 * **Provenance.** sha256 of the three pinned base files and of every package file
   (`MANIFEST.json`), and equality of the printed report with `RESULT.json`.
 
@@ -290,8 +323,11 @@ witnesses in E are complete for what they state.
   `((3u-1)/2)^(1/3)`; `P_o < P_*` off the first row and column.
 * PR #11 (`bbMisk`, open, head `9c1f70f3`) characterizes the family
   `F(u)^s (v + lambda(u-1))`, `F(x) = (1+lambda)x - lambda`, and finds the minimal diagonal
-  exponent `4/3` at `P_*`; it makes no claim outside that family. `P_o` is outside it
-  (`H_2 = 4/3`, while `F(2)^s = (5/2)^(1/3)` at `lambda = 1/2`). The exponent `4/3` is minimal
+  exponent `4/3` at `P_*`; it makes no claim outside that family. `P_o` is in no member of it,
+  for any `lambda` and `s`: on row `u = 2` both profiles are affine in `v`, so equality forces
+  `lambda = 1/2` and `(5/2)^s = 4/3`; on row `u = 3` it then forces `4^s = 14/9`. But
+  `(5/2)^(6/19) > 4/3` gives `s < 6/19`, and `4^(6/19) < 14/9` then gives `4^s < 14/9`
+  (integer comparisons `5^6 3^19 > 2^6 4^19` and `4^6 9^19 < 14^19`). The exponent `4/3` is minimal
   over all admissible profiles by the paper's Lemma 5.1; Theorem 1 adds the least element and
   the sharp constant. No overlap with PR #11's statements.
 * `experiments/matrix-profile.json` and `profile_lp.py`: the floating LP minima are `L_a`;

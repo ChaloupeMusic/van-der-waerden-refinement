@@ -9,7 +9,9 @@ two-parameter family around `P_*`.
 **Open questions.**
 
 - A valid tensor inequality, provable for every character, that the least admissible profile
-  `P_o` violates, and that forces a diagonal exponent above `4/3`.
+  `P_o` violates, and that forces some value `P(a,b)` above `(a+b-1)^(4/3)` (necessarily with
+  `min(a,b) >= 3` once Clebsch-Gordan of order 2 is used). That excludes `t = 3/4` and an
+  interval below it; a diagonal exponent above `4/3` would suffice but is not necessary.
 - Laser-method degenerations of `C(a,b)` into fully independent blocks, whose symmetrized form
   carries a factor `M^(1/t)`: do any of them exclude `t = 3/4`?
 

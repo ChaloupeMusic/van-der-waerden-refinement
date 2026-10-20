@@ -12,6 +12,8 @@
     "monotonicity_violations": 0
   },
   "B_certificates": {
+    "B10_not_in_pr11_family": true,
+    "B11_rows_1_2_inside_envelope_under_K4prime": true,
     "B1_interior_second_difference": true,
     "B2_seam_second_difference_zero": true,
     "B3_tripling_ratio_step": true,
@@ -26,7 +28,8 @@
     ],
     "B6_kappa2_squared_exceeds_three_halves_power": true,
     "B7_growth_recursion_equality_up_to": 400,
-    "B8_tripling_tight_for_h_ge_a": true
+    "B8_tripling_tight_for_h_ge_a": true,
+    "B9_lower_sequence_step": true
   },
   "C_least_element_evidence": {
     "L_a_exact": {
@@ -102,10 +105,17 @@
     }
   },
   "E_envelope_and_constant": {
-    "kappa_bracket_wendel_N_10000": [
+    "kappa_bracket_N_10000": [
       "1679751/1000000",
-      "1679789/1000000"
+      "167977/100000"
     ],
+    "kappa_reference_inside_unrounded_bracket": true,
+    "referee_example_c_81_56": {
+      "exceeds_envelope_at_3_3": true,
+      "listed_constraint_violations_rows_40_columns_200": 0,
+      "value_at_3_3": "9"
+    },
+    "smallest_envelope_gap_min_ge_3_is_at_3_3_on_grid_120": true,
     "t_4_5_first_violation_a": 63,
     "t_7_9_violation_a": 2494
   },
@@ -118,7 +128,9 @@
     "F6_corrupted_identity_detected": true,
     "F7_K1_detects_2P": true,
     "F7_K2_detects_half_P": true,
-    "F8_envelope_3_4_diagonal_holds_to_400": true
+    "F8_envelope_3_4_diagonal_holds_to_400": true,
+    "F9_upper_sequence_at_3N_misses_kappa": true,
+    "F9_wendel_exponent_1_misses_kappa": true
   },
   "base": "63bef9ca996786a41169de4a0c3d6b3b47b0fe96",
   "failures": [],
