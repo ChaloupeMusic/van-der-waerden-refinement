@@ -10,11 +10,13 @@ Exit code 0 and standard output byte-identical to RESULT.json. Assertions are lo
 
 1. Monomial certificates A t^j e^{-dt} <= B for every real t >= 512 (sign of j - dt; value at 512 with
    e >= 2); bounds with sqrt(t) are squared first.
-2. Exact budgets for Sections 4-9 of PROOF.md with certified rational bounds for logarithms, for the main
-   version (Lemma D', 19^k) and for the fallback (N1a's Lemma D, 37^k).
-3. Exhaustive finite checks: Lemma D' (and N1a's 37^k for comparison), the canonical partition and the
-   counting core of the short-block regularity lemma.
-4. Negative controls, a 90-digit decimal replay on a grid of t, and file integrity.
+2. Exact budgets for Sections 4-9 of PROOF.md with certified rational bounds for logarithms, separately
+   for each of three tiers: Lemma D'' (45^(k/2), C = 71/20), Lemma D' alone (19^k, C = 403/100), and
+   N1a's Lemma D alone (37^k, C = 35/8). budgets() takes the constants as parameters.
+3. Exhaustive finite checks: the class products (19^k, 45^(k/2) on classes with K_a >= 2, 37^k), the
+   canonical partition and the counting core of the short-block regularity lemma.
+4. Negative controls that feed each decisive change back into budgets(), a 90-digit decimal replay on a
+   grid of t for the three tiers, and file integrity.
 """
 import hashlib
 import json
@@ -29,10 +31,19 @@ T0 = 512
 AD, BH, AS, AP = 22, 5, 4096, 36               # u = sqrt(k)/(AD t^{5/2}), h0 = BH D t^3, Ms = AS D t, p = AP t^{7/2}/sqrt(k)
 E2 = Q(1, 64)                                   # eps_reg = E2/t, eta = eps_reg/(24 D)
 G = 2 + E2 / 2                                  # gamma = 1/2 - G/t (single source)
-C = Q(403, 100)                                 # F = k (t/8 - (7/8) log t - C), with Lemma D' (19^k)
-C_FALLBACK = Q(35, 8)                           # with N1a's Lemma D (37^k)
-CLASS, CLASS_FALLBACK = 19, 37
 RHO = Q(1, 2 ** 200)                            # rho = 1/u <= 2^-200
+TAIL = Q(1)                                     # second-family tail exp(-TAIL (1 - eps_reg) h/t^2); 1/2 for threshold l/2
+BASE = {"AD": AD, "BH": BH, "AS": AS, "AP": AP, "E2": E2, "G": G, "TAIL": TAIL}
+# Three tiers, F = k (t/8 - (7/8) log t - C). The class product of PR #9 Section 8.3 step 4 is bounded by
+# base^(exp k): D'' (collision classes have K_a >= 2) 45^(k/2); D' 19^k; N1a's Lemma D 37^k.
+TIERS = [
+    {"name": "D2", "label": "Lemma D'': 45^(k/2)", "C": Q(71, 20), "base": 45, "exp": Q(1, 2), "t9": 666, "n9": 961,
+     "coeff1024": Q(1119, 10000)},
+    {"name": "D1", "label": "Lemma D': 19^k", "C": Q(403, 100), "base": 19, "exp": Q(1), "t9": 704, "n9": 1016,
+     "coeff1024": Q(1112, 10000)},
+    {"name": "D0", "label": "N1a's Lemma D: 37^k", "C": Q(35, 8), "base": 37, "exp": Q(1), "t9": 731, "n9": 1055,
+     "coeff1024": Q(1107, 10000)},
+]
 
 
 def require(cond, msg):
@@ -139,7 +150,10 @@ def monomials():
 
 
 # ---------------------------------------------------------------- 2. exact budgets
-def budgets(Cv, cls, label):
+def budgets(p, tier):
+    """Every budget of PROOF.md Sections 4-9 for the parameter dict p and one tier (C, class product)."""
+    AD, BH, AS, AP, E2, G, TAIL = (p[x] for x in ("AD", "BH", "AS", "AP", "E2", "G", "TAIL"))
+    Cv, label = tier["C"], tier["name"]
     L2lo, L2up = ln2_bounds()
     L4, L9, L36 = ln_up(4), ln_up(9), ln_up(AP)
     one = 1 + RHO
@@ -165,13 +179,14 @@ def budgets(Cv, cls, label):
     # (1/2 + 4) t per unit of D, the tail -(1 - E2/t) BH t, and c2 = 2 log 9 + 4 log 280 + BH E2;
     # B0 D h0 + 1 <= 280 k/t uses h0 <= sqrt(kt)/4 and B0 <= 24577 t.
     require(Q(24577, 4 * AD) * one <= 280 - Q(1, 100), "B0 D h0 coefficient")
-    c2 = 2 * L9 + 4 * ln_up(280) + BH * E2
-    require(BH > Q(9, 2), "second-family tail below its entropy")
+    tail = BH * TAIL                                                      # tail = TAIL (1 - E2/t) h0/t^2 >= tail D t
+    c2 = 2 * L9 + 4 * ln_up(280) + tail * E2
+    require(tail > Q(9, 2), "second-family tail below its entropy")
     lt0_lo, lt0_up = ln_lo(T0), ln_up(T0)
-    lhs2 = 8 * ((BH - Q(9, 2)) * T0 + Q(7, 2) * lt0_lo - c2)                # D >= 8; increasing in t
+    lhs2 = 8 * ((tail - Q(9, 2)) * T0 + Q(7, 2) * lt0_lo - c2)              # D >= 8; increasing in t
     require(lhs2 >= 3 * T0 + lt0_up + ln_up(192) + Q(1, 8), "second-family margin at t0")
-    require(8 * (BH - Q(9, 2)) >= 3, "second-family margin is not increasing")
-    require(5 * 8 + 2 <= (1 - E2 / T0) * BH * 8 * T0, "phi decreasing from h0")
+    require(8 * (tail - Q(9, 2)) >= 3, "second-family margin is not increasing")
+    require(5 * 8 + 2 <= (1 - E2 / T0) * tail * 8 * T0, "phi decreasing from h0")
     # third family: M_s/128 >= (AS/128) D t, log A_s <= D(18.5 t + (1/2) log t + 6.6) + 1.5 t + (1/2) log t;
     # need D((AS/128 - 37/2) t - (1/2) log t - 6.6) >= 2.5 t + (1/2) log t + log 96 + 1/8 with D >= 1
     require(3 * L9 <= Q(66, 10) + Q(1, 1000), "third-family constant")
@@ -193,10 +208,11 @@ def budgets(Cv, cls, label):
     c_p = ln_up(100)
     require(Dc_c <= Q(1193, 100) and Dc_p <= Q(829, 100) and c_c <= Q(231, 10) and c_p <= Q(461, 100),
             "error constants")
-    k_ebar = (ln_up(2 * cls) + ln_up(5)) / 2                              # (1/2) log(2*cls*5)
+    k_class = tier["exp"] * ln_up(tier["base"])                          # class product <= base^(exp k)
+    k_ebar = (L2up + k_class + ln_up(5)) / 2                              # E_c: log 2 + class + (1/2) log 5; E_p: (1/2) log 5
     kappa = Cv - L36 / 4 - G / 4 - k_ebar
     require(kappa > 6 * Q(1, 1000) + Q(1, 1000), f"rich budget ({label})")   # six monomials of <= 1/1000 above
-    cut = Cv - L36 / 4 - G / 4 - ln_up(2 * cls) / 2
+    cut = Cv - L36 / 4 - G / 4 - (L2up + k_class) / 2
     require(cut >= Q(8, 10), f"rich cut ({label})")
     r["kappa_lower"] = dec_floor(kappa)
     r["cut_margin_lower"] = dec_floor(cut, 4)
@@ -208,8 +224,9 @@ def budgets(Cv, cls, label):
     # (24.5 t + 9) t^{-7/2} e^{-t/2} is the monomial caseII_lin (<= 1/100)
     caseII_D = 17 * one / (AD * Q(T0) ** 5)
     require(6 * Q(AD, 8) + 560 * Q(1, T0 ** 4) + caseII_D + Q(1, 100) < Q(15, 32) * AP, "case (ii) budget")
-    # Lemma C tail: 4(D+1) e^{-log 64 - t/2} <= 8 sqrt(k) e^{-t/2}/64 = 1/8 and 2 e^{-2 Gamma} <= 1/8 (Gamma >= 1)
-    require(Q(8, 64) + Q(1, 8) <= Q(1, 4), "Lemma C tail")
+    # Lemma C tail: 4(D+1) e^{-log 64 - t/2} <= 8 sqrt(k) e^{-t/2}/64 = 1/8, and 2 e^{-2 Gamma} <= 1/8 needs
+    # Gamma >= log 4, which holds because Gamma >= Ebar + log 64 + t/2 >= log 64
+    require(Q(8, 64) + Q(1, 8) <= Q(1, 4) and ln_lo(64) >= ln_up(4), "Lemma C tail")
     # error coefficients in t (PR #9 factors, see PROOF.md Section 7)
     require(1 + 16 + Q(3, 2) + 3 + 4 == Q(51, 2) and 1 + 16 == 17 and 1 + 6 + 2 + 9 + 12 == 30, "error t-coefficients")
     # thresholds
@@ -217,38 +234,46 @@ def budgets(Cv, cls, label):
     return r
 
 
-def thresholds():
+def thresholds(tier):
     L2lo, L2up = ln2_bounds()
-    out = {}
-    for Cv, t9, n9 in ((C, 704, 1016), (C_FALLBACK, 731, 1055)):
-        g9 = Q(t9, 72) - Q(7, 8) * ln_up(t9) - Cv
-        require(g9 > 0 and t9 > 63 and n9 * L2lo >= t9, "1/9 threshold")
-        require(Q(t9 - 1, 72) - Q(7, 8) * ln_lo(t9 - 1) - Cv < 0, "1/9 threshold is not minimal at this integer t")
-        out[f"one_ninth_C_{Cv}"] = {"t": t9, "k": f"2^{n9}", "margin_lower": dec_floor(g9)}
-    # coefficient at k = 2^1024 (increasing in t), main version
-    t1024 = 1024 * L2lo
-    coeff = Q(1, 8) - (Q(7, 8) * ln_up(t1024) + C) / t1024
-    require(coeff >= Q(1112, 10000), "coefficient at 2^1024")
-    out["coefficient_at_2^1024_lower"] = dec_floor(coeff, 5)
-    return out
+    Cv, t9, n9 = tier["C"], tier["t9"], tier["n9"]
+    g9 = Q(t9, 72) - Q(7, 8) * ln_up(t9) - Cv
+    require(g9 > 0 and t9 > 63 and n9 * L2lo >= t9, "1/9 threshold")
+    require(Q(t9 - 1, 72) - Q(7, 8) * ln_lo(t9 - 1) - Cv < 0, "1/9 threshold is not minimal at this integer t")
+    t1024 = 1024 * L2lo                                                   # coefficient increases in t
+    coeff = Q(1, 8) - (Q(7, 8) * ln_up(t1024) + Cv) / t1024
+    require(coeff >= tier["coeff1024"], "coefficient at 2^1024")
+    return {"one_ninth_from": {"t": t9, "k": f"2^{n9}", "margin_lower": dec_floor(g9)},
+            "coefficient_at_2^1024_lower": dec_floor(coeff, 5)}
 
 
 # ---------------------------------------------------------------- 3. finite checks
-def check_lemma_D_prime(kmax=300):
+def check_class_products(kmax=300):
+    """Lemma D' (all classes, 19^k), Lemma D'' (classes with K_a >= 2, 45^(k/2)) and N1a's 37^k."""
     cases = 0
-    for K in range(1, 2001):
-        require(4 * K * K + 14 * K + 1 <= CLASS ** K, "4K^2+14K+1 <= 19^K")
+    for K in range(1, 3001):
+        require(4 * K * K + 14 * K + 1 <= 19 ** K, "4K^2+14K+1 <= 19^K")
+        if K >= 2:
+            require((4 * K * K + 14 * K + 1) ** 2 <= 45 ** K, "4K^2+14K+1 <= 45^(K/2)")
+    d2_needs_two = False
     for k in range(2, kmax + 1):
         for h in range(1, k):
             Kh = -(-k // h)
-            prod = 1
+            prod_all, prod_two, sum_two = 1, 1, 0
             for a in range(h):
                 Ka = -(-(k - a) // h)
                 require(Ka >= 1 and Kh <= Ka + 1, "K_h <= K_a + 1")
-                prod *= 2 * Ka * (2 * Kh + 5) + 1
-            require(prod <= CLASS ** k, "class product above 19^k")
-            require(prod <= CLASS_FALLBACK ** k, "class product above 37^k")
+                f = 2 * Ka * (2 * Kh + 5) + 1
+                prod_all *= f
+                if Ka >= 2:                        # a collision class has at least two positions
+                    prod_two *= f
+                    sum_two += Ka
+            require(prod_all <= 19 ** k and prod_all <= 37 ** k, "class product above 19^k or 37^k")
+            require(sum_two <= k and prod_two ** 2 <= 45 ** sum_two, "D'': product above 45^(sum K_a / 2)")
+            d2_needs_two = d2_needs_two or prod_all ** 2 > 45 ** k
             cases += 1
+    # control: with classes of length 1 allowed, the 45^(k/2) bound fails (factor 19 > sqrt 45)
+    require(d2_needs_two, "control: K_a >= 2 is not load-bearing")
     return cases
 
 
@@ -291,25 +316,34 @@ def check_regularity_core(smax=14):
 
 # ---------------------------------------------------------------- 4. negative controls
 def negative_controls():
-    rej = {}
-    L36 = ln_up(AP)
-    # (a) AD = 21: the first-family main term alone exceeds 1
-    rej["AD_21"] = 64 * BH * ln_lo(4) / 21 ** 2 > 1
-    # (b) BH = 4: the second-family tail 4 D t no longer beats the entropy 4.5 D t (D-coefficient positive)
-    rej["BH_4"] = Q(1, 2) + 4 - (1 - E2 / T0) * 4 > 0
-    # (c) AP = 35: (15/32) * 35 < 6 * AD/8 = 16.5
-    rej["AP_35"] = Q(15, 32) * 35 < 6 * Q(AD, 8)
-    # (d) C = 4.02 with D', C = 4.35 with D: kappa < 0
-    rej["C_4.02"] = Q(402, 100) - L36 / 4 - G / 4 - (ln_lo(2 * CLASS) + ln_lo(5)) / 2 < 0
-    rej["C_4.35_with_D"] = Q(435, 100) - L36 / 4 - G / 4 - (ln_lo(2 * CLASS_FALLBACK) + ln_lo(5)) / 2 < 0
-    # (e) 37^k in place of 19^k at C = 4.03: kappa < 0, so Lemma D' is load-bearing for 403/100
-    rej["37k_at_C_4.03"] = C - L36 / 4 - G / 4 - (ln_lo(2 * CLASS_FALLBACK) + ln_lo(5)) / 2 < 0
-    # (f) N1b's eligibility threshold l/2 (tail h/(2t^2)): the tail 2.5 D t loses to the entropy 4.5 D t
-    rej["threshold_half"] = Q(BH, 2) < Q(9, 2)
-    # (g) G = 2 (eps_reg ignored in gamma): A0 - 1/t - gamma < 0 at t0
-    tt = Q(T0)
-    rej["G_2"] = (Q(1, 2) - 1 / tt) * (1 - E2 / tt) - 1 / tt - (Q(1, 2) - 2 / tt) < 0
-    # (h) a monomial claimed from t0 = 30 is refused
+    """Each decisive change, fed back into budgets(), must make it fail."""
+    by_name = {tier["name"]: tier for tier in TIERS}
+
+    def fails(p_over, tier_name, tier_over=None):
+        p = dict(BASE, **p_over)
+        tier = dict(by_name[tier_name], **(tier_over or {}))
+        try:
+            budgets(p, tier)
+        except AssertionError:
+            return True
+        return False
+
+    rej = {
+        "AD_21": fails({"AD": 21}, "D1"),
+        "BH_4": fails({"BH": 4}, "D1"),
+        "AS_1024": fails({"AS": 1024}, "D1"),
+        "AP_35": fails({"AP": 35}, "D1"),
+        "AP_37_under_D1": fails({"AP": 37}, "D1"),
+        "C_7/2_under_D2": fails({}, "D2", {"C": Q(7, 2)}),
+        "C_4.02_under_D1": fails({}, "D1", {"C": Q(402, 100)}),
+        "C_4.35_under_D0": fails({}, "D0", {"C": Q(435, 100)}),
+        "19k_at_C_3.55": fails({}, "D2", {"base": 19, "exp": Q(1)}),
+        "37k_at_C_4.03": fails({}, "D1", {"base": 37}),
+        "threshold_l/2": fails({"TAIL": Q(1, 2)}, "D1"),
+        "G_2": fails({"G": Q(2)}, "D1"),
+        "E2_1/2": fails({"E2": Q(1, 2), "G": 2 + Q(1, 4)}, "D1"),
+    }
+    require(not fails({}, "D1") and not fails({}, "D2") and not fails({}, "D0"), "delivered constants fail")
     try:
         monomial("control", (8 * AD) ** 2, 5, 1, 1, t0=30)
         rej["monomial_t0_30"] = False
@@ -339,7 +373,8 @@ def decimal_replay():
 
     fails, checks, grid = 0, 0, list(range(512, 2001, 37)) + [5000, 10 ** 4, 10 ** 5]
     for tt in grid:
-        for Cv, cls in ((C, CLASS), (C_FALLBACK, CLASS_FALLBACK)):
+        for tier in TIERS:
+            Cv = tier["C"]
             t = Dec(tt); k = t.exp(); lt = t.ln()
             u = (t / 2).exp() / (AD * t ** Dec("2.5")); D = ceil(u); M = floor(k / 32)
             h0, Ms = ceil(BH * D * t ** 3), ceil(AS * D * t)
@@ -354,7 +389,7 @@ def decimal_replay():
             phi = (D + 2) * h0.ln() + 2 * D * LN9 + 4 * D * (B0 * D * h0 + 1).ln() - (1 - eps_reg) * h0 / t ** 2
             logAs = t + (D + 1) * h0.ln() + D * (LN9 + 2 * (k * (4 * M + 4) + 1).ln()) + D * (LN9 + 2 * (3 * k ** 7).ln())
             Gamma = gamma * k * L / 2 - (F + D * logP)
-            Ec = 6 * Qh + k * (Dec(2 * cls).ln() + LN5 / 2) + D * (Dec("25.5") * t + Dec("11.93")) + 30 * t + Dec("23.1")
+            Ec = 6 * Qh + k * (LN2 + dq(tier["exp"]) * Dec(tier["base"]).ln() + LN5 / 2) + D * (Dec("25.5") * t + Dec("11.93")) + 30 * t + Dec("23.1")
             Ep = 4 * Qh + k * LN5 / 2 + D * (17 * t + Dec("8.29")) + 2 * t + Dec("4.61")
             logTK = 6 * Qh + D * (16 * t + 5) + Dec("4.5") * t + 6
             logBrun = h0.ln() + (Ms + 1).ln() + Ms * (LN2 + 3 * t)
@@ -369,7 +404,7 @@ def decimal_replay():
             checks += len(c)
             fails += sum(1 for ok in c if not ok)
     require(fails == 0, "decimal replay found a failing inequality")
-    return {"t_values": len(grid), "versions": 2, "checks": checks, "failures": fails}
+    return {"t_values": len(grid), "tiers": len(TIERS), "checks": checks, "failures": fails}
 
 
 # ---------------------------------------------------------------- 6. integrity
@@ -389,20 +424,20 @@ def main():
         "parameters": {"u": f"sqrt(k)/({AD} t^(5/2))", "M": "floor(k/32)", "h0": f"ceil({BH} D t^3)",
                        "Ms": f"ceil({AS} D t)", "eps_reg": f"{E2}/t", "eta": "eps_reg/(24 D)",
                        "B0": "ceil(24576 t + 4)", "delta_s": "1/16", "gamma": f"1/2 - ({G})/t",
-                       "p": f"{AP} t^(7/2)/sqrt(k)", "C": str(C), "C_fallback": str(C_FALLBACK), "t0": T0},
+                       "p": f"{AP} t^(7/2)/sqrt(k)", "t0": T0},
         "monomial_certificates": monomials(),
-        "budgets_main_19k": budgets(C, CLASS, "main"),
-        "budgets_fallback_37k": budgets(C_FALLBACK, CLASS_FALLBACK, "fallback"),
-        "thresholds": thresholds(),
-        "lemma_D_prime_cases": check_lemma_D_prime(),
+        "tiers": {tier["name"]: {"assumption": tier["label"], "C": str(tier["C"]),
+                                 "budgets": budgets(BASE, tier), "thresholds": thresholds(tier)} for tier in TIERS},
+        "class_product_cases": check_class_products(),
         "partition_cases": check_partition(),
         "regularity_core_cases": check_regularity_core(),
         "negative_controls_rejected": negative_controls(),
         "decimal_replay": decimal_replay(),
         "integrity_files": integrity(),
-        "conclusion": "W_r(k) > (k^(1/8) / (e^(403/100) (log k)^(7/8)))^(k floor(log2 r)) for k >= 2^739 "
-                      "(e^(35/8) with N1a's Lemma D); c = 1/9 for k >= 2^1016 (2^1055); "
-                      "conditional on the interfaces of PR #12, Section 2, and PR #9's displayed factors",
+        "conclusion": "W_r(k) > (k^(1/8) / (e^C (log k)^(7/8)))^(k floor(log2 r)) for k >= 2^739, with "
+                      "C = 71/20 under Lemma D'' (c = 1/9 from 2^961), C = 403/100 under Lemma D' alone "
+                      "(from 2^1016), C = 35/8 under N1a's Lemma D alone (from 2^1055); conditional on the "
+                      "interfaces of PR #12, Section 2, and PR #9's displayed factors",
     }
     text = json.dumps(report, indent=2, sort_keys=True) + "\n"
     sys.stdout.write(text)

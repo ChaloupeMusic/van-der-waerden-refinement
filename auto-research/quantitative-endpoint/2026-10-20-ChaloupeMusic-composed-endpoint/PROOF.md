@@ -12,33 +12,37 @@ reviewed theorem. It combines two contributions built on open PR #12 (head `0294
   scale-free lemmas A–E. They are restated in Section 2 with their proofs in brief; the full text is
   N1a's Section 2.
 
-It adds one arithmetic lemma (D′) on a product displayed in PR #9, Section 8.3.
+It adds two arithmetic lemmas (D′ and D″) on a product displayed in PR #9, Section 8.3, step 4.
 
 **Conditional theorem.** Assume the finite source interfaces of #12, Section 2, and the finite factors of
 PR #9 displayed in its Sections 7.3, 8.2 and 8.3 (which #12's Appendix A already imports). For every integer
 `k >= 2^739` and every integer `r >= 2`,
 
 ```math
- W_r(k)>\left(\frac{k^{1/8}}{e^{403/100}(\log k)^{7/8}}\right)^{k\lfloor\log_2 r\rfloor}. \tag{1}
+ W_r(k)>\left(\frac{k^{1/8}}{e^{C}(\log k)^{7/8}}\right)^{k\lfloor\log_2 r\rfloor}, \tag{1}
 ```
 
-Moreover `W_r(k) > k^{(k/9)⌊log_2 r⌋}` for every `k >= 2^1016`, and
-`W_r(k) > k^{(1112/10000) k⌊log_2 r⌋}` for every `k >= 2^1024`.
+where the constant `C` depends on which bound is used for the class product of PR #9, Section 8.3, step 4.
+The three tiers are proved and checked separately, so contesting one does not affect the others.
 
-With N1a's Lemma D in place of D′ (that is, `37^k` instead of `19^k` in the class product), the same proof
-gives (1) with `e^{35/8}`, and the coefficient `1/9` from `k >= 2^1055`. `verify.py` checks both versions.
+| tier | class product | `C` | `c = 1/9` from | coefficient at `2^1024` |
+|---|---|---:|---|---:|
+| D″ (this note, reading of Section 2) | `45^{k/2}` | `71/20` | `2^961` | `> 0.1119` |
+| D′ (this note) | `19^k` | `403/100` | `2^1016` | `> 0.1112` |
+| D (N1a) | `37^k` | `35/8` | `2^1055` | `> 0.1107` |
 
 | | constant | power of `log k` | range | `c = 1/9` from |
 |---|---:|---:|---|---|
 | #12 | `e^{20}` | 1 | `2^1024` | `2^4096` |
 | N1a | `e^{9/2}` | 1 | `2^1024` | `2^1163` |
 | N1b | `e^{35/2}` | 7/8 | `2^739` | `2^2504` |
-| here, with D′ | `e^{403/100}` | 7/8 | `2^739` | `2^1016` |
-| here, with N1a's D | `e^{35/8}` | 7/8 | `2^739` | `2^1055` |
+| here, tier D″ | `e^{71/20}` | 7/8 | `2^739` | `2^961` |
+| here, tier D′ | `e^{403/100}` | 7/8 | `2^739` | `2^1016` |
+| here, tier D | `e^{35/8}` | 7/8 | `2^739` | `2^1055` |
 
-Both versions of (1) beat each of #12, N1a and N1b on that bound's own range (`k >= 2^1024` for #12 and
+Every tier of (1) beats each of #12, N1a and N1b on that bound's own range (`k >= 2^1024` for #12 and
 N1a, `k >= 2^739` for N1b). This holds even without the `(log k)^{1/8}` factor, since
-`403/100 < 35/8 < 9/2 < 35/2`. No coefficient above `1/8` is claimed.
+`71/20 < 403/100 < 35/8 < 9/2 < 35/2`. No coefficient above `1/8` is claimed.
 
 ## 2. Ingredients
 
@@ -84,12 +88,45 @@ where `K_a >= 1` is its number of positions and `K_h = ⌈k/h⌉`. Over the coll
 
 *Proof.* Class `a < h` has `K_a = ⌈(k − a)/h⌉ >= ⌈(k − h + 1)/h⌉ >= ⌈k/h⌉ − 1` positions, so
 `K_h <= K_a + 1`, and the factor is at most `4K_a^2 + 14K_a + 1`. This is `19` at `K_a = 1`. For `K >= 1`
-the ratio `(4(K+1)^2 + 14(K+1) + 1)/(4K^2 + 14K + 1)` is at most `37/19 < 19`. Hence
-`4K^2 + 14K + 1 <= 19^K` for every integer `K >= 1`. The classes are disjoint, so `Σ_a K_a <= k`. ∎
+the ratio `(4(K+1)^2 + 14(K+1) + 1)/(4K^2 + 14K + 1)` is at most its value `45/19 < 19` at `K = 1`.
+Hence `4K^2 + 14K + 1 <= 19^K` for every integer `K >= 1`. The classes are disjoint, so `Σ_a K_a <= k`. ∎
+
+**New: Lemma D″ (collision classes have at least two positions).** Under the same notation,
+
+```math
+ \prod_{a\in\Sigma}\bigl(2K_a(2K_h+5)+1\bigr)\le45^{\,\sum_{a\in\Sigma}K_a/2}\le45^{k/2}.
+```
+
+*The reading of PR #9.* Line numbers refer to `effective-completion/PROOF.md` at PR #9 head `89660352`. The
+reading was written up by the N1a session (radar-dd) and validated by the referee session.
+
+1. Line 410 defines collision classes: "Call a residue class a collision class when it contains a repeated
+   key; write its positions `a+sh`, `0 <= s < K_a`". Line 408 says that every occurrence of a box lies in one
+   residue class modulo `h`.
+2. Line 428 chooses one repeated pair per collision class. This defines `Σ`; noncollision classes get an
+   absence symbol.
+3. The quantities `σ_a`, `ζ_a`, `v_a`, `c_a` of Section 7.4 are defined from the chosen pair, hence only for
+   `a ∈ Σ`. Section 8 fixes data with `Σ ≠ ∅` and `V_0 = span{v_a : a ∈ Σ}`.
+4. Section 8.3 counts "sets of keys at arbitrary selected positions in collision classes" (line 547). Its
+   band form (8.9) (line 555) and steps 1–4 use `τ_a`, `c_a`, `ζ_a`, that is, classes `a ∈ Σ`.
+5. Step 4 (lines 585–588) bounds "a class" by `2K_a(2K_h+5) + 1` band words and takes the product over the
+   classes of that count, that is, over `a ∈ Σ`.
+
+*Why `K_a >= 2`.* A class in `Σ` contains a repeated key, which occupies two distinct positions
+`a + s_1 h` and `a + s_2 h` of that class, by line 408. So `K_a >= 2`.
+
+*Proof of the bound.* As in D′, the factor is at most `4K_a^2 + 14K_a + 1`. This equals `45 = 45^{2/2}` at
+`K_a = 2`. For `K >= 2` the ratio `(4(K+1)^2 + 14(K+1) + 1)/(4K^2 + 14K + 1)` is at most its value
+`79/45 < sqrt(45)` at `K = 2`. Hence `4K^2 + 14K + 1 <= 45^{K/2}` for every integer `K >= 2`. The classes of
+`Σ` are disjoint, so `Σ_{a∈Σ} K_a <= k`. ∎
+
+Without `K_a >= 2` the bound fails: a class of length 1 contributes up to `19 > sqrt(45)`, and `verify.py`
+exhibits `(k, h)` where the product over all classes exceeds `45^{k/2}`.
 
 N1a's Lemma D bounds every factor by its value at `K_h` and the number of classes by `2k/K_h`, which gives
-`37^k`. D′ uses each class's own length. Like Lemma D, it re-bounds PR #9's displayed product and does
-not re-derive the encoding that produces it.
+`37^k`. D′ uses each class's own length, and D″ also uses that classes of `Σ` have length at least 2. Like
+Lemma D, both re-bound PR #9's displayed product and do not re-derive the encoding that produces it. D″
+depends in addition on the reading above.
 
 ## 3. Parameters
 
@@ -202,25 +239,29 @@ block.
 so `Γ >= k(C − (1/4) log 36 − g/4) − D(2t + log 2)`.
 
 **The errors.** These are PR #9's displayed factors, as tabulated in #12's Appendix A, with Lemma D for
-the pairs and Lemma D′ for the classes, at `J <= k^6`, `D <= sqrt(k)`, `D + 4 <= 2 sqrt(k)`:
+the pairs, at `J <= k^6`, `D <= sqrt(k)`, `D + 4 <= 2 sqrt(k)`. Write `ℓ_cls` for the logarithm per position
+of the class product: `(1/2) log 45` under D″, `log 19` under D′, `log 37` under D. Then
 
 ```math
- E_c\le6Q+k\bigl(\log38+\tfrac12\log5\bigr)+D(25.5t+11.93)+30t+23.1,
+ E_c\le6Q+k\bigl(\log2+\ell_{\rm cls}+\tfrac12\log5\bigr)+D(25.5t+11.93)+30t+23.1,
 ```
 ```math
  E_p\le4Q+\tfrac k2\log5+D(17t+8.29)+2t+4.61.
 ```
 
-Hence `Ebar <= 5Q + (k/2) log 190 + D(21.25t + 10.11) + 16t + 13.86`, and
-`(E_c − E_p)/2 <= Q + (k/2) log 38 + D(4.25t + 1.82) + 14t + 9.25`.
+Hence `Ebar <= 5Q + (k/2)(log 10 + ℓ_cls) + D(21.25t + 10.11) + 16t + 13.86`, and
+`(E_c − E_p)/2 <= Q + (k/2)(log 2 + ℓ_cls) + D(4.25t + 1.82) + 14t + 9.25`.
 
-**The bound.** Put `κ = C − (1/4) log 36 − 257/512 − (1/2) log 190`, so that `κ >= 0.0086` (`C` must exceed `4.0213`). The
-remaining terms of `(Ebar − Γ + log 64 + t/2)/k` are monomials summing to less than `κ`. Lemma C's bound
-is therefore at most `1/4`. The cut condition holds with margin
-`C − (1/4) log 36 − 257/512 − (1/2) log 38 >= 0.813`.
+**The bound.** Put `κ = C − (1/4) log 36 − 257/512 − (1/2)(log 10 + ℓ_cls)`. The remaining terms of
+`(Ebar − Γ + log 64 + t/2)/k` are monomials summing to less than `0.007`. When `κ > 0.007`, Lemma C's bound
+is at most `1/4`, because `Γ >= log 64 >= log 4` handles its `e^{−2Γ}` term. The cut condition needs
+`C − (1/4) log 36 − 257/512 − (1/2)(log 2 + ℓ_cls) >= 0.8`.
 
-With N1a's Lemma D (`37^k`), `log 38` and `log 190` become `log 74` and `log 370`, and `C = 35/8` gives
-`κ >= 0.0203`.
+| tier | `(1/2)(log 10 + ℓ_cls)` | `C` | `κ` | cut margin |
+|---|---:|---:|---:|---:|
+| D″ | `2.10296` (`C` must exceed `3.5008`) | `71/20` | `>= 0.0492` | `>= 0.853` |
+| D′ | `2.62351` (`C` must exceed `4.0213`) | `403/100` | `>= 0.0086` | `>= 0.813` |
+| D | `2.95675` (`C` must exceed `4.3546`) | `35/8` | `>= 0.0204` | `>= 0.825` |
 
 ## 8. Non-rich events
 
@@ -245,15 +286,17 @@ includes every `k >= 2^739`.
 
 ## 9. Thresholds
 
-* `F >= kt/9` iff `t/72 − (7/8) log t − 403/100 >= 0`. The left side increases for `t > 63` and is
-  positive at `t = 704`. Every `k >= 2^1016` has `t >= 1016 log 2 > 704.2`.
+* `F >= kt/9` iff `t/72 − (7/8) log t − C >= 0`. The left side increases for `t > 63`.
+  - With `C = 71/20` it is positive at `t = 666`, and `961 log 2 > 666.1`.
+  - With `C = 403/100` it is positive at `t = 704`, and `1016 log 2 > 704.2`.
+  - With `C = 35/8` it is positive at `t = 731`, and `1055 log 2 > 731.2`.
+  `verify.py` also checks that each of these is the first integer `t` that works.
 * The coefficient `1/8 − ((7/8) log t + C)/t` increases for `t >= 1`. At `t = 1024 log 2` it exceeds
-  `1112/10000`.
-* With `C = 35/8`, the same holds from `t = 731`, that is from `k >= 2^1055`.
+  `0.1119`, `0.1112` and `0.1107` in the three tiers.
 
 ## 10. Boundary
 
-Re-proved here: Lemma D′, the scale inequalities of Sections 4–9 at these constants, and their
+Re-proved here: Lemmas D′ and D″ (D″ on the reading of PR #9 given in Section 2), the scale inequalities of Sections 4–9 at these constants, and their
 certificates. Imported:
 
 * N1b's Lemmas 5.1–5.3 and (I1)–(I2), with the stronger eligibility threshold, which is justified above;

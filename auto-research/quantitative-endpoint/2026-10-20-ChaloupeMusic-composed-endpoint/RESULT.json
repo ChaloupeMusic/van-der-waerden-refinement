@@ -4,22 +4,13 @@
     "n1b_head": "8c2b34f",
     "pr12_head": "029431bb29f2bc64bf3f6dd150ddd15bbdf7c7d5"
   },
-  "budgets_fallback_37k": {
-    "cut_margin_lower": "0.8251",
-    "first_family_total_upper": "0.98617",
-    "kappa_lower": "0.020415"
-  },
-  "budgets_main_19k": {
-    "cut_margin_lower": "0.8133",
-    "first_family_total_upper": "0.98617",
-    "kappa_lower": "0.008655"
-  },
-  "conclusion": "W_r(k) > (k^(1/8) / (e^(403/100) (log k)^(7/8)))^(k floor(log2 r)) for k >= 2^739 (e^(35/8) with N1a's Lemma D); c = 1/9 for k >= 2^1016 (2^1055); conditional on the interfaces of PR #12, Section 2, and PR #9's displayed factors",
+  "class_product_cases": 44850,
+  "conclusion": "W_r(k) > (k^(1/8) / (e^C (log k)^(7/8)))^(k floor(log2 r)) for k >= 2^739, with C = 71/20 under Lemma D'' (c = 1/9 from 2^961), C = 403/100 under Lemma D' alone (from 2^1016), C = 35/8 under N1a's Lemma D alone (from 2^1055); conditional on the interfaces of PR #12, Section 2, and PR #9's displayed factors",
   "decimal_replay": {
-    "checks": 1320,
+    "checks": 1980,
     "failures": 0,
     "t_values": 44,
-    "versions": 2
+    "tiers": 3
   },
   "integrity_files": [
     "NOTICE.md",
@@ -27,7 +18,6 @@
     "README.md",
     "verify.py"
   ],
-  "lemma_D_prime_cases": 44850,
   "monomial_certificates": [
     {
       "A": "30976",
@@ -265,20 +255,23 @@
     }
   ],
   "negative_controls_rejected": {
+    "19k_at_C_3.55": true,
     "37k_at_C_4.03": true,
     "AD_21": true,
     "AP_35": true,
+    "AP_37_under_D1": true,
+    "AS_1024": true,
     "BH_4": true,
-    "C_4.02": true,
-    "C_4.35_with_D": true,
+    "C_4.02_under_D1": true,
+    "C_4.35_under_D0": true,
+    "C_7/2_under_D2": true,
+    "E2_1/2": true,
     "G_2": true,
     "monomial_t0_30": true,
-    "threshold_half": true
+    "threshold_l/2": true
   },
   "parameters": {
     "B0": "ceil(24576 t + 4)",
-    "C": "403/100",
-    "C_fallback": "35/8",
     "M": "floor(k/32)",
     "Ms": "ceil(4096 D t)",
     "delta_s": "1/16",
@@ -292,17 +285,57 @@
   },
   "partition_cases": 22500,
   "regularity_core_cases": 14536,
-  "thresholds": {
-    "coefficient_at_2^1024_lower": "0.11122",
-    "one_ninth_C_35/8": {
-      "k": "2^1055",
-      "margin_lower": "0.007666",
-      "t": 731
+  "tiers": {
+    "D0": {
+      "C": "35/8",
+      "assumption": "N1a's Lemma D: 37^k",
+      "budgets": {
+        "cut_margin_lower": "0.8251",
+        "first_family_total_upper": "0.98617",
+        "kappa_lower": "0.020415"
+      },
+      "thresholds": {
+        "coefficient_at_2^1024_lower": "0.11074",
+        "one_ninth_from": {
+          "k": "2^1055",
+          "margin_lower": "0.007666",
+          "t": 731
+        }
+      }
     },
-    "one_ninth_C_403/100": {
-      "k": "2^1016",
-      "margin_lower": "0.010596",
-      "t": 704
+    "D1": {
+      "C": "403/100",
+      "assumption": "Lemma D': 19^k",
+      "budgets": {
+        "cut_margin_lower": "0.8133",
+        "first_family_total_upper": "0.98617",
+        "kappa_lower": "0.008655"
+      },
+      "thresholds": {
+        "coefficient_at_2^1024_lower": "0.11122",
+        "one_ninth_from": {
+          "k": "2^1016",
+          "margin_lower": "0.010596",
+          "t": 704
+        }
+      }
+    },
+    "D2": {
+      "C": "71/20",
+      "assumption": "Lemma D'': 45^(k/2)",
+      "budgets": {
+        "cut_margin_lower": "0.8539",
+        "first_family_total_upper": "0.98617",
+        "kappa_lower": "0.049208"
+      },
+      "thresholds": {
+        "coefficient_at_2^1024_lower": "0.11190",
+        "one_ninth_from": {
+          "k": "2^961",
+          "margin_lower": "0.011371",
+          "t": 666
+        }
+      }
     }
   }
 }

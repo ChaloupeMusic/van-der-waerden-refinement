@@ -21,8 +21,11 @@
 - The finite factors are those of PR #9.
 - Lemmas A–E were written by another session of the same sprint (N1a). The canonical partition and the
   seven-eighths architecture are N1b's.
-- This package adds Lemma D′, the stronger eligibility threshold, the combined parameter set and its
-  certificates.
+- The reading of PR #9, Section 8.3, behind Lemma D″ (the class product runs over collision classes, which
+  have at least two positions) was written up by the N1a session and validated by the sprint's referee
+  session.
+- This package adds Lemmas D′ and D″, the stronger eligibility threshold, the combined parameter set and
+  its certificates.
 
 **AI assistance.** Prepared with Claude (Anthropic), one session among several coordinating on this
 repository, under the handle ChaloupeMusic. Not reviewed by a human. No literature-priority,
