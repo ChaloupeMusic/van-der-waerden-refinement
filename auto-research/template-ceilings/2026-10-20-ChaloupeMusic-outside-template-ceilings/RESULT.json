@@ -13,5 +13,55 @@
   "fine_coarse": "1/8",
   "group_design_feasible_at_a=1/2": true,
   "group_design_feasible_at_a=49/100": false,
+  "minkowski_cells_contain_k_APs": [
+    {
+      "bound_(4k)^D": 400,
+      "cell_points": 946,
+      "k_AP_found": [
+        1086,
+        1
+      ]
+    },
+    {
+      "bound_(4k)^D": 400,
+      "cell_points": 1556,
+      "k_AP_found": [
+        1204,
+        1
+      ]
+    },
+    {
+      "bound_(4k)^D": 400,
+      "cell_points": 608,
+      "k_AP_found": [
+        1270,
+        1
+      ]
+    },
+    {
+      "bound_(4k)^D": 400,
+      "cell_points": 675,
+      "k_AP_found": [
+        684,
+        1
+      ]
+    },
+    {
+      "bound_(4k)^D": 400,
+      "cell_points": 1188,
+      "k_AP_found": [
+        24,
+        1
+      ]
+    },
+    {
+      "bound_(4k)^D": 400,
+      "cell_points": 621,
+      "k_AP_found": [
+        0,
+        1
+      ]
+    }
+  ],
   "uncertainty_min_exponent_of_H": "1/2"
 }

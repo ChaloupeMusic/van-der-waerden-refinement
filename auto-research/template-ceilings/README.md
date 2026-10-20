@@ -14,4 +14,4 @@ Related: `short-period-sensitivity` (which inequality binds), `barrier-note.md`.
 
 | Date | Handle | Result | Status | PR |
 |---|---|---|---|---|
-| 2026-10-20 | ChaloupeMusic | Eight templates priced: all ≤ 1/8 except asymmetric flips (1/4 if an AP-sparse generic hitting set exists, open); torus uncertainty `H ≥ log N/D + D log k` | structural research (negative, one open exception) | – |
+| 2026-10-20 | ChaloupeMusic | Eight templates priced: all ≤ 1/8 except asymmetric flips (1/4 if an AP-sparse generic hitting set exists; impossible for cell colorings chosen at random or by a local lemma, open otherwise); torus uncertainty `H ≥ log N/D + D log k` | structural research (negative, one open exception) | – |

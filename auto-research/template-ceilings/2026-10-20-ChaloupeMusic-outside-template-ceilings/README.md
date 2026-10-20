@@ -72,6 +72,31 @@ part of any progression**, the dual of the open "structured transversal"
 (Porte 1: a sparse transversal of the low-entropy slow words). Both give
 `1/4` optimistically, and both are open.
 
+**No-go for the natural class (cell colorings chosen at random or by a local
+lemma).** Suppose `A` is a union of cells of a partition of the `y`-torus into
+boxes, the cells being colored by a union bound or a local lemma over events
+indexed by cell words, as in the source.
+
+1. *(Minkowski.)* A box cell holding more than `(4k)^D` points of `{ỹ(n)}`
+   contains a `k`-term progression: the lattice of representatives has
+   covolume `1/N`, so the half-scaled difference box of side `ℓ_i/(2(k−1))`
+   contains a nonzero `ỹ(d)`, and `n + jd` stays in the cell from any point of
+   its middle half. So every 1-cell of a `k`-AP-free `A` has `≤ (4k)^D`
+   points. (Checked exactly on small instances by `verify.py`.)
+2. *(Entropy.)* A cell of `≤ (4k)^D` points determines its point up to
+   `(4k)^D`. A generic progression with two points in `A` is therefore fixed,
+   up to `(4k)^{2D}k²`, by its cell word: there are `≥ N^{2−o(1)}` distinct
+   words, and `≥ N^{1−o(1)}` through any one 1-cell. Every event about the
+   colors of `k` cells has probability `≥ e^{−O(k)}`, so both the union bound
+   and the local-lemma condition (incident weight per cell `≪ 1`) fail, since
+   `log N = ck log k ≫ k`.
+
+What survives is a deterministic or algebraic choice of `A`, outside every
+probabilistic selection used in this repository. (Bohr sets are one convex
+cell and fall under 1. Band-level sets `{n : band(n) ∈ Λ}` have cell words of
+entropy `≈ 2 log N` on generic progressions, so only a deterministic hitting
+theorem for pseudo-random band sets could serve; none is known.)
+
 Equivalently, the exception asks for an outer coloring whose monochromatic
 progressions are **all of color 0** and all in a family of event entropy
 `≪ k^{1/2}`: color 1 must be `k`-AP-free (indeed `θ`-sparse on every

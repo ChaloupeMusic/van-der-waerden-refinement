@@ -101,6 +101,35 @@ def dense_radii_c(logk):
     import math
     return math.log(2) / (2 * logk)
 
+def minkowski_cells(q=101, D=2, k=5, seed=3, nbox=6):
+    """Exact check of the lemma used in the no-go: a box cell of the y-torus with
+    more than (4k)^D points of {y~(n)} contains a k-term progression of Z/q^D.
+    Brute force on small instances (q prime, lambda = 1)."""
+    import random
+    rng = random.Random(seed)
+    N = q ** D
+    def yt(n):
+        return tuple(((Q(n, q ** i) + Q(1, 2)) % 1) - Q(1, 2) for i in range(1, D + 1))
+    pts = [yt(n) for n in range(N)]
+    out = []
+    for _ in range(nbox):
+        while True:
+            lo = [Q(rng.randrange(-500, 300), 1000) for _ in range(D)]
+            wd = [Q(rng.randrange(150, 450), 1000) for _ in range(D)]
+            cell = [n for n in range(N) if all(l <= c < l + w for c, l, w in zip(pts[n], lo, wd))]
+            if len(cell) > (4 * k) ** D:
+                break
+        S = set(cell)
+        found = None
+        for d in range(1, N):
+            for n0 in cell:
+                if all((n0 + j * d) % N in S for j in range(k)):
+                    found = (n0, d); break
+            if found: break
+        assert found is not None
+        out.append({"cell_points": len(cell), "bound_(4k)^D": (4 * k) ** D, "k_AP_found": list(found)})
+    return out
+
 def main():
     res = {}
     res["current"] = str(current())
@@ -124,6 +153,7 @@ def main():
     res["group_design_feasible_at_a=1/2"] = group_design(Q(1, 2))
     assert not group_design(Q(49, 100))
     res["dense_radii_c_at_k=2^1024"] = f"{dense_radii_c(1024 * 0.6931471805599453):.3e}"
+    res["minkowski_cells_contain_k_APs"] = minkowski_cells()
     text = json.dumps(res, indent=2, sort_keys=True) + "\n"
     if "--write" in sys.argv:
         (HERE / "RESULT.json").write_text(text); print("RESULT.json written"); return 0
