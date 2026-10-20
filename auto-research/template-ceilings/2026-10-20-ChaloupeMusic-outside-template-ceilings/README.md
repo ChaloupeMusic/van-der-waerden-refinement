@@ -72,6 +72,29 @@ part of any progression**, the dual of the open "structured transversal"
 (Porte 1: a sparse transversal of the low-entropy slow words). Both give
 `1/4` optimistically, and both are open.
 
+Equivalently, the exception asks for an outer coloring whose monochromatic
+progressions are **all of color 0** and all in a family of event entropy
+`≪ k^{1/2}`: color 1 must be `k`-AP-free (indeed `θ`-sparse on every
+progression) while still meeting every non-structured progression. The
+current outer coloring has monochromatic structured progressions of both
+colors (one per label cell), which is exactly what pins the two rates to the
+same `k^{−1/2}`. Three further obstructions, all heuristic, for where such an
+`A` could come from:
+
+* **tiling:** step-1 progressions tile `G`, so some structured progression sees
+  `A` at least at its global density; a set denser on generic progressions than
+  on every structured one does not exist;
+* **deterministic hitting** of all `N²` generic progressions is only available
+  through a local lemma over low-entropy label words, i.e. coarse cells, which
+  contain whole progressions; finer structure is random-like on generic
+  progressions, and a random-like `A` misses `N²(1 − μ)^k ≫ 1` of them unless
+  `μ ≳ 2c log k`;
+* **geometric regions** `A = ỹ^{−1}(R)`: AP-freeness forbids `R` from
+  containing an orbit that is slow in any subset of coordinates (cylinders,
+  slabs, small boxes all fail), while `k ≪ 2^D` points cannot equidistribute
+  in dimension `D = k^a`, so no discrepancy argument forces every generic orbit
+  into a thin `R`.
+
 ## Remark (consolidation)
 
 Fox–Hunter (Theorem 2, cited in the upstream introduction): `W_r(k) ≥
