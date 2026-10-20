@@ -5,7 +5,7 @@
   },
   "conclusion": "W_r(k) > (k^(1/8) / (e^(35/2) (log k)^(7/8)))^(k floor(log2 r)) for k >= 2^739; c = 1/9 for k >= 2^2504; conditional on the interfaces of PR #12, Section 2",
   "decimal_replay": {
-    "checks": 1770,
+    "checks": 1888,
     "failures": 0,
     "t_values": 118
   },

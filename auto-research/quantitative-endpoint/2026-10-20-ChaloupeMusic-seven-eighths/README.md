@@ -73,16 +73,28 @@ Negative controls rejected by `verify.py`:
 - `16384 → 8192` in `p`;
 - `C = 14`;
 - `θ = 3/4`;
-- a block shorter than `h/2` that is entirely nonregular;
+- a block shorter than `h/2` whose grid values all lie within `2η` of the cut (the quantity Lemma 5.2
+  bounds);
 - a monomial claimed from `t_0 = 30`.
 
-Mutation tests run by hand:
+Mutation tests, run by hand on a copy whose `MANIFEST.json` was regenerated. With the delivered
+manifest, any edit of `verify.py` fails first on its own hash. Each constant enters `verify.py` only
+through the inequalities it serves, and γ through the single constant `G` (`γ = 1/2 − G/t`).
 
-- any change of `AD`, `AH`, `AS` or `AP` makes `verify.py` fail, since each is pinned by an exact identity
-  of a budget;
-- `C = 17` and `T0 = 256` also make it fail;
-- a smaller margin, such as `C = 17.499` or `T0 = 500`, still passes. This is expected, because those
-  inequalities have slack.
+| Mutation | Inequality that fails |
+|---|---|
+| `AD = 2048` | `h_0 <= sqrt(kt)/7` |
+| `AD = 4000` | first-family budget |
+| `AH = 64` | second-family budget |
+| `AS = 1024` | third-family budget |
+| `AP = 8192` | few-s-light budget |
+| `G = 2` | dichotomy `A_0 − 1/t > γ` |
+| `C = 17` | rich budget `Γ >= 14k` |
+| `T0 = 256` | `F >= kt/32` |
+| `T0 = 500` | crude many-s-light bound `t/64 − 2 >= 6` |
+
+`C = 69/4` still passes, as it should: the rich budget only needs
+`C >= 14 + 3/100 + (log AP)/4 + G/4 ≈ 17.21`.
 
 ## Track index
 

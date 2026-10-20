@@ -29,6 +29,7 @@ HERE = Path(__file__).resolve().parent
 T0 = 512
 AD, AH, AS, AP = 4096, 256, 4096, 16384      # u = sqrt(k)/(AD t^{5/2}), h0 = AH D t^3, Ms = AS D t, p = AP t^{7/2}/sqrt(k)
 C = Q(35, 2)                                  # F = k (t/8 - (7/8) log t - C)
+G = 3                                         # gamma = 1/2 - G/t (single source for every check)
 
 
 def dec_floor(x, digits=6):
@@ -117,6 +118,13 @@ def ln_bounds(y, N=60):
     return s, s + tail
 
 
+def ln_upper_int(y):
+    """Rational upper bound for log y, y a positive integer: y = 2^e m with 1 <= m < 2."""
+    e = y.bit_length() - 1
+    m = Q(y, 1 << e)
+    return e * ln2_bounds()[1] + (ln_bounds(m)[1] if m > 1 else 0)
+
+
 def e_lower(N=20):
     return sum(Q(1, math.factorial(n)) for n in range(N + 1))
 
@@ -127,29 +135,30 @@ def exact_budgets():
             "log 2 bounds inconsistent")
     r = {}
     # (4.3) h0 coefficients: 256 u t^3 = sqrt(kt)/16 and 514 u t^3 <= sqrt(kt)/7
-    require(Q(AH, AD) == Q(1, 16) and Q(2 * (AH + 1), AD) <= Q(1, 7), "h0 coefficients")
-    # (4.4) log h0 >= t/3 <= t/6 >= log 16
-    require(Q(T0, 6) >= 4 * L2up, "log h0 >= t/3 fails at t0")
-    # (4.10) L >= t/4: 9t/64 >= 14 log 2 at t0 (increasing)
-    require(Q(9 * T0, 64) >= 14 * L2up, "L >= t/4 fails")
+    #       h0 >= (AH/AD) sqrt(kt) and h0 <= (2(AH+1)/AD) sqrt(kt) <= sqrt(kt)/7
+    require(AD >= AH and Q(2 * (AH + 1), AD) <= Q(1, 7), "h0 upper coefficient")
+    # (4.4) log h0 >= t/2 + (1/2) log t - log(AD/AH) >= t/3, implied by t/6 >= log(AD/AH)
+    log_ratio_up = ln_bounds(Q(AD, AH))[1] if AD > AH else 0
+    require(Q(T0, 6) >= log_ratio_up, "log h0 >= t/3 fails at t0")
+    # (4.10) L = t/2 - (7/2) log t - log AP >= t/4: with log t <= t/32, 9t/64 >= log AP at t0
+    logAP_up = ln_upper_int(AP)
+    require(Q(9 * T0, 64) >= logAP_up, "L >= t/4 fails")
     # (4.11) F >= kt/32: 17 t/256 >= 35/2 at t0 (increasing)
     require(Q(17 * T0, 256) >= C, "F >= kt/32 fails")
-    # (4.12) Q coefficient: (1/8) * AD = 512; 6 * 512 = 3072
-    require(Q(AD, 8) == 512 and 6 * 512 == 3072, "Q coefficient")
+    # (4.12) Q <= (AD/8) sqrt(k) t^{7/2} + 3t is used through the monomial sixQ_leading = (6 AD/8)^2
     # (I1) B0 = ceil(384 t + 4) <= 385 t <= 512 t for t >= 4
     require(math.ceil(384 * T0 + 4) <= 385 * T0 <= 512 * T0, "B0 bound")
     # (5) global entropy: 240 * 257 * 4 / AD^2 below 1/33 - 3/200
     g = Q(240 * (AH + 1) * 4, AD * AD)
-    require(240 * (AH + 1) * 4 == 246720, "global coefficient differs")
     margin = Q(1, 33) - g - Q(3, 200)
     require(margin > 0, "first-family budget fails")
     r["first_family_margin_lower"] = dec_floor(margin, 9)
     # log 48 <= 4 (used as -t-4 <= -log 48k)
     require(e_lower() ** 4 >= 48, "log 48 <= 4 fails")
-    # Family 2: h0/(4t^2) >= 64 D t; 64 - 15 = 49; 2t - 49 D t <= -t - 4 for t >= 1
-    require(Q(AH, 4) == 64 and 64 - 15 == 49 and 2 - 49 <= -1, "second-family budget")
-    # Family 3: Ms/32 = 128 D t; 128 - 40 = 88
-    require(Q(AS, 32) == 128 and 128 - 40 == 88, "third-family budget")
+    # Family 2: h0/(4t^2) >= (AH/4) D t; 2t + 15 D t - (AH/4) D t <= -t - 4 needs AH/4 - 15 >= 4 (D >= 1, t >= 4)
+    require(Q(AH, 4) - 15 >= 4, "second-family budget")
+    # Family 3: Ms/32 >= (AS/32) D t; 40 D t - (AS/32) D t <= -t - 4 needs AS/32 - 40 >= 2
+    require(Q(AS, 32) - 40 >= 2, "third-family budget")
     # local lemma criterion: log 2 + 1/8 < 1 <= w
     require(L2up + Q(1, 8) < 1, "local lemma criterion")
     # Lemma 5.2 bookkeeping: D(12 eta + 3/h0) = 1/(2t) + 3D/h0 <= 1/(2t) + 3/(256 t^3) <= 1/t
@@ -158,20 +167,20 @@ def exact_budgets():
     for tt in (Q(T0), Q(1000), Q(10 ** 6)):
         A0 = (Q(1, 2) - 1 / tt) * (1 - 1 / tt)
         require(A0 - 1 / tt - (Q(1, 2) - Q(5, 2) / tt) == 1 / tt ** 2, "dichotomy identity")
-        require(Q(1, 2) - Q(5, 2) / tt > Q(1, 2) - 3 / tt, "dichotomy margin")
+        require(A0 - 1 / tt > Q(1, 2) - Q(G) / tt, "dichotomy margin: A0 - 1/t > gamma")
         require(A0 <= Q(1, 2), "A0 <= 1/2")
     # (7) gamma L / 2 identity, checked on a full interpolation grid (T * both sides is a polynomial of
-    # degree 2 in T and 1 in A = log t, B = log 2, so a 3 x 2 x 2 grid proves it)
+    # degree 2 in T and 1 in A = log t, B = log AP, so a 3 x 2 x 2 grid proves it)
     for T in (Q(1), Q(2), Q(5)):
         for A in (Q(0), Q(1)):
             for B in (Q(0), Q(1)):
-                gamma = Q(1, 2) - 3 / T
-                L = T / 2 - Q(7, 2) * A - 14 * B
-                rhs = T / 8 - Q(7, 8) * A - Q(7, 2) * B - Q(3, 4) + Q(21, 4) * A / T + 21 * B / T
+                gamma = Q(1, 2) - Q(G) / T
+                L = T / 2 - Q(7, 2) * A - B
+                rhs = T / 8 - Q(7, 8) * A - B / 4 - Q(G, 4) + Q(7 * G, 4) * A / T + Q(G, 2) * B / T
                 require(gamma * L / 2 == rhs, "gamma L / 2 expansion")
-    rich = C - Q(7, 2) * L2up - Q(3, 4)
-    require(rich >= Q(1432, 100), "Gamma/k lower bound below 14.32")
-    require(Q(1432, 100) - Q(3, 100) >= 14 and 14 - 11 == 3, "rich margin")
+    # Gamma >= k (C - log(AP)/4 - G/4) - 3Dt with 3Dt <= 3k/100 must give Gamma >= 14k (E <= 11k)
+    rich = C - logAP_up / 4 - Q(G, 4)
+    require(rich - Q(3, 100) >= 14 and 14 - 11 == 3, "rich budget: Gamma < 14k")
     r["Gamma_over_k_lower"] = dec_floor(rich)
     # E <= 11 k from 6Q + 100 D t <= k
     require(10 + 1 == 11, "E budget")
@@ -180,8 +189,8 @@ def exact_budgets():
     # (8) run budget: Ms(3t+1) <= 8194 (3 + 1/512) u t^2 and 8194 (3 + 1/512)/AD <= 7
     require(Q(2 * AS + 2, 1) * (3 + Q(1, T0)) / AD <= 7, "run coefficient")
     require(Q(7) + Q(1, 64) <= Q(T0) ** 4 / 2, "run t^{-1/2} term")
-    require(3072 + 1 == 3073 < Q(AP, 4) == 4096, "few s-light budget")
-    r["few_s_light_coefficients"] = "3073 < 4096"
+    require(Q(6 * AD, 8) + 1 < Q(AP, 4), "few s-light budget: 6Q + rest >= pk/4")
+    r["few_s_light_coefficients"] = f"{Q(6 * AD, 8) + 1} < {Q(AP, 4)}"
     # main threshold: 739 log 2 > 512
     require(739 * L2lo > T0, "k >= 2^739 does not give t >= 512")
     # (2) the 1/9 threshold: g(t) = t/72 - (7/8) log t - 35/2 increases for t > 63, g(1735) > 0
@@ -263,13 +272,13 @@ def negative_controls():
     #     A0 (k - k/16) - k/t < gamma k at t0, so the dichotomy fails without Lemma 5.1.
     tt = Q(T0)
     A0 = (Q(1, 2) - 1 / tt) * (1 - 1 / tt)
-    require(A0 * (1 - Q(1, 16)) - 1 / tt < Q(1, 2) - 3 / tt, "control (a) not rejected")
+    require(A0 * (1 - Q(1, 16)) - 1 / tt < Q(1, 2) - Q(G) / tt, "control (a) not rejected")
     rejected["remainder_with_M_k_over_32"] = True
     # (b) keeping #12's M = floor(k/t) with D ~ sqrt(k)/t^{5/2}: M/t^2 = k/t^3 < 246720/AD^2 * k/t^2
-    require(Q(1, T0) < Q(246720, AD * AD), "control (b) not rejected")
+    require(Q(1, T0) < Q(240 * (AH + 1) * 4, AD * AD), "control (b) not rejected")
     rejected["M_k_over_t_with_new_D"] = True
     # (c) AD = 2048 with the crude bound D <= 2u: 246720/2048^2 > 1/33
-    require(Q(246720, 2048 * 2048) > Q(1, 33), "control (c) not rejected")
+    require(Q(240 * (AH + 1) * 4, 2048 * 2048) > Q(1, 33), "control (c) not rejected")
     rejected["AD_2048"] = True
     # (d) AP = 8192: 3073 >= 8192/4
     require(not (3073 < Q(8192, 4)), "control (d) not rejected")
@@ -280,8 +289,9 @@ def negative_controls():
     # (f) theta = 3/4 (p ~ t^3/sqrt(k)): 6Q ~ 3072 sqrt(k) t^{7/2} exceeds pk/4 = 4096 sqrt(k) t^3 at t0
     require(3072 ** 2 * T0 > 4096 ** 2, "control (f) not rejected")   # 3072 t^{1/2} > 4096, squared
     rejected["theta_three_quarters"] = True
-    # (g) blocks shorter than h/2: a block of length ell = 4 eta s at step 1/s next to the cut is entirely
-    #     nonregular, fraction 1 > 12 eta + 3/h0.
+    # (g) blocks shorter than h/2: for a block of length ell = 4 eta s at step 1/s next to the cut, every
+    #     position has its grid value within 2 eta of the cut (the quantity Lemma 5.2 bounds), so that
+    #     count reaches ell, above (12 eta + 3/h0) ell.
     s, h0 = 960, 100
     eta = Q(1, 96)
     ell = int(4 * eta * s)                 # 40 consecutive grid points fit in the arc of length 4 eta
@@ -321,10 +331,12 @@ def decimal_replay():
         u = sk / (AD * t ** Dec("2.5"))
         D, M = ceil(u), floor(k / 32)
         h0, Ms = ceil(AH * D * t ** 3), ceil(AS * D * t)
-        eta, gamma = ONE / (24 * D * t), ONE / 2 - 3 / t
+        eta, gamma = ONE / (24 * D * t), ONE / 2 - G / t
+        A0 = (ONE / 2 - ONE / t) * (ONE - ONE / t)
         logp = Dec(AP).ln() + Dec("3.5") * t.ln() - t / 2
+        Cd = Dec(C.numerator) / Dec(C.denominator)
         p, L = logp.exp(), -logp
-        F = k * (t / 8 - Dec("0.875") * t.ln() - Dec("17.5"))
+        F = k * (t / 8 - Dec("0.875") * t.ln() - Cd)
         logP = LN2 + 2 * t
         Qh = F / D + logP
         logJ = LN2 + 2 * t + ((D + 1) * Qh).ln() + Dec(10) ** -40
@@ -340,6 +352,7 @@ def decimal_replay():
              2 * M / k * TOL <= ONE / 16, 4 * M / k ** 3 <= eta, D * (12 * eta + 3 / h0) <= ONE / t,
              logTglob - M / t ** 2 <= -Dec(48).ln() - t,
              logAs - Ms / 32 <= -Dec(48).ln() - t,
+             A0 * k - k / t > gamma * k,
              Gamma >= 14 * k, 10 * k + 100 * D * t + 6 * Qh <= 11 * k,
              logTK <= k, LN2 + logTK + logBrun - p * k / 4 < -Dec(4).ln()]
         checks += len(c)
@@ -362,9 +375,9 @@ def main():
     report = {
         "base": {"pr12_head": "029431bb29f2bc64bf3f6dd150ddd15bbdf7c7d5",
                  "repository_base": "63bef9ca996786a41169de4a0c3d6b3b47b0fe96"},
-        "parameters": {"u": "sqrt(k)/(4096 t^(5/2))", "M": "floor(k/32)", "h0": "ceil(256 D t^3)",
-                       "Ms": "ceil(4096 D t)", "eta": "1/(24 D t)", "gamma": "1/2 - 3/t",
-                       "p": "16384 t^(7/2)/sqrt(k)", "F": "k (t/8 - (7/8) log t - 35/2)", "t0": T0},
+        "parameters": {"u": f"sqrt(k)/({AD} t^(5/2))", "M": "floor(k/32)", "h0": f"ceil({AH} D t^3)",
+                       "Ms": f"ceil({AS} D t)", "eta": "1/(24 D t)", "gamma": f"1/2 - {G}/t",
+                       "p": f"{AP} t^(7/2)/sqrt(k)", "F": f"k (t/8 - (7/8) log t - {C})", "t0": T0},
         "monomial_certificates": monomial_certificates(),
         "exact_budgets": exact_budgets(),
         "partition_lemma_cases": check_partition(),

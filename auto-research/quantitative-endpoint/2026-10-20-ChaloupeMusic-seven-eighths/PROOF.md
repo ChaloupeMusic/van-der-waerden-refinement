@@ -37,7 +37,10 @@ else is #12's argument at new scales.
 **Where `7/8` comes from.** The flip probability is `p = 16384 t^{7/2}/sqrt(k)` instead of
 `65536 t^4/sqrt(k)`, because `D` grows like `sqrt(k)/t^{5/2}` instead of `sqrt(k)/t^3`. The extra
 `t^{1/2}` comes from `M = Θ(k)` in the first local-lemma family. Since `log N ≈ γkL/2` with
-`L = log(1/p)`, the factor `t^{-1/2}` in `p` gains `(k/8) log t`.
+`L = log(1/p)`, the factor `t^{-1/2}` in `p` gains `(k/8) log t`. The constant `16384` instead of
+`65536` is a separate saving of order `k`, unrelated to `M`. Case (ii) is compared with the full exponent
+of `e^{−pk/4}` (as in #12's own bound on the event, and PR #9 (11.5)), where #12 (31) compared with
+`pk/16`.
 
 ## 2. Interfaces
 
@@ -295,6 +298,7 @@ proves (2).
 Re-proved here: Lemmas 5.1–5.3, the extension (I2) of the anchored count to short patterns, the rewritten
 dichotomy (6), and every inequality of Sections 4–10 at the new scales. Imported unchanged: the finite
 interfaces of #12, Section 2 (geometry, global and short-period word counts, digit-rank counts with
-`E = 10k + 100Dt + 6 log q`, affine key words), #12's dilation bound and its Families 1 and 3, the rank
-split, and the source's digit product. The local lemma, Hoeffding's inequality, and the encodings of
+`E = 10k + 100Dt + 6 log q`, affine key words), #12's dilation bound, its Family 3, the rank split,
+and the source's digit product. #12's Family 1 is used with `S` redefined through the canonical
+partition (Section 6). Its probability and weight are unchanged; `S` itself changes. The local lemma, Hoeffding's inequality, and the encodings of
 PR #9 are not formalized.
