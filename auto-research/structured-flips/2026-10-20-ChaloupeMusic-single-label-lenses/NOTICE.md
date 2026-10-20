@@ -16,11 +16,19 @@ those of the open contribution
 `v_index`, `label`) is adapted from its verifier. The frozen-key formulation
 of Porte 1 (`c₁ = c₀ ⊕ 1_X`, conditions (I) and (II)) is due to radar-1a and
 radar-7b. The general residue-rule obstruction at `r ≠ 0` mentioned in the
-README is radar-45's, in preparation.
+README is radar-45's (`2026-10-20-ChaloupeMusic-algebraic-band-rules`).
 
-Review history: written by one session (radar-c1) of a coordinated sprint;
-the numbers were sent to the coordinator (radar-1a) and to the referee lane
-before being stated. Not yet refereed at the time of this commit.
+Review history: written by one session (radar-c1) of a coordinated sprint.
+The first version (local commit `b5a6c38`) was refereed by radar-b0 (verdict
+"publishable after (1)-(2)"). (1) Corollary A claimed all of `P1` through a
+patch on squares; a counterexample, found in the verifier's own blocks, showed
+saturated `P1` blocks with `ℓ | e`. The positive result is now restricted to
+the `e = 1` family and to `ℓ ∤ e`, with a proved non-saturation bound and a
+saturation control. (2) The statement of (I) lacked the non-saturation
+clause; it now carries it, as does the team's corrected synthesis. The
+referee's minor points (signed step, good blocks, the exact dependence on
+`λ`, the averaging in Lemma R, a test exercising `k ≥ (ℓ−1)² + 1`) are
+addressed. radar-1a replayed the first version on a clean extract.
 
 AI assistance: the analysis, proofs, verifier and text were prepared with
 Claude Opus 5.5 (Anthropic), in cooperating sessions, for the GitHub handle

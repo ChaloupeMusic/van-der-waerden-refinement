@@ -11,10 +11,12 @@ dilation lam, y_i(n) = (lam n mod q^i)/q^i, y~ its centred value in
 
 What is checked:
 
-  1. Lens identity (Lemma 1).  On n_j = r + q^(D-1)(m + j e):
+  1. Lens identity (Lemma 1).  On n_j = r + q^(D-1)(m + j e), e a signed
+     step whose real segment s + j lam e stays in [-q/2, q/2):
        band(n_j) = floor(theta + v j) + lam^2 e^2 j^2,
        theta = C + s^2, v = 2 s lam e, frac(s) = y_{D-1}(r),
      with C = sum_{i<D} (q y~_i(r))^2 and s = q y~_D(n_0).  Fractions.
+     Control: the unsigned step q - e (same points as -e) breaks it.
   2. Shifted squares (Lemma 2).  For D >= 3, 0 <= u < q/2 and
      r = u lam^{-1} mod q^(D-1): band(n_j) = x_j^2 + u^2 exactly, with
      x_j = floor(s) + j lam e.  Negative control: false for D = 2.
@@ -25,7 +27,9 @@ What is checked:
   4. Theorem A at lens level: with k = (ell-1)^2 + 1, R = R' + {-1, 0, 1},
      every lens floor(theta + v j) + L j^2 with L a nonzero square mod ell
      meets R mod ell; the Dirichlet witness of the proof is recomputed on each
-     lens.  Control: L = 0 mod ell (that is, ell | e) with v = 0 mod ell misses.
+     lens.  A tight lens forces the witness index (ell-1)^2, so the
+     hypothesis k >= (ell-1)^2 + 1 is exercised.  Control: L = 0 mod ell
+     (that is, ell | e) with v = 0 mod ell misses.
   5. Measured, exhaustive (not a proof for general ell): with k = 2 ell, the
      stored R of size <= 5 meets EVERY lens (all real theta, v, all nonzero
      squares L) for ell in {13, 17, 19}; the enumeration of mechanical words
@@ -33,16 +37,19 @@ What is checked:
      3-element set does it for ell = 13, so |R| = 4 is minimal there.
   6. The real construction (q = 2^61 - 1, D = 3, lam = 840, k = 145, ell = 13,
      the source's U mesh and adaptive V mesh with 200-digit decimals):
-       * P3 blocks (random r, e = 1) and P1 blocks (r = 0, random e,
-         multiples of 13 included) stay in one full label and each meets
-         X = (band mod 13 in R) + (patch on the squares x^2 with x in H);
+       * P3 blocks (random r, e = 1) and P1 blocks (r = 0) with 13 not
+         dividing e stay in one full label, meet X = (band mod 13 in R),
+         and are not saturated by it (fewer than k keys in X);
+       * saturation control, Proposition B with u = 0 (P2): on P1 blocks
+         with 13 | e the rule is constant; some are missed and some have
+         all k keys in X, which freezes them monochromatic;
        * the killer: a single-label block of the shifted family u = 1 with
-         e = 13 has no key in X (Proposition B);
-       * control: without the patch, a P1 block with e = 13 is missed.
+         e = 13 has no key in X and no perfect-square band, so no patch
+         on squares can reach it (Proposition B).
   7. Rich side, typical behaviour only (II): on 2000 uniformly random
      progressions of Z/N the number of keys in X has the binomial mean and
-     variance of density |R|/13 within 5 standard errors; the patch is never
-     met.  The tail that matters for (II) is NOT tested (see README).
+     variance of density |R|/13 within 5 standard errors.  The tail that
+     matters for (II) is NOT tested (see README).
 """
 import json
 import math
@@ -116,7 +123,22 @@ for trial in range(400):
         check(band(n, q, D, lam) == math.floor(theta + v * j) + lam ** 2 * e ** 2 * j ** 2,
               f'lens: identity fails, trial {trial} j {j}')
 OUT['lens_identity_positions'] = tests
-print(f'1. lens identity: band = floor(theta + v j) + lam^2 e^2 j^2 on {tests} positions')
+# control: the step must be read as a signed e with (k-1) lam |e| < q/2.  The step
+# e' = q - e gives the same points as -e in Z/N, and the identity read with e' fails.
+q, D, lam, k, e = 10007, 3, 60, 8, 2
+r = 12345
+bad = 0
+for m in range(5000, 9000, 37):
+    s = q * ytilde(r + q ** (D - 1) * m, q, D, lam)[-1]
+    C = sum((q * v) ** 2 for v in ytilde(r + q ** (D - 1) * m, q, D, lam)[:-1])
+    ep = q - e
+    for j in range(k):
+        if band(r + q ** (D - 1) * (m + j * ep), q, D, lam) != \
+                math.floor(C + s * s + 2 * s * lam * ep * j) + lam ** 2 * ep ** 2 * j ** 2:
+            bad += 1
+check(bad > 0, 'control: an unsigned wrapped step should break the lens identity')
+print(f'1. lens identity: band = floor(theta + v j) + lam^2 e^2 j^2 on {tests} positions; '
+      f'the wrapped step q - e breaks it on {bad} positions')
 
 # ---------------------------------------------------------- 2. shifted squares
 tests = 0
@@ -225,10 +247,33 @@ theta = Fraction(13, 3)
 bands = [math.floor(theta + 13 * 7 * j) + (13 * 4) * j * j for j in range(kA)]
 check(len({b % ell for b in bands}) == 1 and bands[0] % ell not in RR,
       'control: ell | e lens should be constant mod ell and miss R')
+# a lens on which the proof needs the largest index (ell-1)^2: v = n + 1/(ell-1) forces
+# beta = ell - 1, and floor(theta), n are chosen so that g meets R' only at i = ell - 1
+tight = None
+for n_int in range(ell):
+    for th0 in range(ell):
+        v = n_int + Fraction(1, ell - 1)
+        theta = th0 + Fraction(1, 2)
+        L = 840 ** 2
+        beta, a = dirichlet(v, ell - 1)
+        g = [(th0 + a * i + L * beta * beta * i * i) % ell for i in range(ell)]
+        hits = [i for i in range(ell) if g[i] in Rp]
+        if beta == ell - 1 and hits == [ell - 1]:
+            tight = (n_int, th0)
+            break
+    if tight:
+        break
+check(tight is not None, 'tight lens not found')
+if tight:
+    v, theta = tight[0] + Fraction(1, ell - 1), tight[1] + Fraction(1, 2)
+    bands = [math.floor(theta + v * j) + 840 ** 2 * j * j for j in range(kA)]
+    check((ell - 1) ** 2 < kA and bands[(ell - 1) ** 2] % ell in RR,
+          'tight lens: the witness index (ell-1)^2 must lie below k')
+    OUT['theoremA_tight_lens'] = {'v': str(v), 'theta': str(theta), 'witness_index': (ell - 1) ** 2}
 OUT['theoremA_lenses'] = lens_ok
 OUT['theoremA_R'] = sorted(RR)
 print(f'4. Theorem A (k = {kA}, ell = {ell}, |R| = {len(RR)}): {lens_ok} random lenses hit, '
-      f'Dirichlet witness recomputed; the ell | e control misses')
+      f'Dirichlet witness recomputed; the tight lens uses index (ell-1)^2; the ell | e control misses')
 
 # ------------------------------------- 5. measured: k = 2l, exhaustive lenses
 
@@ -316,24 +361,11 @@ assert math.gcd(lam, ell) == 1 and kA <= k
 alpha, Rmesh, mm = mesh(q, D, k)
 E_MAX = q // (400 * k ** 3 * lam)
 check(E_MAX > 10 ** 6, 'instance: E_max too small')
-H_PRIMES = [p for p in range(ell + 1, k + 1) if is_prime(p) and lam % p]
-prod = 1
-for p in H_PRIMES:
-    prod *= p
-check(prod > E_MAX, 'patch: product of H primes must exceed E_max')
-
-
-def in_H(x):
-    return any(x % p == 0 for p in H_PRIMES)
 
 
 def in_X(n):
-    """Key of n in X: band mod 13 in R, or band = x^2 with x in H and x >= q/8."""
-    b = band(n, q, D, lam)
-    if b % ell in RR:
-        return True
-    z = math.isqrt(b)
-    return z * z == b and 8 * z >= q and in_H(z)
+    """Key of n in X_13: band mod 13 in R (the rule of Theorem A, no patch)."""
+    return band(n, q, D, lam) % ell in RR
 
 
 def block(r, mstart, e):
@@ -349,34 +381,44 @@ def good_start(r, mstart, e):
     return Fraction(1, 8) <= Y <= Fraction(3, 8) - Fraction(k * lam * e, q)
 
 
-counts = {'P3_hit': 0, 'P1_hit': 0, 'P1_hit_via_patch_only': 0}
-while counts['P3_hit'] < 30:
-    r, ms = rng.randrange(q ** (D - 1)), rng.randrange(q)
-    if not good_start(r, ms, 1):
-        continue
-    ns = block(r, ms, 1)
-    if not single_label(ns):
-        continue
-    check(any(in_X(n) for n in ns), 'real P3 block missed by X')
-    counts['P3_hit'] += 1
-es = [rng.randint(1, E_MAX) for _ in range(20)] + [13 * rng.randint(1, E_MAX // 13) for _ in range(10)]
-for e in es:
+def good_block(r, e):
     while True:
         ms = rng.randrange(q)
-        if good_start(0, ms, e) and single_label(block(0, ms, e)):
-            break
-    ns = block(0, ms, e)
-    check(any(in_X(n) for n in ns), f'real P1 block missed by X (e = {e})')
-    counts['P1_hit'] += 1
+        if good_start(r, ms, e) and single_label(block(r, ms, e)):
+            return block(r, ms, e)
+
+
+counts = {'P3_met': 0, 'P3_max_keys_in_X': 0, 'P1_13_not_dividing_e_met': 0,
+          'P1_13_divides_e_missed': 0, 'P1_13_divides_e_saturated': 0}
+while counts['P3_met'] < 30:
+    ns = good_block(rng.randrange(q ** (D - 1)), 1)
+    c = sum(in_X(n) for n in ns)
+    check(c >= 1, 'real P3 block missed by X')
+    check(c < k, 'real P3 block saturated by X')
+    counts['P3_met'] += 1
+    counts['P3_max_keys_in_X'] = max(counts['P3_max_keys_in_X'], c)
+while counts['P1_13_not_dividing_e_met'] < 15:
+    e = rng.randint(1, E_MAX)
     if e % ell == 0:
-        res13 = {band(n, q, D, lam) % ell for n in ns}
-        check(len(res13) == 1, 'P1, 13 | e: bands should be constant mod 13')
-        if not (res13 & RR):
-            counts['P1_hit_via_patch_only'] += 1
-check(counts['P1_hit_via_patch_only'] >= 1, 'P1: no block exercised the patch alone')
+        continue
+    ns = good_block(0, e)
+    c = sum(in_X(n) for n in ns)
+    check(1 <= c < k, f'real P1 block with 13 not dividing e: {c} keys of {k} in X')
+    counts['P1_13_not_dividing_e_met'] += 1
+# Proposition B with u = 0 (that is P2): on 13 | e the rule is constant on the block,
+# so it misses it or saturates it; both happen.  This is the saturation control.
+for _ in range(60):
+    ns = good_block(0, ell * rng.randint(1, E_MAX // ell))
+    c = sum(in_X(n) for n in ns)
+    check(c in (0, k), f'P1 with 13 | e: partial intersection {c}')
+    counts['P1_13_divides_e_missed' if c == 0 else 'P1_13_divides_e_saturated'] += 1
+    if counts['P1_13_divides_e_missed'] >= 3 and counts['P1_13_divides_e_saturated'] >= 3:
+        break
+check(counts['P1_13_divides_e_missed'] >= 1 and counts['P1_13_divides_e_saturated'] >= 1,
+      'P1 with 13 | e: both branches of Proposition B should occur')
 OUT['real_blocks'] = counts
 
-# the killer: shifted family u = 1, e = 13, x0 = 2 mod 13
+# the killer: shifted family u = 1, e = 13; its bands x^2 + 1 are never perfect squares
 u, e = 1, 13
 r = (u * pow(lam, -1, q ** (D - 1))) % q ** (D - 1)
 killer = None
@@ -396,32 +438,24 @@ if killer is not None:
     ns = block(r, killer[0], e)
     bands = [band(n, q, D, lam) for n in ns]
     check(all(bands[j] == (killer[1] + j * lam * e) ** 2 + 1 for j in range(k)), 'killer: bands are not x^2 + 1')
+    check(not any(math.isqrt(b) ** 2 == b for b in bands), 'killer: a band is a perfect square')
     check(not any(in_X(n) for n in ns), 'killer: the block meets X')
     OUT['killer'] = {'u': u, 'e': e, 'm_start': killer[0], 'x0': killer[1], 'x0_mod_13': killer[1] % ell,
                      'band_residue_mod_13': bands[0] % ell}
 print(f'6. real construction (q = 2^61-1, D = 3, k = {k}, ell = {ell}, E_max = {E_MAX}): '
-      f'{counts["P3_hit"]} P3 and {counts["P1_hit"]} P1 single-label blocks meet X '
-      f'({counts["P1_hit_via_patch_only"]} of them with 13 | e and met through the patch only); '
-      f'the shifted block u = 1, e = 13 misses X entirely')
+      f'{counts["P3_met"]} P3 blocks met, at most {counts["P3_max_keys_in_X"]} of {k} keys in X; '
+      f'{counts["P1_13_not_dividing_e_met"]} P1 blocks with 13 not dividing e met, not saturated; '
+      f'P1 with 13 | e: {counts["P1_13_divides_e_missed"]} missed, '
+      f'{counts["P1_13_divides_e_saturated"]} saturated (Proposition B, u = 0); '
+      f'the shifted block u = 1, e = 13 misses X and has no square band')
 
 # ------------------------------------------ 7. rich side, typical behaviour
 N = q ** D
 rho = Fraction(len(RR), ell)
 vals = []
-patch_hits = 0
 for _ in range(2000):
     n0, d = rng.randrange(N), rng.randrange(1, N)
-    c = 0
-    for j in range(k):
-        n = (n0 + j * d) % N
-        b = band(n, q, D, lam)
-        if b % ell in RR:
-            c += 1
-        else:
-            z = math.isqrt(b)
-            if z * z == b and 8 * z >= q and in_H(z):
-                patch_hits += 1
-    vals.append(c)
+    vals.append(sum(band((n0 + j * d) % N, q, D, lam) % ell in RR for j in range(k)))
 mean = Fraction(sum(vals), len(vals))
 var = Fraction(sum(x * x for x in vals), len(vals)) - mean * mean
 bmean, bvar = k * rho, k * rho * (1 - rho)
@@ -429,12 +463,11 @@ se_mean = math.sqrt(float(bvar) / len(vals))
 check(abs(float(mean - bmean)) <= 5 * se_mean, 'rich: mean far from binomial')
 se_var = float(bvar) * math.sqrt(2 / (len(vals) - 1))
 check(abs(float(var - bvar)) <= 5 * se_var, 'rich: variance far from binomial')
-check(patch_hits == 0, 'rich: the patch should essentially never be met')
 OUT['rich_typical'] = {'samples': len(vals), 'density': str(rho), 'mean': round(float(mean), 3),
                        'binomial_mean': round(float(bmean), 3), 'variance': round(float(var), 3),
-                       'binomial_variance': round(float(bvar), 3), 'max': max(vals), 'patch_hits': patch_hits}
+                       'binomial_variance': round(float(bvar), 3), 'max': max(vals)}
 print(f'7. rich side, typical: mean {float(mean):.2f} (binomial {float(bmean):.2f}), variance '
-      f'{float(var):.2f} (binomial {float(bvar):.2f}), max {max(vals)}, patch hits {patch_hits}')
+      f'{float(var):.2f} (binomial {float(bvar):.2f}), max {max(vals)}')
 
 # ------------------------------------------------------------------- summary
 OUT['fails'] = len(FAIL)
