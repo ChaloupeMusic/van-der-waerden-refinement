@@ -15,3 +15,4 @@ Related: `barrier-note.md` (rigidity of `6 log q` in the earlier template).
 |---|---|---|---|---|
 | 2026-10-20 | erwan | `b < a` is the only single lever; relaxing `2a<m` or `a+b<1` alone gains nothing | research note (exact LP sensitivity) | – |
 | 2026-10-20 | ChaloupeMusic | single-label progressions make `b < a` and `a + b < 1` necessary for every sub-prescription union bound with iid flips (`λ ≤ q/(400k³)`); periodic band flips fail deterministically; PR7 tuple's threshold exceeds `10^{402}` | negative result (proofs + exact checks) | – |
+| 2026-10-20 | ChaloupeMusic | past `a = 1/2` (λ > q/k²) the x-label is injective, so the first local-lemma family must balance every k-AP of Z/N: circular; F cannot be relaxed by better counting | research note (negative, template-scoped) | – |
