@@ -23,8 +23,17 @@ bound**: a family 𝒢 of key sets such that every rich `(P, β)` has some
 1. **Duality (rigorous, trivial).** If a probability measure ν on rich
    `(P, β)` satisfies `ν(F ⊇ S) ≤ p^{|S|}` for every nonempty key set `S`,
    every cover costs at least 1.
-2. **Small sets (rigorous).** With ν uniform on ≥ N²/4 non-short-period
-   progressions and β the majority color (`|F| ≤ k/2`), the bound holds for
+2. **Small sets (rigorous).** Take ν uniform on ≥ N²/4 non-short-period
+   progressions **without a repeated V-box**, with β the majority color
+   (`|F| ≤ k/2`). The restriction matters: the covers of this repository only
+   cover coherent events (#4, § 5: "first discard F ∩ Z ≠ ∅", and likewise
+   #6, #7, #9), and a key repeated at a minority and a majority position makes
+   `(P, β)` empty, so such a cover may skip it. Without a repeated box no key
+   repeats, every `(P, β)` in the support is coherent, and every cover of the
+   repository must cover it. Few progressions are lost: a box repeated at gap
+   `g < k` forces `‖ỹ(gd)‖_∞ ≤ 2H`, hence at most `(4q/k² + 1)^D` values of
+   `gd`, hence of `d` (`g` is invertible), so at most `kN²(4/k² + 1/q)^D =
+   o(N²)` progressions. On this support the bound holds for
    `|S| = 1` (box fibre ≤ `Π(q|I_i| + 1)`) and for `2 ≤ |S| < s₀`,
    `s₀ = ⌊(4 − 2/log k)D/b⌋` (two keys, two positions, two fibres).
 3. **Linear rigidity is false (exact certificate).** Treating
@@ -44,12 +53,14 @@ bound**: a family 𝒢 of key sets such that every rich `(P, β)` has some
    fit. Proof: by Cauchy–Binet, `Π σ_i² = det(M_ρ M_ρᵀ) ≥ 1`, with
    `σ₁ ≤ 2nk²`, so `σ_ρ ≥ (2nk²)^{−n}`; the solutions lie within
    `τ ≤ 1/(4q)` of an affine subspace of dimension `d` (because `a < 1/2`);
-   points of the lattice `Λ² = {(ỹ(n₀), ỹ(d))}` are `1/q`-separated, so a
-   packing argument concludes.
+   points of the lattice `Λ² = {(ỹ(n₀), ỹ(d))}` are `1/q`-separated (sup
+   norm, separation lemma of the source), so after projection they are
+   `1/(2q)` apart in a ball of radius `√(D/2)` (circumscribing the cube),
+   and packing gives `(1 + 4q√(D/2))^d ≤ (1 + 4q√D)^d`.
 5. **Proposition (rigorous reduction).** Let `a < 1/2`, `0 < b < 1`,
    `c > b/4`, `θ < 2 − b/(2c)`. Assume
-   > **(G_θ)** there are ≥ N²/4 non-short-period progressions such that, for
-   > each one and every set `J` of `s₀` positions,
+   > **(G_θ)** there are ≥ N²/4 non-short-period progressions without a
+   > repeated V-box such that, for each one and every set `J` of `s₀` positions,
    > `rank(r_t : t ∈ J) ≥ 2D + 3 − θD`.
 
    Then for large `k` every rich cover costs ≥ 1. No full rank is needed:
@@ -58,7 +69,8 @@ bound**: a family 𝒢 of key sets such that every rich `(P, β)` has some
    `O(k^{2a} log k) + θck log k`, below `(2c − b/2)k log k`.
 
 So the rich-side barrier `c ≤ b/4 = γb/2` at `γ = 1/2` holds for every cover
-bound with these keys, **conditional on (G_θ)**, a purely combinatorial
+bound with these keys (covering at least the coherent rich events, as all
+covers of this repository do), **conditional on (G_θ)**, a purely combinatorial
 statement about Beatty vectors `w_t = round(A + tB)`. The only deficit
 mechanism found is that of Dirichlet: `r` vectors `g` costing `2r` on a
 common level set, which shrinks by ≈ 0.5–0.7 per added `g`. On `s₀` positions
@@ -96,7 +108,8 @@ Expected: `OK: all checks pass and match RESULT.json` (≈ 7 s, standard
 library only). It replays: the exact Dirichlet certificate (three instances),
 the first-order check, the four deficit measurements, on small instances the
 fibre bound, the `1/q` separation and the Gram determinant ≥ 1, and the
-three regimes of the proposition at `a = 49/100, b = 97/200, c = 13/100,
+three regimes of the proposition (with the `1/q` terms kept) and the
+repeated-box fraction at `a = 49/100, b = 97/200, c = 13/100,
 θ = 13/100, k = 10^400` (margin `6·10⁻⁴` in units of `k log k`, which is
 `2c − b/2 − θc`).
 
