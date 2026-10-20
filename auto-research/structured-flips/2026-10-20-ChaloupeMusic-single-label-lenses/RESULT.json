@@ -1,0 +1,75 @@
+{
+ "counting_bound_primes": 665,
+ "fails": 0,
+ "killer": {
+  "band_residue_mod_13": 5,
+  "e": 13,
+  "m_start": 966886100112315948,
+  "u": 1,
+  "x0": 527584851125126407,
+  "x0_mod_13": 2
+ },
+ "lens_identity_positions": 534,
+ "measured_k_equals_2l": {
+  "13": {
+   "R": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "k": 26,
+   "min_pattern_size": 7,
+   "words": 1786
+  },
+  "17": {
+   "R": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "k": 34,
+   "min_pattern_size": 9,
+   "words": 3994
+  },
+  "19": {
+   "R": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "k": 38,
+   "min_pattern_size": 10,
+   "words": 5566
+  }
+ },
+ "real_blocks": {
+  "P1_hit": 30,
+  "P1_hit_via_patch_only": 8,
+  "P3_hit": 30
+ },
+ "rich_typical": {
+  "binomial_mean": 78.077,
+  "binomial_variance": 36.036,
+  "density": "7/13",
+  "max": 101,
+  "mean": 78.062,
+  "patch_hits": 0,
+  "samples": 2000,
+  "variance": 36.133
+ },
+ "shifted_squares_positions": 979,
+ "theoremA_R": [
+  0,
+  1,
+  2,
+  6,
+  7,
+  8,
+  12
+ ],
+ "theoremA_lenses": 1500
+}
