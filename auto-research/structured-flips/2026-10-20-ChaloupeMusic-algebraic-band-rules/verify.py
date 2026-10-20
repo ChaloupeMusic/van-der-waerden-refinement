@@ -25,17 +25,22 @@ What is checked:
   2. U-phase lemma.  phase(sigma) = frac(x_D(n_0) k^2 lam) moves by exactly
      k^2/q (mod 1) when sigma moves by 1, so U-spoiled starts form intervals.
   3. Toy instance in the right regime (q = 1009^6, D = 3, k = 24,
-     lam = 720720, e = 256): for four rules of the class (a quadratic-character
-     rule mod a prime above the P2 range, a Boolean mix with a periodic part
-     mod 77, a polynomial condition combined with a character, and the CRT
-     union), and for several box words: the constructed block keeps one full
-     label (source U mesh and adaptive V mesh, 200-digit decimals), its bands
-     are Q_tau(j), every per-prime indicator is 0 and t mod L0 is constant on
-     it, so the rule puts all of its keys on the same side.  Distinct blocks
-     have disjoint key sets.
-  4. Beyond P2: the moduli of rules 1 and 3 exceed the largest step of any
-     single-label block, so no step makes their band constant (P2 and its
-     extension L | lam e do not apply).
+     lam = 720720, e = 2^18): for five rules of the class (the non-residue rule
+     chi(t - c) = -1 mod a prime above every single-label step, a truth table
+     on t mod 77 and four indicators, a cubic condition mod 1201 OR the
+     non-residue rule mod a prime near 10^6, the CRT union, and a random
+     40-element residue set mod 4001 that satisfies (G-ii) only), and for
+     several box words: the constructed block keeps one full label (source U
+     mesh and adaptive V mesh, 200-digit decimals), its bands are Q_tau(j),
+     every per-prime indicator is 0 and t mod L0 is constant on it, so the
+     rule puts all of its keys on the same side.  Distinct blocks have
+     disjoint key sets.
+  4. Scope.  The modulus of rule 1 exceeds the largest step of any
+     single-label block, so no step freezes rule 1 (P2 and its extension
+     L | lam e do not apply).  An OR is frozen as soon as ONE of its moduli
+     divides lam e': rule 3 is saturated on an r = 0 block of step 1201 (all
+     24 keys in X_s).  "chi(t - c) = 1" alone (T = c + nonzero squares) is
+     outside the class for every prime 5 <= l < 200.
   5. Negative controls, all rejected: L0 = 0 (f = 1/4) freezes the
      discriminant; r = 0 (f = 0) makes every block meet 0 mod l; a start
      sigma_0 outside the stretch breaks the band formula; a rule violating the
@@ -200,15 +205,20 @@ def T_set(l, spec):
 
 
 def hypothesis_G(l, spec, k):
-    """(G)(i): T - squares != Z/l, or (G)(ii): 2k|T| < l.  Returns the label."""
+    """The per-prime hypotheses that hold: 'G(i)' (T - squares != Z/l) and/or
+    'G(ii)' (2k|T| < l).  The empty tuple means: outside the class."""
+    out = []
     if spec[0] in ('single', 'shiftNR'):
-        return 'G(i)'                # proved in the README for every l >= 5
-    T = T_set(l, spec)
-    if len({(t - s) % l for t in T for s in squares(l)}) < l:
-        return 'G(i)'
-    if 2 * k * len(T) < l:
-        return 'G(ii)'
-    return None
+        out.append('G(i)')           # proved in the README for every odd l >= 3
+        size = 1 if spec[0] == 'single' else (l - 1) // 2
+    else:
+        T = T_set(l, spec)
+        size = len(T)
+        if len({(t - s) % l for t in T for s in squares(l)}) < l:
+            out.append('G(i)')
+    if 2 * k * size < l:
+        out.append('G(ii)')
+    return tuple(out)
 
 
 def rule_member(rule, t):
@@ -272,12 +282,11 @@ class Instance:
 
     def good_residues(self, l, spec, sigma0, I0):
         """tau mod l such that Q_tau(j) mod l avoids T_l for all j < k."""
-        if l <= 5000:
-            out = []
+        if l <= 5000:                               # first good residue, or none
             for tau in range(l):
                 if not any(in_T(l, spec, self.Q(sigma0, I0, tau, j)) for j in range(self.k)):
-                    out.append(tau)
-            return out
+                    return [tau]
+            return []
         # large l: closed form through kappa(tau) = -Delta_0(tau)/(4 gamma)
         K0 = self.K0(sigma0, I0)
         slope = 8 * self.le * self.L0
@@ -392,16 +401,19 @@ e_single_max = int(Decimal(q) * Vmax / ((k - 1) * lam)) + 1   # every single-lab
 l_big = next_prime(10 ** 9)
 l_mid = next_prime(10 ** 6)
 rules = [
-    dict(name='quadratic character mod a prime above the P2 range',
+    dict(name='non-residue rule chi(t - c) = -1 mod a prime above every single-label step',
          L0=1, primes=[(l_big, ('shiftNR', 12345))], F=lambda t0, b: b[0] == 1),
     None,                                         # Boolean mix, built below
-    dict(name='cubic condition mod 1201 OR character mod a prime near 10^6',
+    dict(name='cubic condition mod 1201 OR non-residue rule mod a prime near 10^6',
          L0=1, primes=[(1201, ('poly', [7, 2, 0, 1], frozenset({0, 1, 2}))),
                        (l_mid, ('shiftNR', 3))],
          F=lambda t0, b: max(b) == 1),
     dict(name='CRT union {t = 0 mod l}, l = 17, 19, 23',
          L0=1, primes=[(17, ('single', 0)), (19, ('single', 0)), (23, ('single', 0))],
          F=lambda t0, b: max(b) == 1),
+    dict(name='random 40-element residue set mod 4001, (G-ii) only',
+         L0=1, primes=[(4001, ('set', frozenset(random.Random(4001).sample(range(4001), 40))))],
+         F=lambda t0, b: b[0] == 1),
 ]
 # Boolean mix: an arbitrary truth table on (t mod 77, four indicators)
 sq29 = squares(29)
@@ -447,7 +459,7 @@ for ri, rule in enumerate(rules):
     inst = Instance(P, w, D, k, lam, e, rule['L0'])
     Mrule = math.prod(l for l, _ in rule['primes'])
     hyps = [hypothesis_G(l, spec, k) for l, spec in rule['primes']]
-    check(all(h is not None for h in hyps), f'toy rule {ri}: hypothesis (G) fails')
+    check(all(hyps), f'toy rule {ri}: hypothesis (G) fails')
     check(all(l % 2 and (2 * lam * e * rule['L0']) % l for l, _ in rule['primes']),
           f'toy rule {ri}: a prime divides 2 lam e L0')
     check(rule['L0'] * (Mrule + 1) * 8 <= lam * e, f'toy rule {ri}: hypothesis (S1) fails')
@@ -505,13 +517,40 @@ print(f'3.  disjointness: {n_blocks} blocks, {n_pairs} pairs within a rule, no s
 
 
 # ============================================================ 4. beyond P2
-for ri in (0, 2):
-    L = rules[ri]['L0'] * math.prod(l for l, _ in rules[ri]['primes'])
-    check(math.gcd(L, lam) == 1 and L > e_single_max,
-          f'beyond P2: rule {ri} modulus within reach of a constant-band step')
-check(e_single_max < l_big, 'beyond P2: l_big not above the largest single-label step')
-print(f'4. beyond P2: largest single-label step < {e_single_max}; rule moduli '
-      f'{l_big} and {1201 * l_mid} are coprime to lam and larger')
+check(is_prime(l_big) and math.gcd(l_big, lam) == 1 and l_big > e_single_max,
+      'scope: rule 1 modulus within reach of a freezing step')
+check(hypothesis_G(4001, rules[4]['primes'][0][1], k) == ('G(ii)',),
+      'scope: rule 5 should satisfy (G-ii) and not (G-i)')
+# an OR is frozen by ONE modulus: rule 3 on an r = 0 block of step 1201
+T1201 = T_set(1201, rules[2]['primes'][0][1])
+sq1201 = squares(1201)
+c_frozen = next(t for t in sorted(T1201) if t in sq1201)
+root = next(x for x in range(1201) if x * x % 1201 == c_frozen)
+lo, hi = intervals_D[0]
+s_h = math.ceil(Fraction(lo) * q) + 1
+s_h += (root - s_h) % 1201
+frozen_block = None
+for _ in range(50):
+    m_h = (lam_inv_q * s_h) % q                     # r = 0: q y_D = lam m mod q
+    ns = [q ** (D - 1) * (m_h + j * 1201) for j in range(k)]
+    if (len({label(n, q, D, lam, k, alpha, R, mm) for n in ns}) == 1
+            and q * ytilde(ns[0], q, D, lam)[-1] == s_h):
+        frozen_block = ns
+        break
+    s_h += 1201 * 1000
+check(frozen_block is not None, 'scope: no single-label r = 0 block of step 1201')
+bands_h = [band(n, q, D, lam) for n in frozen_block]
+check(all(t % 1201 == c_frozen for t in bands_h), 'scope: bands not frozen mod 1201')
+check(all(rule_member(rules[2], t)[0] for t in bands_h), 'scope: rule 3 should contain the whole block')
+# "chi(t - c) = 1" alone: T = c + nonzero squares fails (G-i) and (G-ii)
+out_of_class = [l for l in range(5, 200) if is_prime(l)
+                and hypothesis_G(l, ('set', frozenset(s2 for s2 in squares(l) if s2)), k) == ()]
+check(out_of_class == [l for l in range(5, 200) if is_prime(l)],
+      'scope: "t - c a nonzero square" unexpectedly in the class')
+print(f'4. scope: every single-label step is below {e_single_max}; rule 1 (modulus {l_big}) '
+      f'cannot be frozen; rule 3 is frozen inside X_s by step 1201 at r = 0 '
+      f'(24 bands = {c_frozen} mod 1201); rule 5 is (G-ii) only; '
+      f'"chi(t - c) = 1" is outside the class for the {len(out_of_class)} primes 5 <= l < 200')
 
 
 # ============================================================ 5. controls
@@ -557,7 +596,7 @@ for tau in range(0, inst.Ts, max(1, inst.Ts // 40)):
 check(bad > 0, 'control (c): a bad stretch start went undetected')
 ctrl += 1
 # (d) T = squares mod 29 violates (G); the construction finds no residue
-check(hypothesis_G(29, ('set', frozenset(squares(29))), k) is None, 'control (d): (G) should fail')
+check(hypothesis_G(29, ('set', frozenset(squares(29))), k) == (), 'control (d): (G) should fail')
 check(inst.good_residues(29, ('set', frozenset(squares(29))), sigma0, I0) == [],
       'control (d): a good residue exists for T = squares')
 ctrl += 1
@@ -597,13 +636,17 @@ summary = {
         'hypotheses': ['L0 | lam e/2', 'primes odd, not dividing lam e L0',
                        'S1: 8 L0 (M + 1) <= lam e', 'S2: (6k+12) lam e + 8 <= q H/32 - 2',
                        'S3: 32 k lam e < q'],
-        'unsplit_blocks_at_least': '(k^2/2 - 4)^(D-1) * W, W = floor((qH/32 - 2)/((k+2) lam e)) - 4 >= 2',
+        'unsplit_blocks_at_least': '(k^2/2 - 4)^(D-2) * (k^2/4 - 2) * W, W = floor((qH/32 - 2)/((k+2) lam e)) - 4 >= 2',
+        'regime': 'a < 1/2 (lam <= q/(400 k^3)); exponent scale: total modulus must be >= q^(1-o(1))',
         'consequence': {'inside': 'K_in blocks inside X_s: monochromatic for every draw; K_in >= 1 gives P(no mono) = 0',
                         'outside': 'K_out blocks outside X_s: sub-prescription union bound >= K_out (1-p)^k, P(no mono) <= exp(-K_out (1-p)^k)',
                         'split': 'K = K_in + K_out; K_in = 0 forces K_out = K'},
     },
     'toy_instance': {'q': '1009^6', 'D': D, 'k': k, 'lam': lam, 'e': e, 'W': W_toy,
                      'largest_single_label_step_below': e_single_max, 'l_big': l_big,
+                     'scope': {'never_frozen': 'rule 1 (prime modulus above every single-label step)',
+                               'or_frozen_by_one_modulus': f'rule 3 inside X_s on an r = 0 block of step 1201, bands = {c_frozen} mod 1201',
+                               'chi_equal_1_outside_class_primes_5_to_199': len(out_of_class)},
                      'rules': summary_rules},
     'finite_checks': {'algebra_instances': alg_instances, 'algebra_band_points': alg_points,
                       'u_phase_pairs': 200, 'disjoint_block_pairs': n_pairs,

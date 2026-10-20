@@ -1,9 +1,11 @@
 # Algebraic band rules cannot split every single-label block
 
 **Status:** negative result (structural research note), with proofs and exact
-finite checks. No new bound is claimed. The note closes one named class of
-candidates for "door 1" (structured flips), the only known route past `1/8`
-in the current template.
+finite checks. No new bound is claimed. In the regime `a < 1/2` of the
+template, the note closes one named class of candidates for "door 1"
+(structured flips), the only known route past `1/8` in the current template.
+It closes the class up to total modulus `q^{1−o(1)}`. Beyond that it says
+nothing.
 
 **Base commit:** `63bef9ca996786a41169de4a0c3d6b3b47b0fe96`.
 
@@ -41,16 +43,21 @@ Door 1 (the synthesis of the sprint, "La sortie qui reste") freezes a
 structured set `X_s` of keys, `c_1 = c_0 ⊕ 1_{X_s}`, and flips the other keys
 independently with probability `p = k^{-b}`. It needs:
 
-* **(I)** every case (ii) progression is cut by `X_s`;
+* **(I)** every case (ii) progression `P` is cut by `X_s`: `X_s` contains at
+  least one key of `P` on its dominant colour, and **not all** of them
+  (non-saturation). If every dominant key is frozen, `c_1` swaps the dominant
+  positions to the other colour, and `P` is monochromatic, or nearly so, for
+  every draw;
 * **(II)** no rich progression has more than `εk` keys in `X_s`.
 
 Then `b` is no longer bounded by `a`, and every `c < 1/4` would follow.
 
 For a single-label progression `B` (one full label, so `c_0` is constant on
 `B`), `c_1` is monochromatic on `B` exactly when `X_s` contains **none or
-all** of the keys of `B`. So (I) must be read as "`X_s` **splits** `κ(B)`":
-a block whose keys all lie in `X_s` is as bad as a block that misses it, and
-worse, since nothing random is left on it.
+all** of the keys of `B`. On single-label blocks, (I) with its non-saturation
+clause therefore reads "`X_s` **splits** `κ(B)`". A block whose keys all lie
+in `X_s` is as bad as a block that misses it, and worse, since nothing random
+is left on it.
 
 The deliverable (b) of the sprint plan asks for a class of `X_s`, containing
 the periodic rules (closed by P2) and the CRT unions, that provably fails (I).
@@ -78,11 +85,15 @@ The class contains:
 
 * every rule periodic in the band modulo `L_0` (`𝓛 = ∅`), the class of P2;
 * residue unions, the CRT construction: `T = {ρ_ℓ}` (G-i), `F = OR`;
-* quadratic-character rules "`t − c` is a non-residue mod `ℓ`": `T = c + NR_ℓ`,
-  of density `1/2` (G-i), since `c ∉ T − □_ℓ`;
-* polynomial conditions `P_W(t) mod ℓ ∈ S_W` with `deg P_W ≤ d` and
-  `2kd|S_W| < ℓ` (G-ii), whose coefficients may depend on the box coordinates
-  in any way;
+* the non-residue rules "`t − c` is a non-residue mod `ℓ`", i.e.
+  `χ_ℓ(t − c) = −1`: `T = c + NR_ℓ` has density `1/2` and satisfies (G-i),
+  since `c ∉ T − □_ℓ`. Their complements `χ_ℓ(t − c) ∈ {0, 1}` are in the
+  class through `F`. The rule "`t − c` is a nonzero square" taken alone is
+  **not** in the class: `T = c + (□_ℓ ∖ {0})` fails (G-i) and (G-ii) for
+  every prime `5 ≤ ℓ < 200` (checked);
+* polynomial conditions `P_W(t) mod ℓ ∈ S_W` with `P_W` non-constant mod `ℓ`,
+  `deg P_W ≤ d` and `2kd|S_W| < ℓ` (G-ii), whose coefficients may depend on
+  the box coordinates in any way (a constant `P_W` gives `T = ∅` or `ℤ/ℓ`);
 * any Boolean combination of these with a periodic part (XOR, majority, a
   truth table).
 
@@ -127,9 +138,10 @@ monochromatic progression for every draw, or the two bounds above with
 
 **Corollary 3 (sizes).** Let `L_0' = L_0/gcd(L_0, λ/2)` and take
 `e = L_0'·2^t` with `t ≥ 0` minimal such that `λe ≥ 8L_0(M+1)`. Then
-`λe ≤ max(λL_0', 16 L_0 (M+1))` and `W ≥ q/(32k²(k+2)λe) − 6`. On the
-exponent scale (`D = k^a`, `ln q = c k^{1−a} ln k (1+o(1))`, `p = k^{−b}`,
-`b > a`), `pk = k^{1−b} = o(ln q)`. Hence an algebraic band rule with
+`λe ≤ max(λL_0', 16 L_0 (M+1))` and `W ≥ q/(32k²(k+2)λe) − 6`. In the regime
+`a < 1/2` of the template (`λ ≤ q/(400k³)`), on the exponent scale
+(`D = k^a`, `ln q = c k^{1−a} ln k (1+o(1))`, `p = k^{−b}`, `b > a`),
+`pk = k^{1−b} = o(ln q)`. Hence an algebraic band rule with
 `ln(L_0' λ) ≤ (1−η) ln q` and `ln(L_0 M) ≤ (1−η) ln q` makes
 `ln K ≥ η ln q (1 − o(1)) ≫ pk`, which is fatal. **An algebraic band rule
 that cuts every single-label block needs total modulus `L_0 · ∏ℓ ≥ q^{1−o(1)}`.**
@@ -142,20 +154,29 @@ When moreover `a + b > 1`, the box words alone give
 A single-label block of step `e'` needs `(k−1)λe' < q·|V| < qH`, so every
 step is below `e_1 = qH/((k−1)λ)`. P2 (and radar-c1's Proposition B)
 **freezes** a periodic rule of modulus `L` by taking a step with `L | λe'`.
-This works only when `L/gcd(L, λ) < e_1`. Theorem 1 never freezes anything:
-under (S2) it reaches total moduli up to `λe/8 ≈ q/(1536 k³)`, a factor
-of order `λ/1536` beyond `e_1 ≈ q/(k³λ)`. For the source's `λ`, the product
-of prime powers over the primes up to `h_0`, `ln λ ≥ θ(h_0) ≥ h_0/2`, so the
+This works only when `L/gcd(L, λ) < e_1`. Theorem 1 freezes only the periodic
+part `t mod L_0`, by the same mechanism (Lemma 4). It never freezes a
+per-prime indicator: it sets all of them to 0 through `τ`. Under (S2) the
+product `M = ∏ℓ` can reach `λe/(8L_0) ≈ q/(1536 k³ L_0)`, a factor of order
+`λ/(1536 L_0)` beyond `e_1 ≈ q/(k³λ)`. For the source's `λ` (the product of
+prime powers over the primes up to `h_0`), `ln λ ≥ θ(h_0) ≥ h_0/2`, so this
 factor is `exp(Ω(k^a log² k))`.
 
-In particular a residue union (`F = OR`) with one prime `ℓ ≤ E_max` already
-dies by Proposition B. The block of step `e' = ℓ` freezes `t mod ℓ`. In the
-family `x² + u²` the frozen value can be chosen in `T_ℓ`, and then the whole
-block lies inside `X_s`. Theorem 1
-adds the rules that no step can freeze. Quadratic characters modulo primes
-above `e_1` are the simplest: they have density `1/2`, and P2, Proposition B
-and counting all leave them open. It also adds every Boolean combination,
-whatever its truth table.
+A rule whose per-prime part has a modulus `ℓ < e_1` can already die by
+freezing, and for an OR one such prime suffices. The block of step `e' = ℓ`
+freezes `t mod ℓ`. In radar-c1's family its bands are `x_j² + u²` with
+`x_j ≡ x_0 (mod ℓ)`. Inside one box word, `x_0` and `u` run over all residues
+mod `ℓ`, since their ranges have length at least `q/(32k²) ≥ ℓ`, and every
+residue mod an odd prime is a sum of two squares. The frozen value
+`x_0² + u²` can therefore be put in `T_ℓ`, and the whole block then lies
+inside `X_s`. `verify.py` exhibits such a block for rule 3 of the toy
+(Checks, 4).
+
+Theorem 1 adds the rules that no single step freezes into one value. The
+simplest are the non-residue rules `χ_ℓ(t − c) = −1` modulo a prime `ℓ`
+above `e_1` (rule 1 of the toy). They have density `1/2`, so neither freezing
+nor counting kills them. Theorem 1 handles every Boolean combination in the
+same way, with all indicators at 0, whatever the truth table.
 
 ## Proof
 
@@ -264,8 +285,9 @@ Corollaries 2 and 3 follow as in radar-99's Theorem 1. With the prescribed
   or the integer part of `C`) cannot be combined with `τ` by this CRT argument.
 * **Pseudo-random residue sets.** If `T − □_ℓ = ℤ/ℓ` and `|T| ≥ ℓ/(2k)`
   (for instance a random `T` with more than `2 log₂ ℓ` elements), no
-  residue `τ` need be good. Such rules behave like random sets, and those
-  fail (II) (synthesis, "Un X_s aléatoire échoue sur (II)").
+  residue `τ` need be good, and such rules are not covered. The synthesis
+  shows that a uniformly random `X_s` fails (II). Whether a pseudo-random
+  residue rule can satisfy (I) and (II) is not addressed here.
 * **Non-periodic rules.** Rules that read exact squares (patches; see
   radar-c1's family `x² + u²`), rules in `√(t − C_0)` (the key does not know
   `C`; radar-99, "Open: structured flips"), and Bohr sets of irrational
@@ -286,22 +308,32 @@ Corollaries 2 and 3 follow as in radar-99's Theorem 1. With the prescribed
    discriminant equals `K_0 + 8λeL_0τ`. All in Fractions: 2,783 bands.
 2. **U-phase.** On 200 random pairs, `phase(σ+d) − phase(σ) − dk²/q ∈ ℤ`.
 3. **Toy instance in the regime of the theorem.** `q = 1009^6`, `D = 3`,
-   `k = 24`, `λ = 720720`, `e = 2^18`, with (S1)–(S3) checked. Four rules:
-   * a quadratic character modulo the prime `1000000007`;
-   * a random truth table on `(t mod 77`, four indicators mod 17, 19, 23, 29`)`,
-     mixing singletons, a shifted non-residue set and a two-element set;
-   * the cubic condition `t³ + 2t + 7 ∈ {0,1,2} mod 1201` (G-ii) OR a
-     character modulo `1000003`;
-   * the CRT union mod 17, 19, 23.
+   `k = 24`, `λ = 720720`, `e = 2^18`, with (S1)–(S3) checked. Five rules:
+   1. the non-residue rule `χ(t − c) = −1` modulo the prime `1000000007`;
+   2. a random truth table on `(t mod 77`, four indicators mod 17, 19, 23, 29`)`,
+      mixing singletons, a shifted non-residue set and a two-element set;
+   3. the cubic condition `t³ + 2t + 7 ∈ {0,1,2} mod 1201`, for which (G-i)
+      and (G-ii) both hold, OR the non-residue rule modulo `1000003`;
+   4. the CRT union mod 17, 19, 23;
+   5. a random 40-element residue set mod `4001`, which satisfies (G-ii) and
+      not (G-i). This exercises the sparse branch alone.
 
    For each rule, on 8 coordinate-1 words and 2 coordinate-`D` intervals:
    32 blocks keep one full label, computed with the source's `U` mesh and
    adaptive `V` mesh to 200 digits. Their bands equal `Q_τ(j)`, every
    indicator is 0, `t mod L_0` is constant, and every key lies on one side
-   of `X_s`. The 1,984 pairs of blocks within a rule share no key.
-4. **Beyond P2.** Every single-label step of the toy is below `55210352`. The
-   moduli `1000000007` and `1201·1000003` are prime to `λ` and above it, so
-   no step freezes those rules.
+   of `X_s`. The 2,480 pairs of blocks within a rule share no key.
+4. **Scope.**
+   * Every single-label step of the toy is below `55210352`. The modulus
+     `1000000007` of rule 1 is a prime, prime to `λ` and above that bound,
+     so no step freezes rule 1.
+   * An OR is frozen as soon as **one** of its moduli divides `λe'`. On an
+     `r = 0` block of step `1201`, with labels checked on the source's
+     meshes, the 24 bands are `≡ 140 (mod 1201)`, a value in the cubic's set.
+     Rule 3 thus contains the whole block. This is radar-b0's
+     counterexample to an earlier wording, reproduced here.
+   * "`t − c` is a nonzero square" alone is outside the class for the 44
+     primes `5 ≤ ℓ < 200`.
 5. **Negative controls, all rejected:** `L_0 = 0` (`f = 1/4`) freezes the
    discriminant; at `r = 0` every block meets `0 mod ℓ`; a start outside the
    stretch breaks the band formula; `T = □_29` violates (G) and has no good
@@ -311,12 +343,18 @@ Corollaries 2 and 3 follow as in radar-99's Theorem 1. With the prescribed
 **Mutation test** (run by hand, not part of `verify.py`). Each of the
 following edits of `verify.py` makes it fail:
 
-* `b_f + 1` (3,159 failed checks);
-* `L_0/(λe)` in place of `L_0/(2λe)` (2,686);
+* `b_f + 1` (3,205 failed checks);
+* `L_0/(λe)` in place of `L_0/(2λe)` (2,726);
 * `T_s = λe/(2L_0)` (14, at `τ = 104`);
 * slope `4λeL_0` in place of `8λeL_0` (128);
 * the opposite sign of `κ` (128);
-* `σ = σ_0 + τ` (369);
-* `Q_τ` without `+τ` (2,829).
+* `σ = σ_0 + τ` (382);
+* `Q_τ` without `+τ` (2,838).
+
+The arbiter's three mutations also fail:
+
+* `e = 2^19`, which violates (S2) (3);
+* top digit `⌊f*q⌋ − 1` (224);
+* `κ` shifted by 1 for the non-residue rule (128).
 
 The finite checks illustrate the lemmas; the proofs are the text above.

@@ -3,7 +3,7 @@
   "finite_checks": {
     "algebra_band_points": 2783,
     "algebra_instances": 31,
-    "disjoint_block_pairs": 1984,
+    "disjoint_block_pairs": 2480,
     "negative_controls_rejected": 7,
     "u_phase_pairs": 200
   },
@@ -27,7 +27,8 @@
       "G(i): T_l - squares != Z/l",
       "G(ii): 2k|T_l| < l"
     ],
-    "unsplit_blocks_at_least": "(k^2/2 - 4)^(D-1) * W, W = floor((qH/32 - 2)/((k+2) lam e)) - 4 >= 2"
+    "regime": "a < 1/2 (lam <= q/(400 k^3)); exponent scale: total modulus must be >= q^(1-o(1))",
+    "unsplit_blocks_at_least": "(k^2/2 - 4)^(D-2) * (k^2/4 - 2) * W, W = floor((qH/32 - 2)/((k+2) lam e)) - 4 >= 2"
   },
   "toy_instance": {
     "D": 3,
@@ -42,22 +43,32 @@
       {
         "L0": 1,
         "hypotheses": [
-          "G(i)"
+          [
+            "G(i)"
+          ]
         ],
         "modulus": 1000000007,
         "primes": [
           1000000007
         ],
-        "rule": "quadratic character mod a prime above the P2 range",
+        "rule": "non-residue rule chi(t - c) = -1 mod a prime above every single-label step",
         "unsplit_blocks_checked": 32
       },
       {
         "L0": 77,
         "hypotheses": [
-          "G(i)",
-          "G(i)",
-          "G(i)",
-          "G(i)"
+          [
+            "G(i)"
+          ],
+          [
+            "G(i)"
+          ],
+          [
+            "G(i)"
+          ],
+          [
+            "G(i)"
+          ]
         ],
         "modulus": 16588957,
         "primes": [
@@ -72,23 +83,34 @@
       {
         "L0": 1,
         "hypotheses": [
-          "G(i)",
-          "G(i)"
+          [
+            "G(i)",
+            "G(ii)"
+          ],
+          [
+            "G(i)"
+          ]
         ],
         "modulus": 1201003603,
         "primes": [
           1201,
           1000003
         ],
-        "rule": "cubic condition mod 1201 OR character mod a prime near 10^6",
+        "rule": "cubic condition mod 1201 OR non-residue rule mod a prime near 10^6",
         "unsplit_blocks_checked": 32
       },
       {
         "L0": 1,
         "hypotheses": [
-          "G(i)",
-          "G(i)",
-          "G(i)"
+          [
+            "G(i)"
+          ],
+          [
+            "G(i)"
+          ],
+          [
+            "G(i)"
+          ]
         ],
         "modulus": 7429,
         "primes": [
@@ -98,7 +120,26 @@
         ],
         "rule": "CRT union {t = 0 mod l}, l = 17, 19, 23",
         "unsplit_blocks_checked": 32
+      },
+      {
+        "L0": 1,
+        "hypotheses": [
+          [
+            "G(ii)"
+          ]
+        ],
+        "modulus": 4001,
+        "primes": [
+          4001
+        ],
+        "rule": "random 40-element residue set mod 4001, (G-ii) only",
+        "unsplit_blocks_checked": 32
       }
-    ]
+    ],
+    "scope": {
+      "chi_equal_1_outside_class_primes_5_to_199": 44,
+      "never_frozen": "rule 1 (prime modulus above every single-label step)",
+      "or_frozen_by_one_modulus": "rule 3 inside X_s on an r = 0 block of step 1201, bands = 140 mod 1201"
+    }
   }
 }
