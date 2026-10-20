@@ -102,18 +102,28 @@ K = (k²/2 − 4)^{D−2} · (k²/4 − 2) · W,     W = ⌊(qH/32 − 2) / ((k+
 
 single-label progressions `n_j = r + q^{D−1}(m + je)`, `0 ≤ j < k`, with
 pairwise disjoint key sets, such that `X_s` contains either all or none of the
-keys of each.
+keys of each. Write `K = K_in + K_out` accordingly. Both cases are failures of
+(I): a block inside `X_s` is saturated (all its keys are frozen), a block
+outside is not touched.
 
 **Corollary 2 (door 1).** For every algebraic band rule satisfying the
-hypotheses, and every outer coloring `c_0`:
+hypotheses, and every outer coloring `c_0`, with `c_1 = c_0 ⊕ 1_{X_s}` and
+independent flips of probability `p` on the keys outside `X_s`:
 
-* if one of the `K` blocks lies inside `X_s`, it is monochromatic under `c_1`
-  with probability 1;
-* otherwise all `K` blocks avoid `X_s`; each is monochromatic as soon as none
-  of its keys flips, and these events are independent, so
-  `P(no monochromatic progression) ≤ exp(−K(1−p)^k)`, and every
-  sub-prescription union bound totals at least `K(1−p)^k` (each event fixes
-  flips on keys of a single block, as in radar-99's Theorem 1).
+* **inside** (`K_in` blocks): such a block has no random key, and `c_1` is
+  constant on it, so it is monochromatic for every draw of the flips. If
+  `K_in ≥ 1`, then `P(no monochromatic progression) = 0`, and no union bound
+  can fall below 1.
+* **outside** (`K_out` blocks): such a block is monochromatic as soon as none
+  of its `k` keys flips, with probability `(1−p)^k`, and these events are
+  independent across blocks. Hence
+  `P(no monochromatic progression) ≤ exp(−K_out(1−p)^k)`, and every
+  sub-prescription union bound totals at least `K_out(1−p)^k`: each event
+  fixes flips on keys of a single block, as in radar-99's Theorem 1.
+
+Since `K_in = 0` forces `K_out = K`, the rule fails in every case: either a
+monochromatic progression for every draw, or the two bounds above with
+`K_out = K`.
 
 **Corollary 3 (sizes).** Let `L_0' = L_0/gcd(L_0, λ/2)` and take
 `e = L_0'·2^t` with `t ≥ 0` minimal such that `λe ≥ 8L_0(M+1)`. Then

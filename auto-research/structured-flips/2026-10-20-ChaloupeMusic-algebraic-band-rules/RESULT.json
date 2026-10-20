@@ -10,7 +10,11 @@
   "theorem": {
     "band_polynomial": "Q_tau(j) = (sigma_0 + 2 tau + j lam e)^2 + b_f j + I_0 + tau, b_f = lam e/2 + L0",
     "class": "X_s on word W = {t : F_W(t mod L0, (1[t mod l in T_l])_l) = 1}, F_W arbitrary",
-    "consequence": "every sub-prescription union bound >= K (1-p)^k; P(no mono) <= exp(-K (1-p)^k)",
+    "consequence": {
+      "inside": "K_in blocks inside X_s: monochromatic for every draw; K_in >= 1 gives P(no mono) = 0",
+      "outside": "K_out blocks outside X_s: sub-prescription union bound >= K_out (1-p)^k, P(no mono) <= exp(-K_out (1-p)^k)",
+      "split": "K = K_in + K_out; K_in = 0 forces K_out = K"
+    },
     "discriminant": "K_0 + 8 lam e L0 tau",
     "hypotheses": [
       "L0 | lam e/2",
