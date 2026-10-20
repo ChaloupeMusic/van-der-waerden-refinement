@@ -77,15 +77,22 @@ lemma).** Suppose `A` is a union of cells of a partition of the `y`-torus into
 boxes, the cells being colored by a union bound or a local lemma over events
 indexed by cell words, as in the source.
 
-1. *(Minkowski.)* A box cell holding more than `(4k)^D` points of `{ỹ(n)}`
-   contains a `k`-term progression: the lattice of representatives has
-   covolume `1/N`, so the half-scaled difference box of side `ℓ_i/(2(k−1))`
-   contains a nonzero `ỹ(d)`, and `n + jd` stays in the cell from any point of
-   its middle half. So every 1-cell of a `k`-AP-free `A` has `≤ (4k)^D`
-   points. (Checked exactly on small instances by `verify.py`.)
-2. *(Entropy.)* A cell of `≤ (4k)^D` points determines its point up to
-   `(4k)^D`. A generic progression with two points in `A` is therefore fixed,
-   up to `(4k)^{2D}k²`, by its cell word: there are `≥ N^{2−o(1)}` distinct
+1. *(Minkowski, sketch.)* There is an absolute `C` such that a box cell
+   holding more than `(Ck)^D` points of `{ỹ(n)}` contains a `k`-term
+   progression. Sketch: the representatives form a lattice of covolume `1/N`
+   whose fundamental domain has diameter `≈ √D/q`. In coordinates where the
+   cell is narrower than the lattice spacing, restrict to one layer, a coset
+   of the sublattice stationary in those coordinates. In the others the
+   cell's middle half-box contains a lattice point, and pigeonholing the
+   points over `(4k)^{D′}` sub-boxes gives a nonzero lattice vector `v` with
+   `|v_i| ≤ ℓ_i/(4k)`, so `n + jv` stays in the cell for `j < k`. The layer
+   bookkeeping is not written out: a complete proof is an open obligation,
+   and `verify.py` only checks the statement exactly on small instances
+   (where the step `d = 1` already works). The constant plays no role below.
+   So every 1-cell of a `k`-AP-free `A` has `≤ (Ck)^D` points.
+2. *(Entropy.)* A cell of `≤ (Ck)^D` points determines its point up to
+   `(Ck)^D`. A generic progression with two points in `A` is therefore fixed,
+   up to `(Ck)^{2D}k²`, by its cell word: there are `≥ N^{2−o(1)}` distinct
    words, and `≥ N^{1−o(1)}` through any one 1-cell. Every event about the
    colors of `k` cells has probability `≥ e^{−O(k)}`, so both the union bound
    and the local-lemma condition (incident weight per cell `≪ 1`) fail, since
