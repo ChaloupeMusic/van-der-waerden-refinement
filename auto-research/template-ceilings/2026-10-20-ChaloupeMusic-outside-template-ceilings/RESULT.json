@@ -1,0 +1,17 @@
+{
+  "asymmetric_if_no_structured_ones_theta=1/20": "19/80",
+  "asymmetric_with_structured_ones": {
+    "1/10": "1/40",
+    "1/2": "1/8",
+    "1/4": "1/16",
+    "3/4": "1/16"
+  },
+  "control_drop_B": "1/4",
+  "control_drop_F_R": "1/4",
+  "current": "1/8",
+  "dense_radii_c_at_k=2^1024": "4.883e-04",
+  "fine_coarse": "1/8",
+  "group_design_feasible_at_a=1/2": true,
+  "group_design_feasible_at_a=49/100": false,
+  "uncertainty_min_exponent_of_H": "1/2"
+}
