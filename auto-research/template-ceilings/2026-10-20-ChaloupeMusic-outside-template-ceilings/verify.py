@@ -14,7 +14,7 @@ a constraint deliberately dropped must show the gain, so the solver sees gains).
 """
 from fractions import Fraction as Q
 from itertools import combinations
-import json, sys
+import json, math, sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -72,13 +72,19 @@ def asymmetric(theta, structured_ones=True):
     cons.append(([0, -(1 - theta), Q(0), Q(2)], Q(0)))                    # 2c <= (1-theta) b0
     return sup([0, 0, 0, 1], cons, 4, box=Q(1))
 
-def fine_coarse():
-    """x = (a, bc, s, c): flips of rate k^-bc on a set Sigma of density k^-s.
-    Structured progressions see rate k^-(bc+s) (density averaging), rich ones too."""
+def fine_coarse(s_fixed=None, rich_bc_only=False):
+    """x = (a, bc, s, c): oblivious version, flips of rate k^-bc on a set Sigma of
+    density k^-s. Structured progressions see rate k^-(bc+s) (density averaging),
+    rich ones too. rich_bc_only is a mutation (rich side paying bc alone)."""
     cons = [([Q(-1), Q(1), Q(1), Q(0)], Q(0)),            # bc + s <= a
             ([Q(1), Q(1), Q(1), Q(0)], Q(1)),             # a + bc + s <= 1
-            ([Q(1), 0, 0, 0], H),                         # a <= 1/2
-            ([Q(0), -H, -H, Q(2)], Q(0))]                 # 2c <= gamma (bc + s)
+            ([Q(1), 0, 0, 0], H)]                         # a <= 1/2
+    if rich_bc_only:
+        cons.append(([Q(0), -H, Q(0), Q(2)], Q(0)))
+    else:
+        cons.append(([Q(0), -H, -H, Q(2)], Q(0)))         # 2c <= gamma (bc + s)
+    if s_fixed is not None:
+        cons += [([0, 0, Q(1), 0], s_fixed), ([0, 0, Q(-1), 0], -s_fixed)]
     return sup([0, 0, 0, 1], cons, 4)
 
 def uncertainty():
@@ -101,34 +107,85 @@ def dense_radii_c(logk):
     import math
     return math.log(2) / (2 * logk)
 
-def minkowski_cells(q=101, D=2, k=5, seed=3, nbox=6):
-    """Exact check of the lemma used in the no-go: a box cell of the y-torus with
-    more than (4k)^D points of {y~(n)} contains a k-term progression of Z/q^D.
-    Brute force on small instances (q prime, lambda = 1)."""
+def cell_lemma_cyclic(q, D, k, lam, nbox, seed):
+    """Cell lemma, cyclic progressions, constant C = 1 (proof due to the referee
+    session of the sprint): the representatives form the lattice
+    L = Z^D + Z u, u = (1/q, ..., 1/q^D); a box cell of widths <= 1 lifts to a
+    half-open box B; if |L cap B| > (k-1)^D = [L : (k-1)L], two points x != y are
+    congruent mod (k-1)L, v = (y - x)/(k-1) is a nonzero element of L with
+    |v_i| < 1, and x + jv (j < k) stays in B by convexity. Checked exactly: for
+    every random box above the threshold, such a pair is found and its
+    progression n + jd lies in the cell. Also the tight example: the box
+    [0, (k-1)/q)^D holds exactly (k-1)^D points and contains no k-AP."""
     import random
     rng = random.Random(seed)
     N = q ** D
-    def yt(n):
-        return tuple(((Q(n, q ** i) + Q(1, 2)) % 1) - Q(1, 2) for i in range(1, D + 1))
-    pts = [yt(n) for n in range(N)]
-    out = []
-    for _ in range(nbox):
-        while True:
-            lo = [Q(rng.randrange(-500, 300), 1000) for _ in range(D)]
-            wd = [Q(rng.randrange(150, 450), 1000) for _ in range(D)]
-            cell = [n for n in range(N) if all(l <= c < l + w for c, l, w in zip(pts[n], lo, wd))]
-            if len(cell) > (4 * k) ** D:
-                break
-        S = set(cell)
+    lam_inv = pow(lam, -1, N)
+    def yt(n):   # centered representative of y(n) = lam n u
+        m = lam * n % N
+        return tuple(((Q(m, q ** i) + Q(1, 2)) % 1) - Q(1, 2) for i in range(1, D + 1))
+    Y = [yt(n) for n in range(N)]
+    def lift(t, lo, w):
+        out = []
+        for ti, l, wi in zip(t, lo, w):
+            x = ti + math.ceil(l - ti)          # smallest lift >= l
+            if not (x < l + wi):
+                return None
+            out.append(x)
+        return tuple(out)
+    def in_L(v):
+        mD = v[-1] * q ** D
+        if mD.denominator != 1:
+            return None
+        m = int(mD) % N
+        if all((vi - Q(m, q ** i)).denominator == 1 for i, vi in enumerate(v, 1)):
+            return m
+        return None
+    thr = (k - 1) ** D
+    stats = {"boxes_above_threshold": 0, "steps_d_not_1": 0, "max_points_seen": 0,
+             "min_points_above_threshold": None}
+    tried = 0
+    while stats["boxes_above_threshold"] < nbox and tried < 20000:
+        tried += 1
+        lo = [Q(rng.randrange(-q * q // 2, q * q // 2), q * q) for _ in range(D)]
+        w = [Q(rng.randrange(q, min(2 * k * q, q * q)), q * q) for _ in range(D)]   # fine cells: widths 1/q .. 2k/q, < 1
+        pts = [(n, lift(Y[n], lo, w)) for n in range(N)]
+        pts = [(n, x) for n, x in pts if x is not None]
+        stats["max_points_seen"] = max(stats["max_points_seen"], len(pts))
+        if len(pts) <= thr:
+            continue
+        stats["boxes_above_threshold"] += 1
+        mp = stats["min_points_above_threshold"]
+        stats["min_points_above_threshold"] = len(pts) if mp is None else min(mp, len(pts))
         found = None
-        for d in range(1, N):
-            for n0 in cell:
-                if all((n0 + j * d) % N in S for j in range(k)):
-                    found = (n0, d); break
+        for i in range(len(pts)):
+            for j in range(i + 1, len(pts)):
+                v = tuple((b - a) / (k - 1) for a, b in zip(pts[i][1], pts[j][1]))
+                m = in_L(v)
+                if m is not None and any(v):
+                    found = (pts[i][0], pts[i][1], v, m); break
             if found: break
         assert found is not None
-        out.append({"cell_points": len(cell), "bound_(4k)^D": (4 * k) ** D, "k_AP_found": list(found)})
-    return out
+        n0, x0, v, m = found
+        assert all(abs(c) < 1 for c in v)
+        d = lam_inv * m % N
+        assert d != 0
+        for jj in range(k):
+            xj = tuple(a + jj * b for a, b in zip(x0, v))
+            assert all(l <= c < l + wi for c, l, wi in zip(xj, lo, w))
+            assert lift(Y[(n0 + jj * d) % N], lo, w) == xj
+        if d != 1:
+            stats["steps_d_not_1"] += 1
+    assert stats["boxes_above_threshold"] == nbox
+    # tight example: exactly (k-1)^D points, no k-AP
+    lo = [Q(0)] * D; w = [Q(k - 1, q)] * D
+    cellset = {n for n in range(N) if lift(Y[n], lo, w) is not None}
+    assert len(cellset) == thr
+    assert not any(all((n0 + jj * d) % N in cellset for jj in range(k))
+                   for d in range(1, N) for n0 in cellset)
+    stats.update({"q": q, "D": D, "k": k, "lambda": lam, "threshold_(k-1)^D": thr,
+                  "tight_box_points": len(cellset), "tight_box_has_k_AP": False})
+    return stats
 
 def main():
     res = {}
@@ -147,13 +204,23 @@ def main():
     assert asymmetric(Q(1, 20), structured_ones=False) == Q(19, 80)   # -> 1/4 as theta -> 0
     res["fine_coarse"] = str(fine_coarse())
     assert fine_coarse() == Q(1, 8)
+    # the rich term is exercised: with s pinned at 1/4 the correct model keeps 1/8,
+    # the mutation "rich side pays bc only" drops to 1/16
+    assert fine_coarse(s_fixed=Q(1, 4)) == Q(1, 8)
+    assert fine_coarse(s_fixed=Q(1, 4), rich_bc_only=True) == Q(1, 16)
     res["uncertainty_min_exponent_of_H"] = str(uncertainty())
     assert uncertainty() == H
     res["group_design_feasible_at_a=49/100"] = group_design(Q(49, 100))
     res["group_design_feasible_at_a=1/2"] = group_design(Q(1, 2))
     assert not group_design(Q(49, 100))
     res["dense_radii_c_at_k=2^1024"] = f"{dense_radii_c(1024 * 0.6931471805599453):.3e}"
-    res["minkowski_cells_contain_k_APs"] = minkowski_cells()
+    res["cell_lemma_cyclic_small_instances"] = [cell_lemma_cyclic(13, 3, 4, 1, 12, 5),
+                                                cell_lemma_cyclic(13, 3, 4, 5, 12, 6),
+                                                cell_lemma_cyclic(31, 2, 5, 7, 12, 7)]
+    for st in res["cell_lemma_cyclic_small_instances"]:
+        assert st["steps_d_not_1"] > 0
+    res["_scope"] = ("optimistic first-order exponents (units of k log k) of the oblivious versions; "
+                     "not bounds on W_2(k)")
     text = json.dumps(res, indent=2, sort_keys=True) + "\n"
     if "--write" in sys.argv:
         (HERE / "RESULT.json").write_text(text); print("RESULT.json written"); return 0
