@@ -21,7 +21,7 @@ W_r(k)>\left(\frac{k^{1/8}}{e^{9/2}\log k}\right)^{k\lfloor\log_2 r\rfloor}. \ta
 Moreover
 
 ```math
-W_r(k)>k^{(k/9)\lfloor\log_2 r\rfloor}\quad(k\ge2^{1169}),\qquad
+W_r(k)>k^{(k/9)\lfloor\log_2 r\rfloor}\quad(k\ge2^{1163}),\qquad
 W_r(k)>k^{(1093/10000)\,k\lfloor\log_2 r\rfloor}\quad(k\ge2^{1024}). \tag{2}
 ```
 
@@ -162,7 +162,8 @@ have probability at most `2 exp(-delta_s M_s/8)` by weighted Hoeffding,
 since `sum w^2 <= (k/M_s) k_L` and `k_L >= delta_s k`. In the non-rich
 case (i), at least `delta_s k/4` positions need a flip, carried by at least
 `delta_s k/8` distinct keys. In case (ii), more than `(1 - delta_s)k`
-positions are heavy, so the run code prescribes at least `(1 - delta_s)k/2`
+positions are s-heavy (multiplicity greater than `k/M_s`), so the run code
+prescribes at least `(1 - delta_s)k/2`
 distinct keys. With `delta_s = 1/16`, these numbers are `k/128` and
 `15k/32`, against PR #12's `k/16` and `k/4`.
 
@@ -197,8 +198,10 @@ bound at 709. `verify.py` names each certificate.
 - `h0 < 2M` (`h0_below_2M`), `D <= k/64`, `M_s <= k`, `2M/k <= 2/t <= 1/16`,
   and `4MH/k <= 4/(k^2 t) <= eta = 1/(32Dt)` (`rotating_drift`).
 - `D(4 eta + 1/h0) = 1/(8t) + D/h0 <= 1/(8t) + 1/(5t^3) <= eps_reg`.
-- `(D + 1) log q <= kt` (`mesh_D_log_q`), so `J <= 2k^3 t + 2 <= k^6`
-  (`mesh_count`).
+- `(D + 1) log q <= kt`, so `J <= 2k^3 t + 2 <= k^6` (`mesh_count`). In
+  detail, `(D + 1) log q <= 2D log q <= 2F + 2D(2t + log 2)`, with
+  `2F <= kt/4` and `2D(2t + log 2) <= (s/t^3)(2t + 1) <= 3s/t^2`. Since
+  `e^{-t/2} <= 1/2` (`mesh_D_log_q`), `3s/t^2 <= 3k/(2t^2) <= 3kt/4`.
 
 These are the conditions of PR #12, Section 5. The remaining source
 conditions follow from `H = k^-2`, `k >= 16` and `M <= k/t`, as there.
@@ -370,8 +373,9 @@ exists, and the digit product gives (1).
 ## 9. Thresholds
 
 **Coefficient 1/9.** `F >= kt/9` when `t/72 - log t - 9/2 >= 0`. This
-function increases for `t >= 72` and is positive at `t = 810`, where it
-exceeds `0.0529`. And `k >= 2^1169` gives `t >= 1169 log 2 > 810`.
+function increases for `t >= 72` and is positive at `t = 806`, where it
+exceeds `0.0023`. And `k >= 2^1163` gives `t >= 1163 log 2 > 806`. The
+function is negative at `1162 log 2`, so the argument stops at `2^1163`.
 
 **All `k >= 2^1024`.** The coefficient `1/8 - (log t + 9/2)/t` increases for
 `t >= 1`. At `t = 709.78 <= 1024 log 2` it is at least `1093/10000`.

@@ -351,13 +351,15 @@ def threshold(c: Q) -> tuple[int, int]:
 
 def threshold_checks() -> dict[str, Any]:
     out: dict[str, Any] = {}
-    # (2): c = 1/9 for k >= 2^1169: t >= 1169 log 2 >= 810; f(t) = t/72 - log t - C
-    # is increasing for t >= 72 and f(810) > 0.
-    require(1169 * log_lo(2) >= 810, '2^1169 does not give t >= 810')
-    require(Q(810, 72) - log_hi(810) - C > 0, 'c = 1/9 threshold fails at t = 810')
-    require(Q(1168, 1) * log_hi(2) < 810, 'threshold exponent is not minimal for this check')
-    out['one_ninth_minimum_k'] = '2^1169'
-    out['one_ninth_margin_at_t_810'] = f'{float(Q(810, 72) - log_hi(810) - C):.6f}'
+    # (2): c = 1/9 for k >= 2^1163: t >= 1163 log 2 >= 806; f(t) = t/72 - log t - C
+    # is increasing for t >= 72 and f(806) > 0. (At 1162 log 2 < 805.5, f < 0, so
+    # 1163 is the least exponent this argument reaches.)
+    require(1163 * log_lo(2) >= 806, '2^1163 does not give t >= 806')
+    require(Q(806, 72) - log_hi(806) - C > 0, 'c = 1/9 threshold fails at t = 806')
+    require(Q(8055, 10) / 72 - log_lo(Q(8055, 10)) - C < 0 and 1162 * log_hi(2) < Q(8055, 10),
+            'the argument would reach 2^1162')
+    out['one_ninth_minimum_k'] = '2^1163'
+    out['one_ninth_margin_at_t_806'] = f'{float(Q(806, 72) - log_hi(806) - C):.6f}'
     # (3): for all k >= 2^1024, c(t) = 1/8 - (log t + C)/t is increasing, and at
     # t >= 709.78 (a lower bound for 1024 log 2) it is at least 1093/10000.
     t_low = Q(70978, 100)
@@ -550,7 +552,7 @@ def run() -> dict[str, Any]:
         'builds_on': 'PR #12 head 029431bb29f2bc64bf3f6dd150ddd15bbdf7c7d5',
         'endpoint_bound': '(k^(1/8)/(exp(9/2)*log(k)))^(k*floor(log2(r)))',
         'endpoint_minimum_k': '2^1024',
-        'coefficient_1_9_minimum_k': '2^1169',
+        'coefficient_1_9_minimum_k': '2^1163',
         'constants': {'T0': T0, 'u_scale': AD, 'h0_scale': BH, 'Ms_scale': BS,
                       'flip_scale': AP, 'C': str(C), 'gamma_slack': str(G),
                       'eps_reg_scale': str(EREG), 'delta_s': str(DS)},
@@ -576,7 +578,7 @@ def main() -> None:
         n = len(report['all_larger_t_certificates'])
         print(f'PASS: {n} exact certificates valid for every real t >= {T0}')
         print('endpoint: ' + report['endpoint_bound'] + ' for k >= 2^1024')
-        print('c = 1/9 for k >= 2^1169; c = 1093/10000 for every k >= 2^1024')
+        print('c = 1/9 for k >= 2^1163; c = 1093/10000 for every k >= 2^1024')
         for field in ('exact_checks', 'thresholds', 'theta_and_dilation', 'replay'):
             print(field + ': ' + json.dumps(report[field], sort_keys=True))
         print(f'Negative controls rejected: {len(report["negative_controls_rejected"])}')

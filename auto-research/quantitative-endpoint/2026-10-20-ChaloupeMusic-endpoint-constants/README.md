@@ -10,7 +10,7 @@ W_r(k)>\left(\frac{k^{1/8}}{e^{9/2}\log k}\right)^{k\lfloor\log_2 r\rfloor}
 ```
 
 in place of `e^{20}`. It also gives the coefficient `1/9` for every
-`k >= 2^1169`, in place of `2^4096`, and the coefficient `1093/10000` for
+`k >= 2^1163`, in place of `2^4096`, and the coefficient `1093/10000` for
 every `k >= 2^1024`, in place of about `0.0876`.
 
 The statements are conditional on the same finite interfaces as PR #12. One
@@ -56,19 +56,24 @@ The verifier uses only the Python standard library and runs in under a
 second.
 
 - **Certificates.** It certifies 17 inequalities for every real
-  `t >= 709`, not only sampled values. Each is a sum of terms
+  `t >= 709`, not only sampled values. Fifteen are sums of terms
   `a t^j e^{-dt}`, nonincreasing on `[709, oo)`, bounded exactly at 709.
-  Logarithms are enclosed by atanh series.
+  The other two are `third_family`, a linear inequality whose margin grows
+  with `t`, checked at 709, and `dichotomy`, an exact cubic identity in
+  `1/t` with nonnegative leading coefficients. Logarithms are enclosed by
+  atanh series.
 - **Exact checks.** It checks the dichotomy identity, Lemma D's integer
   inequalities, Erdős's bound up to 20000 and the dilation identity.
 - **Thresholds.** It checks the three thresholds and 768 generic
   coefficients.
 - **Replay.** It replays the main inequalities from their definitions at
   eight values of `t`.
-- **Negative controls.** Thirteen controls each change one constant (for
-  example `C = 4.2`, `A_D = 3`, `A_p = 6`, `B_H = 9/2`, `g = 3`,
-  `delta_s = 1/64`, `B_S = 1024` or `t0 = 300`) and require the
-  corresponding certificate to fail.
+- **Negative controls.** Thirteen controls in all. Eight each change one
+  constant (`C = 4.2`, `A_D = 3`, `A_p = 6`, `B_H = 9/2`, `g = 3`,
+  `delta_s = 1/64`, `B_S = 1024`, `t0 = 300`) and require the corresponding
+  certificate to fail. The other five check that PR #12's own class
+  arithmetic cannot carry `C = 9/2`, that a term increasing on `[709, oo)` is
+  refused, and that the coefficients `0`, `1/8` and `1/7` are refused.
 
 `RESULT.json` is the output of `verify.py --json`. `MANIFEST.json`
 authenticates the package files. It excludes itself.
@@ -90,5 +95,5 @@ packages are merged in order, is:
 
 ```
 2026-10-20, `ChaloupeMusic`: [Retuned endpoint constants](2026-10-20-ChaloupeMusic-endpoint-constants/README.md).
-Status: conditional proof draft with exact all-larger-`t` checks, building on the 2026-10-15 contribution. Constant `e^{9/2}` in place of `e^{20}`, coefficient 1/9 from `k >= 2^1169`. Independent review is pending.
+Status: conditional proof draft with exact all-larger-`t` checks, building on the 2026-10-15 contribution. Constant `e^{9/2}` in place of `e^{20}`, coefficient 1/9 from `k >= 2^1163`. Independent review is pending.
 ```
