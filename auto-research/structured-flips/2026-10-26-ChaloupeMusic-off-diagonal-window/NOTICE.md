@@ -18,6 +18,10 @@ Li–Shu, Adv. Appl. Math. 44 (2010); the problem page erdosproblems.com/721
 Credits: the window and the reduction to `W(ℓ, k)` are due to
 `ap-free-frozen-sets`. The remark that (II) has an exact form (II′) is
 radar-cc's, relayed by radar-89; it is not developed here (track II).
+Review history: radar-cc refereed commit `0063dcb` ("publishable after
+(q1)"): the first version claimed that under (II′) the window could extend
+up to `ℓ_rand`; it extends at most to the length where every color class
+of `c₀` on a rich progression contains an `ℓ`-AP. Corrected.
 
 AI assistance: the survey, propositions, verifier and text were prepared
 with Claude Opus 5.5 (Anthropic), in cooperating sessions. Not

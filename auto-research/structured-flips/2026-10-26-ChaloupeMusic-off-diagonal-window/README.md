@@ -88,12 +88,23 @@ The expected number of `k`-APs in `A` is at most
 Consequence for the window. Theorem 3 constrains only `ℓ < ℓ_rand`, and
 `ℓ_rand` is about `2^{375}` to `2^{3674}` at the 21 points, against
 `p₀ ≤ 353`. The cut at `p₀` therefore comes entirely from the **literal**
-(II), through `r_ℓ(k) ≥ k/4` for `ℓ ≥ p₀`, and not from Theorem 3. Under a
-weaker exact form (II′) of (II) (track II, radar-d9), the useful window
-could extend up to `ℓ_rand`. On `[p₀, ℓ_rand)` the status below is the same,
-with `ℓ` in place of `p₀ − 1`. Above `ℓ_rand`, AP-freeness of `I_X(P)` is
-compatible with (I) on every single fibre, and only the global question
-remains.
+(II), through `r_ℓ(k) ≥ k/4` for `ℓ ≥ p₀`, and not from Theorem 3.
+
+The exact form (II′) of (II) (track II) does **not** move the cut far.
+(II_ℓ) implies (II′) only if `X_P` cannot cover almost a whole color class
+of `c₀` on `P`, that is, only if every color class of `c₀` on a rich `P`
+contains an `ℓ`-AP. For an arbitrary `c₀`, a class of about `k/2` positions
+can avoid `ℓ`-APs as soon as `r_ℓ(k) ≥ k/2`, which is again near `p₀`. For
+a `c₀` that behaves randomly on rich progressions, the longest AP inside a
+half of `[k]` has length about `2 log₂ k` (1 478 at `k = 2^739`, 8 192 at
+`k = 2^4096`), which is not proved for the template's `c₀`. So under (II′)
+the useful window extends **at most** to the length beyond which the color
+classes of `c₀` on rich progressions must contain an `ℓ`-AP: about
+`2 log₂ k` if `c₀` behaves randomly, far below `ℓ_rand`. (Correction of the
+referee, radar-cc.)
+
+Above `ℓ_rand`, AP-freeness of `I_X(P)` is compatible with (I) on every
+single fibre, and only the global question remains.
 
 ## Verdict: open, and exactly what would settle it
 
@@ -167,7 +178,7 @@ from this.
 |---|---|
 | 3 | closed (Theorem 2 of `ap-free-frozen-sets`, Kelley–Meka / Bloom–Sisask) |
 | `4 ≤ ℓ < p₀(k)` | open: closes under (Cl), needs (Op) to open; both far from the literature |
-| `p₀(k) ≤ ℓ < ℓ_rand` | not usable under the literal (II); under (II′), same open status |
+| `p₀(k) ≤ ℓ < ℓ_rand` | not usable under the literal (II); under (II′), usable at most up to the length where every color class of `c₀` on a rich progression contains an `ℓ`-AP (about `2 log₂ k` if `c₀` behaves randomly, not proved), with the same open status there |
 | `ℓ ≥ ℓ_rand` | no constraint from Theorem 3 (Proposition 2) |
 
 ## What is not claimed
@@ -175,7 +186,7 @@ from this.
 * That the window is closed, or open. Both directions need results about
   `r_ℓ` or `W(ℓ, k)` that no one has.
 * Anything about door 1 beyond AP-freeness of `I_X(P)`.
-* Anything about (II′). The remark above only locates where the cut at
+* Anything proved about (II′). The remarks above only locate where the cut at
   `p₀` comes from.
 * The literature table is a survey as of the date above, from the cited
   arXiv abstracts and erdosproblems.com/721. It is not a re-proof.
