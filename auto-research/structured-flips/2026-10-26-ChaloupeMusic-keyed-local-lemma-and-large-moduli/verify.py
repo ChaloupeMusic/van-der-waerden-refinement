@@ -32,9 +32,11 @@ What is checked (the proofs are in README.md; these checks illustrate them):
      4. density lemma: some all-light P has >= k(delta_X - eta)/4 distinct
         X-keys, for non-residue rules chi_l(t - c) = -1 with l prime > q;
      5. shift average: (1/l) sum_c delta(X_c) = (l - 1)/(2l) exactly;
-     6. squares family (toy q = 101, D = 2, k = 6, lam = 12): for every a with
+     6. squares family (toy q = 101, D = 2, k = 6, lam = 12 and lam = 40 > k^2):
+        for every a with
         -q/2 <= a and a + k - 1 < q/2, the progression n_j = lam^{-1}(a + j)
-        has k distinct full labels (all light) and bands exactly (a + j)^2.
+        has k distinct U labels in coordinate D alone (hence k distinct full
+        labels, all light) and bands exactly (a + j)^2.
 """
 import bisect
 import json
@@ -360,19 +362,23 @@ def part_b():
     }
 
 
-def part_b6():
-    T = Toy(q=101, D=2, k=6, lam=12)
+def part_b6(lam):
+    T = Toy(q=101, D=2, k=6, lam=lam)
     N, k, q = T.N, T.k, T.q
     inv = pow(T.lam, -1, N)
     tested = 0
     for a in range(-(q // 2), q // 2 - k + 1):
         pos = [inv * (a + j) % N for j in range(k)]
         labs = set()
+        u_last = set()
         for j, n in enumerate(pos):
             Uv, Vv, t = T.position(n)
             labs.add((Uv, Vv))
+            u_last.add(Uv[-1])
             check(t == (a + j) ** 2, 'B6 band a=%d j=%d' % (a, j))
         check(len(labs) == k, 'B6 labels a=%d' % a)
+        # the proof separates the terms in the U label of coordinate D alone
+        check(len(u_last) == k, 'B6 U_D labels a=%d lam=%d' % (a, lam))
         tested += 1
     return tested
 
@@ -387,7 +393,10 @@ def main():
     res['A3_cover_instances'] = part_a3(rng)
     res['A5_exponent_table'] = exponent_table()
     res['B'] = part_b()
-    res['B6_squares_family_progressions'] = part_b6()
+    res['B6_squares_family_progressions'] = part_b6(12)
+    # lam = 40 > k^2 = 36: the gap 1/lam between two terms is below the
+    # U width a mesh coarser by the factor lam would have, so B6 then tests it
+    res['B6_squares_family_progressions_lam40'] = part_b6(40)
     res['claims'] = {
         'theorem_A': 'any criterion sound for every variable-generated system '
                      'with the same event-variable incidence and marginals '

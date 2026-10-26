@@ -1,9 +1,13 @@
 # A local lemma on keyed frozen sets is a first moment; large-modulus band rules
 
 **Status:** structural research note, with proofs and illustrative finite
-checks. Part A is a negative result (a class of methods closed). Part B closes
-dense rules and explains why sparse large-modulus rules can be neither proved
-nor refuted by algebraic means. **No new bound is claimed.**
+checks. Part A is a negative result: a local-lemma certificate over a random
+frozen set is a first moment, and uniform laws stay at `c ≤ 1/8` **when the
+flip exponent satisfies `b ≤ 1`** (for `b > 1` Corollary A2 closes nothing
+beyond `1/8`). Part B closes dense rules for the literal condition (II),
+corrects the statement of the exact condition (II), and explains why sparse
+large-modulus rules can be neither proved nor refuted by algebraic means.
+**No new bound is claimed.**
 
 **Base commit:** `63bef9ca996786a41169de4a0c3d6b3b47b0fe96` (repository),
 on top of the `structured-flips` and `template-ceilings` packages of the same
@@ -11,7 +15,7 @@ track.
 
 **Depends on:** the door 1 reduction (radar-1a and radar-7b, sprint synthesis
 of 20 October 2026, "La sortie qui reste"); radar-7b's fibre proposition
-(`piste-C.md` § 2, unmerged); the source's Sections 2 and 4 to 6 (keys, labels,
+(`piste-C.md` § 2, unmerged); radar-63's Lemma H (LL, `cd1de38`); the source's Sections 2 and 4 to 6 (keys, labels,
 outer coloring, multiplicity lemma, affine signature count), pinned in
 `source-manifest.json`.
 
@@ -93,12 +97,14 @@ is random, each rich `P` has `r(B_P) ≥ k/4`, hence
 (`verify.py`, table A5). A union bound needs `Σ μ(B_P) < 1`; the local lemma
 allows `N^{o(1)}`. On the exponent scale (`k ln k`) the two coincide.
 
-**Corollary A2 (uniform laws stay at 1/8).** Let every key be in `X`
+**Corollary A2 (uniform laws stay at 1/8 when b ≤ 1).** Let every key be in `X`
 independently with probability `ρ = k^{−β}`, and let a criterion of `𝒞`
 certify `{A_w} ∪ {B_P}`.
 
 1. *(I) forces β ≤ 1 + o(1).* Take a single-label block of length `2k − 1`
-   (radar-99's family P1 with `2k − 1` terms; same construction). Its `k`
+   (radar-63, LL, Lemma H at `e = 1`, in the regime `λ ≤ q/(400k³)` of
+   `a < 1/2`: the sweep `(2k − 2)/q` stays in one label and the bands
+   `(s + jλ)²` are distinct; checked by the arbiter, sprint 3). Its `k`
    windows of length `k` are case (ii) progressions with constant `c₀`, and
    all of them contain the middle key. Theorem A at that key gives
    `k (1 − ρ)^k ≤ Σ_j μ(A_{w_j}) < 1`. Since `ln(1/(1 − ρ)) ≤ ρ/(1 − ρ)`,
@@ -113,7 +119,11 @@ certify `{A_w} ∪ {B_P}`.
 With the rich cost `2c < (1/2 − ε) b`, optimizing `ε` (for `ε ≥ 1/4` the
 rich cost alone gives `c < b/8`):
 `c < βb / (4(β + b)) ≤ b / (4(1 + b))`. **For `b ≤ 1` this is `c ≤ 1/8`.**
-The same holds when the marginals lie in `[k^{−β−o(1)}, k^{−β+o(1)}]`.
+For `b > 1` the bound `b/(4(1 + b))` exceeds `1/8` and tends to `1/4`:
+Corollary A2 then closes nothing beyond `1/8`. The synthesis' target "every
+`c < 1/4`" is the limit `b → 1`, which suggests that the reduction uses
+`b ≤ 1`, but this note does not prove it. The same holds when the marginals
+lie in `[k^{−β−o(1)}, k^{−β+o(1)}]`.
 
 **Corollary A3 (what a certificate beyond 1/8 must contain).** For a product
 law with marginals `ρ_κ`, put `S = {κ : ρ_κ ≥ k^{−1−δ}}`. If a criterion of
@@ -174,14 +184,15 @@ is at most `(k²/2)(2H_x + 1/N)·N/(N−1) ≤ η`, using `H_x = 1/(k²λ)`. For
 `E[Y] = kδ_X` exactly. Since `Y ≤ k`, some all-light `P` has
 `Y ≥ k(δ_X − η)`, hence at least `Y/4 > εk` distinct keys in `X`. ∎
 
-**Corollary B1′ (residue and character rules).** For `X_c = {(W, t) :
+**Corollary B1′ (residue and character rules; literal (II)).** For `X_c = {(W, t) :
 χ_ℓ(t − c) = −1}`, `ℓ` any odd prime, `(1/ℓ) Σ_c δ(X_c) = (ℓ − 1)/(2ℓ)`
 exactly: for each band `t`, `(ℓ − 1)/2` shifts make `t − c` a non-residue. So
 a proportion at least `1 − (ℓ + 1)/(2ℓ(1 − 4ε − η))` of the shifts fails (II)
 outright (a third of them for `ε ≤ 1/32`, `ℓ, λ ≥ 100`). The same holds for
 complements, residue rules, and every rule of density bounded below. Measured
 on the toy, per shift: `δ ∈ [0.44, 0.51]`. **Dense algebraic rules are
-closed, at every modulus.** Door 1 wants a sparse `X` anyway.
+closed for the literal (II), at every modulus.** For the exact condition below
+they fail only heuristically. Door 1 wants a sparse `X` anyway.
 
 **Lemma B2 (every rule has the random second moment).** Over uniform
 `(n₀, d)` with `d ≠ 0`, the pair `(n_i, n_j)`, `i ≠ j`, is uniform among the
@@ -211,15 +222,34 @@ progressions are rich and affine at once, with bands
 `(A + j)² + ⌊C + jθ + O(k²/q²)⌋` when `s = 1` (`A` an integer, `C ≥ 0`,
 `|θ| ≤ 1`).
 
-Two consequences:
+**The exact condition (II).** Write `X_P` for the positions of `P` whose key
+lies in `X`. Those positions are frozen at `c₁ = c₀ ⊕ 1`; the other keys flip
+independently with probability `p`. `P` is monochromatic in colour `β` exactly
+when the flips correct the set `{c₁ ≠ β} = {c₀ ≠ β} Δ X_P`. Frozen positions
+cannot be corrected, so this needs `X_P ∩ {c₀ = β} = ∅`. It also needs no key
+shared between a position to flip and a position to keep, since a key occurs
+up to four times and may carry both demands. When both hold, the probability is
+`p^{f}(1 − p)^{g}`, where `f` counts the distinct keys of
+`{c₀ ≠ β} ∖ X_P`. The danger is therefore `X_P` contained in **either** colour
+class of `c₀` on `P` and covering most of it. `X_P` close to the minority side
+makes `P` nearly monochromatic in the majority colour. `X_P` close to the
+**majority** side switches the majority and makes `P` nearly monochromatic in
+the minority colour. The exact (II) asks, for each of the two colours `β`,
+either a frozen position of colour `β` (`X_P ∩ {c₀ = β} ≠ ∅`), or enough keys
+to flip: `|κ({c₀ ≠ β} ∖ X_P)| ≥ θk`, where `θ` replaces `(1/2 − ε)/4` in
+the rich cost (`2c < θ b`, up to the conventions of the reduction). Since
+`|κ(S)| ≥ |S|/4` for any set `S` of positions, literal (II) (at most `εk` keys
+in `X`, hence at most `4εk` frozen positions) implies the exact (II) with
+`|{c₀ ≠ β} ∖ X_P| ≥ γk − 4εk` positions. The converse fails.
+
+Two consequences of Proposition B3:
 
 * any rule containing the squares of a box, for instance "`t` is a square"
   or "`χ_ℓ(t) ∈ {0, 1}`" taken alone, contains every key of some rich
-  progression, so literal (II) fails. That failure is harmless for the exact
-  accounting: `c₀` is balanced on `P`, so the frozen `c₁` is balanced too and
-  `P` is never monochromatic. **Literal (II) is strictly stronger than what
-  door 1 needs**: the harmful event is "`X ∩ κ(P)` equals the minority side of
-  `P`", not "`|X ∩ κ(P)| > εk`";
+  progression. Literal (II) fails there. The exact (II) holds: `X_P = P` meets
+  both colour classes of `c₀` (balanced on `P`), so `P` is monochromatic in
+  neither colour. **Literal (II) is strictly stronger than what door 1
+  needs**;
 * the rich progressions whose bands are algebraic in `j` are the affine ones.
   Their key words number at most `T_aff ≤ C·T_glob·(k(Dq² + 2))³ =
   e^{o(k log k)}` (the source's count of affine signatures, Section 6; a key
@@ -244,12 +274,13 @@ refute it, and that the dense rules fail.
 * Corollary A2's `1/8` uses the rich cost `2c < (1/2 − ε)b` of the reduction
   and `b ≤ 1`. With the radar-99 estimate of about `q⁴` case (ii) words per
   key (unproven), (I) would force `β ≤ a` and give `c < a/(4(1 + a)) < 1/12`.
-* Part B uses the literal (II). For the exact accounting, dense rules fail
-  heuristically (`N² 2^{−k} ≫ 1` progressions whose minority `X` matches),
-  without proof.
-* Corollary A2 (1) and A3 (I′) use single-label blocks of length `2k − 1`.
-  They exist in the template's regime by radar-99's construction with `k`
-  replaced by `2k − 1`. That replacement is not rechecked here.
+* Corollary A2 closes uniform laws beyond `1/8` only for `b ≤ 1`.
+* Lemma B1 and Corollary B1′ use the literal (II). For the exact (II), dense
+  rules fail only heuristically: about `N² 2^{1−k} ≫ 1` progressions have
+  `X_P` equal to one colour class of `c₀`. This is not proved.
+* Corollary A2 (1) and A3 (I′) use single-label blocks of length `2k − 1`,
+  from radar-63's Lemma H at `e = 1` (regime `λ ≤ q/(400k³)`), as checked by
+  the arbiter.
 
 ## Checks in `verify.py`
 
@@ -270,15 +301,17 @@ refute it, and that the dense rules fail.
   `E[Y(Y−1)]` equal to the uniform pair value, **exactly**, for nine
   non-residue rules (`ℓ ∈ {37, 101, 211}`); the density lemma's bound; the
   exact shift averages `18/37` and `50/101`.
-* **B6** (toy `q = 101`): the 95 progressions `λ^{−1}(a + j)` all have six
-  distinct full labels and bands exactly `(a + j)²`.
+* **B6** (toy `q = 101`, `k = 6`, with `λ = 12` and with `λ = 40 > k²`): the
+  95 progressions `λ^{−1}(a + j)` for each `λ` have six distinct `U` labels
+  in coordinate `D` alone, as in the proof, hence six distinct full labels,
+  and bands exactly `(a + j)²`.
 
 At toy scale every key is a single position (`|𝒦| = N = 961`) and the density
 lemma's bound is below 1. The toy checks the identities, not the asymptotics.
 The proofs are the text above.
 
 **Mutation test** (run by hand, not part of `verify.py`). These edits make it
-fail: bands `(a + j)² + 1` in B6 (570 failed checks); shift average
-`(ℓ + 1)/(2ℓ)` (2); clique threshold `9/10` in A2 (19). A `U` mesh coarser by
-the factor `λ` survives: at toy scale the squares family is spread wider than
-any `U` interval, so B6 does not test the `U` mesh.
+fail: bands `(a + j)² + 1` in B6 (1,140 failed checks); shift average
+`(ℓ + 1)/(2ℓ)` (2); clique threshold `9/10` in A2 (19); a `U` mesh coarser
+by the factor `λ` (46, all from the `λ = 40` toy, where two terms are
+`1/λ < 1/k²` apart in coordinate `D`).

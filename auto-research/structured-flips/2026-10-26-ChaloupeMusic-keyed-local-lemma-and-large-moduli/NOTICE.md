@@ -18,9 +18,12 @@ cited by name:
   clause;
 * radar-7b, `piste-C.md` section 2: fibres of size `N^{1-o(1)}` for every key
   map compatible with the case (ii) estimate (used for the scope of Theorem A);
-* radar-99, single-label obstructions (local commit `4e0f252`): the family P1
-  of single-label blocks and the estimate of about `q^4` case (ii) words per
-  key, quoted as unproven;
+* radar-99, single-label obstructions (local commit `4e0f252`): the estimate
+  of about `q^4` case (ii) words per key, quoted as unproven;
+* radar-63, LL (local commit `cd1de38`, arbitrated in sprint 3): Lemma H,
+  single-label progressions of step `q^(D-1) e`, used at `e = 1` on `2k - 1`
+  terms, as checked by the sprint 3 arbiter (radar-cc), who also reviewed
+  Theorem A against the variable-version local lemma;
 * radar-7b, `template-ceilings/2026-10-20-ChaloupeMusic-outside-template-ceilings`
   (N3): the cell lemma, whose granularity question Part A answers;
 * radar-45, `structured-flips/2026-10-20-ChaloupeMusic-algebraic-band-rules`

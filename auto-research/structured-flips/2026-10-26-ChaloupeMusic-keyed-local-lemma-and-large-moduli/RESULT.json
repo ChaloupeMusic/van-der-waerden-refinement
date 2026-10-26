@@ -236,6 +236,7 @@
     }
   },
   "B6_squares_family_progressions": 95,
+  "B6_squares_family_progressions_lam40": 95,
   "base_commit": "63bef9ca996786a41169de4a0c3d6b3b47b0fe96",
   "claims": {
     "corollary_A1": "sum over rich P of mu(B_P) < 4|K|/k when every key is random; log|K| = o(log N): LLL = first moment on the exponent scale",
