@@ -60,9 +60,9 @@ Each item cites the step that forces it, and each is weaker than what that step 
   Its events have Hoeffding bound `2 exp(−2Mε_1^2)`, the template counts the events through a label by
   the bound `T_glob` of #12 (3), and the incident weight must be below `1/(48k)`. That bound is
   `[9(3k^2(k^2λ+J)+1)^2]^{2D} >= λ^{4D}`. By N1a's Lemma A identity,
-  `log λ = Σ_{j>=1} θ(min(h_0, (2M)^{1/j})) >= θ(h_0)` since `h_0 <= 2M`, where `θ` is Chebyshev's
+  `log λ = Σ_{j>=1} ϑ(min(h_0, (2M)^{1/j})) >= ϑ(h_0)` since `h_0 <= 2M`, where `ϑ` is Chebyshev's
   function. So (T2) implies
-  `4Dθ(h_0) <= kε_1^2/16`.
+  `4Dϑ(h_0) <= kε_1^2/16`.
 * **(T3) Second family.** For `h = h_0 + 1`: `A_h e^{−(h+1)ε_2^2} <= 1`, where `ε_2 l` is the tolerance on
   a pattern's `l` regular labels. The template counts the triples through a label by `h·A_h` (N1b (I2)),
   and bounds each weight by the one at its smallest admissible `l`, which is at most `⌈h/2⌉` because
@@ -109,7 +109,7 @@ So `L > 0`, `ε_1 + ε_2 < 1/2`, and `L > 4f`. With (3), `L >= t/2 − (7/2) log
  (h_0+2)\,\epsilon_2^2\ \ge\ 9D\Bigl(\frac t2-O(\log t)\Bigr). \tag{5}
 ```
 
-In particular `h_0 → ∞`. By (T2) and the prime number theorem, `θ(h_0) = (1 + o(1))h_0`, so
+In particular `h_0 → ∞`. By (T2) and the prime number theorem, `ϑ(h_0) = (1 + o(1))h_0`, so
 `h_0 <= (1 + o(1)) kε_1^2/(64D)`. Insert this in (5) and divide by `9Dt/2`. The term `2ε_2^2`
 contributes `O(1/(Dt))`, and `D >= e^{t/3}`. This gives
 
@@ -149,7 +149,7 @@ attained at `e^{−x} = 1/(2B')`, that is `ε_i = (1 + o(1))/t`. So
 ```
 
 **Theorem A** follows. Every `ℓ_cls` in use is nonnegative, so `C^* >= 0`. (Chebyshev's
-`θ(x) >= x/2` for large `x`, in place of the prime number theorem, gives Theorem A alone with a weaker
+`ϑ(x) >= x/2` for large `x`, in place of the prime number theorem, gives Theorem A alone with a weaker
 constant.)
 
 **Corollary.** Suppose a template proof gives (1) with `θ = 7/8` and a constant `C` for all `k >= k_0`.
@@ -182,7 +182,7 @@ At finite `t` the template's best constant is below `C^*`, and increases to it (
 optimisation, given as evidence only). The gap between the delivered `71/20` and `C^* = 3.41219…` comes
 from:
 
-* Erdős's `θ(x) < x log 4` in Lemma A, about `(1/8) log log 4 ≈ 0.041`;
+* Erdős's `ϑ(x) < x log 4` in Lemma A, about `(1/8) log log 4 ≈ 0.041`;
 * `h_0 = ⌈5Dt^3⌉` where `4.5Dt^3` is the entropy, about `(1/8) log(10/9) ≈ 0.013`;
 * `δ_s = 1/16`, which prescribes `15k/32` keys rather than `k/2`, about `(1/4) log(16/15) ≈ 0.016`;
 * the `sqrt(2M)` term of Lemma A, the small first-family terms, `ε_reg`, the margin `κ >= 0.007`, and the
