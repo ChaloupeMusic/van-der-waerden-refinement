@@ -129,7 +129,9 @@ four groups.
   "flipped" positions; Lemma 3 (`|P₁| = 2r + s`); and Lemmas A\* and C\*,
   which count key sets and progressions by their discrete data (boxes,
   return structure, digit rank) and never read a color. Replace `c₀` by `c₁`
-  in it, `P₁` by `D_β(P)`, and `γ` by `θ`. Each certificate is a set of keys
+  in it, `P₁` by `D_β(P)`, and `γ` by `θ` (the threshold of (II′); the
+  per-rank split `θ_R` of Theorem 9 is unchanged, now with `0 < θ_R < θ`).
+  Each certificate is a set of keys
   of `D_β(P)`, so these keys are free, and "all of them flipped" has
   probability `p^{⌈θ_R k⌉}` or `p^{|F|}`, exactly as there. Every step then
   goes through with `θ` in place of `γ`, and the total is
@@ -198,7 +200,11 @@ let `𝓕` be a family of rich progressions in which no key carries both
 `c₀`-colors. Then, for each `P ∈ 𝓕` and the majority color `β`,
 `Pr[(II′_θ) fails at (P, β)] ≥ ρ^{(1/2−θ)k+1} (1−ρ)^k`. If `|𝓕| = N^{2−o(1)}`,
 the expected number of failures tends to infinity as soon as
-`2c > (1/2 − θ) b_X`.
+`2c > (1/2 − θ) b_X`. This is a first moment only: it does not show that a
+random `X` fails with high probability. `X` carries only `|𝒦| = N^{o(1)}`
+independent bits for `N²` strongly correlated events (a subfamily with
+pairwise disjoint keys has `N^{o(1)}` members), so no second moment comes
+for free.
 
 *Proof.* `C_{¬β}` is the minority class, with at most `k/2` positions. The
 failure event contains the following one: `X` contains keys covering all
@@ -210,24 +216,26 @@ when `b_X = 1`. ∎
 The family exists. A progression with no repeated box has distinct keys.
 By Lemma R1 of `source-only-1-8`, a return forces
 `|h y(d) − t| ≤ 2H` in every coordinate for some `h ≤ k`. That is a set of
-steps of density at most `Σ_h h^D (4H)^D = o(1)`, since `4kH < 1`. And
+steps of density at most `k(4H)^D = o(1)`, since `4kH < 1`. And
 non-rich progressions are those with a short-period label word
 (Theorem 6), also `o(N²)`.
 
-Combined with `2c < θb`, the optimum is
-`c < b·b_X / (4(b + b_X))`, whose supremum over `b` is `b_X / 4 ≤ 1/4`. For
-`b_X = 0` (dense, constant density), failures are `e^{−O(k)} ≫ N^{−2}`: a
-random dense `X` fails for every `c > 0`. A random `X` that satisfies (I)
-has `b_X ≤ a` (C1, the random hitting cost `~ log q / k = k^{−a+o(1)}`),
-hence `c < a/4 < 1/8`. This is the remark of radar-dd's annex ("Gowers"),
-now with (II′) in place of (II). Under the uniform laws of A2, the result is
+Combined with `2c < θb`: the first moment of a random `X` does not certify
+(II′) beyond `c < b·b_X / (4(b + b_X))`, whose supremum over `b` is
+`b_X / 4 ≤ 1/4`. For `b_X = 0` (dense, constant density), each failure has
+probability `e^{−O(k)} ≫ N^{−2}`: the first moment of a random dense `X`
+certifies nothing for any `c > 0`. For a random `X` dense enough to satisfy
+(I) by its own first moment, `b_X ≤ a` (C1, the random hitting cost
+`~ log q / k = k^{−a+o(1)}`), and the first moment certifies nothing beyond
+`c < a/4 < 1/8`. This is the remark of radar-dd's annex ("Gowers"), in the
+same first-moment form, now with (II′) in place of (II). Under the uniform laws of A2, the result is
 the bound of A2, with `1/2 − θ` in place of `ε`.
 
 ## 4. The closures, re-read under (II′)
 
 | closure | uses the literal (II)? | under (II′) |
 |---|---|---|
-| Gowers remark (random `X`, radar-dd annex, synthesis) | yes | **holds**, Proposition 5: `c < a/4` |
+| Gowers remark (random `X`, radar-dd annex, synthesis) | yes | **holds**, in its first-moment form (Proposition 5): nothing certified beyond `c < a/4` |
 | N2a, single-label lenses (PR #16): Theorem A, Proposition B, Lemma R | no, they concern (I) | **holds**. Its remark "On (II)" already had the exact form. Its bound `c < γ min(b_X, b)/2` for a random-like rule is an upper bound, and Proposition 5 refines it to `γ b b_X/(2(b + b_X))` |
 | N2b, algebraic band rules (PR #16) | no, it concerns (I) (saturated or untouched blocks) | **holds** |
 | N3, template ceilings (PR #16) | no. Its templates are oblivious perturbations, and their rich side is `Pr ≥ p^{k/2}` | **holds**. Its frame "`c > 1/8` needs `H ≪ k^{1/2}`" assumes that flips pay for the structured events, which Door 1 escapes by freezing; N3 already says so |
@@ -248,8 +256,8 @@ ways to use this were examined.
 
 1. **Split everything.** Circular (Proposition 4.2): it is a full van der
    Waerden coloring of `ℤ/N`.
-2. **Dense random-like.** Fails for every `c > 0` (Proposition 5 at
-   `b_X = 0`). A random set misses one class of `e^{−O(k)}`-many rich
+2. **Dense random-like.** Its first moment certifies nothing for any
+   `c > 0` (Proposition 5 at `b_X = 0`). A random set misses one class of `e^{−O(k)}`-many rich
    progressions out of `N²`. To beat the first moment, a dense `X` would
    need to hit **both** classes of all but `N^{o(1)}` rich progressions.
    That is a deterministic transversal of the `2N^{2}` color classes, each
@@ -267,8 +275,8 @@ ways to use this were examined.
 
 **Answer to the brief's question 3.** (II′) is a real relaxation: it admits
 `X` that put many keys on a rich progression, if they split it. It changes
-the closure ledger in one place (B1). It does not change the first-moment
-ceiling of a random-like `X` (`b_X/4`, Proposition 5), and its extreme case
+the closure ledger in one place (B1). It does not change what the first moment of a random-like `X`
+certifies (`b_X/4`, Proposition 5), and its extreme case
 is circular. The open problem of Door 1, stated exactly, is now this. Find
 `X` satisfying (I′_η) and (I′_w) such that every rich progression is either split by
 `X`, or has `X_P` inside one class leaving at least `θk` positions, with
@@ -311,5 +319,5 @@ is circular. The open problem of Door 1, stated exactly, is now this. Find
 * The `o(N²)` count of progressions with a repeated box or a non-rich word,
   in Proposition 5, is a sketch from R1 and Theorem 6.
 * § 5.2 and § 5.3 are obstacles, not theorems. Only Proposition 4.2 (the
-  all-split circularity) and Proposition 5 (the random first moment) are
-  proved.
+  all-split circularity) and Proposition 5 (the random first moment, an
+  expectation and not a high-probability failure) are proved.
