@@ -14,9 +14,10 @@ The explicit choice is `c = 1/17`. That is `100000/17 ≈ 5882` times the source
 `1/100000`. It is smaller than the repository's `1/9`, but it rests on a much
 smaller base:
 
-* the lemmas of the OpenAI source (Sections 02 to 07), used as stated, with the
-  numerical exponents replaced by the general ones of §2 below; the side
-  conditions this needs are listed there;
+* the proofs of the OpenAI source (Sections 02 to 07), replayed under the
+  inequalities of §2 below: with other values of `D, M, h_0, η` and with
+  condition (i) of eligible patterns strengthened. §2 lists every place where
+  the source's numerical values enter, and the inequality that replaces them;
 * nothing else. The arguments added to the source are proved in full here.
 
 In particular the proof uses **none** of the repeated-key, rank-certificate or
@@ -57,6 +58,16 @@ does three things:
 Thus everything below `1/16` depends on (S) only, and the remaining factor
 `16/9` up to `1/9` depends on (S) plus (K).
 
+**Relation to the `1/24` ceiling.** The README of `main` (section "Why
+`1/24` is a ceiling of this architecture", after `barrier-note.md`) bounds
+every argument of one template by `1/24`. That template pays the affine case
+with a union bound over affine signatures, which costs the `k^{2a}` label
+entropy and forces `2a + b ≤ 1`. §7 below does not count signatures: non-rich
+progressions are paid by their key words and run codes, which needs only
+`a + b < 1`. The template's hypotheses therefore fail here, and there is no
+contradiction. On `main`, `1/24` was the best coefficient not using (K); this
+note raises it to every `c < 1/16`.
+
 ## 2. Parameters, and the source lemmas reused
 
 Fix rational exponents and constants
@@ -81,7 +92,7 @@ with these values. "Light" and "heavy" refer to multiplicity `≤ k/M` and
 `> k/M` in the progression (source §04). All statements are for `k` larger
 than a threshold depending only on the fixed constants above.
 
-The source lemmas are used verbatim. Their proofs use the source's numerical
+The source's proofs are replayed as written. They use its numerical
 values only through the inequalities below, each of which holds for the
 general parameters:
 

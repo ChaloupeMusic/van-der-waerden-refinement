@@ -11,7 +11,8 @@ W_r(k)>k^{ck\lfloor\log_2 r\rfloor}\qquad(k\ge K_0,\ r\ge2).
 ```
 
 The explicit choice is the repository's `c = 1/9`. What changes is the base it
-rests on: **the lemmas of the OpenAI source (Sections 02 to 07) only**. The
+rests on: **the proofs of the OpenAI source (Sections 02 to 07) only**,
+replayed under the inequalities of the companion note's §2. The
 companion note [`../2026-10-26-ChaloupeMusic-source-only-1-16/`](../2026-10-26-ChaloupeMusic-source-only-1-16/)
 proved links (P2), (O) and (R) of the `1/9` chain, and found that link (K),
 the rich-event estimate `2c < γb`, was the only one still needed above
