@@ -2,19 +2,16 @@
   "_scope": "checks of README.md; no new bound on W_r(k)",
   "crossover": {
     "1/16": {
-      "eps": 0.9098,
       "fraction_of_ln2": 0.0902,
-      "r_exponent": 3.2973
+      "r_exponent": 2.1982
     },
     "1/8": {
-      "eps": 0.8197,
       "fraction_of_ln2": 0.1803,
-      "r_exponent": 3.66
+      "r_exponent": 2.44
     },
     "1/9": {
-      "eps": 0.8397,
       "fraction_of_ln2": 0.1603,
-      "r_exponent": 3.5727
+      "r_exponent": 2.3818
     }
   },
   "digit_product_cases": [

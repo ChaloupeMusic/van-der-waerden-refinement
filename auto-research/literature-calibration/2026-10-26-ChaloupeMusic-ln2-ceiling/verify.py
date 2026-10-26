@@ -7,14 +7,17 @@ Run:  python3 -B verify.py          (assertions are load-bearing; never -O)
 
 What is checked:
   1. the normalization r^{alpha k ln k} = k^{alpha ln2 k log2 r};
-  2. the mechanics of Proposition 1 on exhaustive small cases: a cyclic
-     2-coloring of Z/N without monochromatic k-term progressions (nonzero
-     step, degenerate ones included, as in the source's Proposition 7.1),
-     its digit product on [0, N^m), absence of monochromatic progressions
-     there, and a color class of density >= 2^-m that is k-AP-free;
-  3. negative controls: a coloring with a monochromatic progression is
-     caught, and so is its product;
-  4. the crossover exponents 3/(1 - c/ln 2) of Proposition 3.
+  2. the digit product behind Proposition 1, exhaustively on small cases:
+     a cyclic 2-coloring of Z/N without monochromatic k-term progressions
+     (nonzero step, degenerate ones included, as in the source's
+     Proposition 7.1), and its product on [0, N^m) without monochromatic
+     progressions; then the averaging step of Proposition 2 (a class of
+     density >= 2^-m), which is plain pigeonhole;
+  3. that the bases are the largest within the searched ranges, for k = 3, 4;
+  4. negative controls: a base that is a valid *interval* coloring but not a
+     valid cyclic one makes the product fail, so the cyclic hypothesis is
+     load-bearing; a base with a monochromatic progression is caught;
+  5. the crossover exponents 2/(1 - c/ln 2) of Proposition 3.
 """
 from fractions import Fraction as Q
 from itertools import product
@@ -88,11 +91,10 @@ def check_product(k, N, m):
     S = max(classes.values(), key=len)
     assert Q(len(S), N ** m) >= Q(1, 2 ** m)
     assert not has_ap(S, k)
-    # negative control: break the base coloring, the product must fail
-    bad = list(col); i = next(i for i in range(N) if bad[i] != bad[0])
-    bad[i] = bad[0]
-    if cyclic_mono(bad, k):
-        assert interval_mono(digit_product(bad, m), k) or N ** m < k
+    # negative control: an interval-valid, cyclic-invalid base must fail
+    bad = next(c for c in product((0, 1), repeat=N)
+               if not interval_mono(c, k) and cyclic_mono(c, k))
+    assert interval_mono(digit_product(bad, m), k), (k, N, m)
     return {"k": k, "N": N, "m": m, "base": "".join(map(str, col)),
             "classes": 2 ** m, "largest_class": len(S), "length": N ** m}
 
@@ -109,9 +111,15 @@ def main():
                 assert math.isclose(lhs, rhs, rel_tol=1e-12)
     res["normalization"] = "r^{a k ln k} = k^{a ln2 k log2 r}; FH Thm 2 <-> c = (1-eps) ln 2"
 
-    # 2-3. Proposition 1 mechanics, exhaustive small cases
+    # 2-4. digit product (Proposition 1) and averaging (Proposition 2)
     # largest N with a cyclic coloring, by exhaustive search over
-    # N <= 13 (k = 3), N <= 19 (k = 4), N <= 21 (k = 5): 4, 11, 20
+    # N <= 13 (k = 3), N <= 19 (k = 4), N <= 21 (k = 5): 4, 11, 20;
+    # N_cyc is not monotone (k = 4: N = 5, 6, 7, 11). Maximality is
+    # re-checked below for k = 3, 4; for k = 5 it is not re-run (minutes).
+    for k, Nmax, top in ((3, 13, 4), (4, 19, 11)):
+        assert first_cyclic_coloring(top, k) is not None
+        assert all(first_cyclic_coloring(N, k) is None
+                   for N in range(top + 1, Nmax + 1)), k
     cases = []
     for k, N, m in ((3, 4, 2), (3, 4, 3), (4, 11, 2), (4, 7, 3), (5, 19, 2), (5, 20, 2)):
         cases.append(check_product(k, N, m))
@@ -120,16 +128,19 @@ def main():
     assert cyclic_mono((0, 0, 0, 1, 1), 3)
     assert interval_mono(digit_product((0, 0, 0, 1, 1), 2), 3)
 
-    # 4. crossover exponents of Proposition 3, and the calibration ratios
+    # 5. crossover exponents of Proposition 3 (Fox-Hunter Corollary 5.1:
+    # r >= (ln k)^{2+alpha} gives exponent 1 - 2/(2+alpha) - eps), and the
+    # calibration ratios
     ln2 = math.log(2)
     cross = {}
     for name, c in (("1/9", 1 / 9), ("1/8", 1 / 8), ("1/16", 1 / 16)):
         eps = 1 - c / ln2
         assert 0 < eps < 1
-        cross[name] = {"eps": round(eps, 4), "r_exponent": round(3 / eps, 4),
+        cross[name] = {"r_exponent": round(2 / eps, 4),
                        "fraction_of_ln2": round(c / ln2, 4)}
-    assert 3.57 < cross["1/9"]["r_exponent"] < 3.58
-    assert 3.65 < cross["1/8"]["r_exponent"] < 3.67
+    assert 2.38 < cross["1/9"]["r_exponent"] < 2.39
+    assert 2.43 < cross["1/8"]["r_exponent"] < 2.45
+    assert 2.19 < cross["1/16"]["r_exponent"] < 2.20
     res["crossover"] = cross
     res["ln2"] = round(ln2, 6)
 
