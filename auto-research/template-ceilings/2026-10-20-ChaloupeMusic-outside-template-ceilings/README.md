@@ -178,6 +178,11 @@ the pair congruent mod `(k−1)Λ` is found and its progression checked. The
 tight box `[0, (k−1)/q)^D` is checked to hold exactly `(k−1)^D` points and no
 `k`-AP.
 
+Lean: item 1 of the no-go (the cell lemma, `C = 1`) is formalized as
+`cyclic_cell_lemma` in `lean/` (Lean 4.21, Mathlib v4.21.0, as PR #10), the
+`k` terms distinct in `Z/N`; the sharpness and item 2 are not. Build and
+axioms in `lean/evidence/`: `cd lean && lake build && lake env lean Axioms.lean`.
+
 ## Scope
 
 First-order optimistic costs only: lower-order terms, local-lemma weights and
