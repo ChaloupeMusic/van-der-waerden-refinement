@@ -1,4 +1,4 @@
-# Every c < 1/8 (explicit 1/9) from the source's lemmas alone
+# Every c < 1/8 (explicit 1/9) from the source's proofs alone, replayed
 
 **Status:** research note with a complete proof relative to the pinned OpenAI
 source. Prepared with Claude (Anthropic). Not reviewed by a human, not formally
@@ -211,7 +211,7 @@ parameter space):
    `θ_j ∈ [0,1)` affine. For `c_a + s > 0`, `⌊f_j⌋` is fixed by the position of
    `ζ_a` among the points `(δ − θ_j)/(c_a+s)`, `|δ| ≤ K + 2`. The order of
    these points within each class, and their positions relative to `±1`, are
-   signs of `O(k²K²)` affine functions (positive denominators cleared):
+   signs of `O(hK⁴)` affine functions (positive denominators cleared):
    `exp(O(D log k))` outcomes.
 4. Then class `a` has at most `2K_a(2K+5) + 1` band words; the product over
    classes is `exp(h · O(log(k/h + 2))) = exp(O(k))`.

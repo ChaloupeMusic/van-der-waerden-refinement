@@ -1,4 +1,4 @@
-# Every c < 1/16 (explicit 1/17) from the source's lemmas alone
+# Every c < 1/16 (explicit 1/17) from the source's proofs alone, replayed
 
 **Status:** research note with a complete proof relative to the pinned OpenAI
 source. Prepared with Claude (Anthropic). Not reviewed by a human, not formally
