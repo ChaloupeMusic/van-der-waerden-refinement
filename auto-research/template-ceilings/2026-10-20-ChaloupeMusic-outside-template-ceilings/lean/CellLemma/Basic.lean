@@ -73,14 +73,14 @@ theorem segment_in_box {A W X Y V m j : ℚ} (hm : 1 ≤ m) (hV : m * V = Y - X)
 /-- **Cell lemma, abstract form.** `φ` parametrizes a lattice `Λ = φ(ℤ^ι)`.
 A half-open box of widths `≤ 1` holding more than `(k-1)^|ι|` points of `Λ`
 contains `k` points `φ x + j φ v` (`j < k`) of `Λ`, with `φ v ≠ 0` and every
-coordinate of `φ v` in `(-1, 1)`. -/
+coordinate of `(k-1) φ v` in `(-1, 1)`. -/
 theorem cell_lemma {ι κ : Type*} [Fintype ι] [DecidableEq ι]
     (φ : (ι → ℤ) →+ (κ → ℚ))
     (k : ℕ) (hk : 2 ≤ k) (a w : κ → ℚ) (hw : ∀ i, w i ≤ 1)
     (P : Finset (κ → ℚ)) (hPΛ : ∀ p ∈ P, p ∈ Set.range φ)
     (hPB : ∀ p ∈ P, InBox a w p)
     (hcard : (k - 1) ^ Fintype.card ι < P.card) :
-    ∃ x v : ι → ℤ, φ v ≠ 0 ∧ (∀ i, |φ v i| < 1) ∧
+    ∃ x v : ι → ℤ, φ v ≠ 0 ∧ (∀ i, ((k - 1 : ℕ) : ℚ) * |φ v i| < 1) ∧
       ∀ j : ℕ, j < k → InBox a w (φ (x + (j : ℤ) • v)) := by
   classical
   let c : (κ → ℚ) → ι → ℤ := fun p => if h : p ∈ Set.range φ then h.choose else 0
@@ -114,8 +114,7 @@ theorem cell_lemma {ι κ : Type*} [Fintype ι] [DecidableEq ι]
     have hwi := hw i
     have habs : |y i - x i| < 1 := by
       rw [abs_lt]; constructor <;> linarith
-    rw [← hb, abs_mul, abs_of_pos (by linarith)] at habs
-    nlinarith [abs_nonneg (φ v i)]
+    rwa [← hb, abs_mul, abs_of_pos (by linarith)] at habs
   · intro j hj i
     have hjm : (j : ℚ) ≤ ((k - 1 : ℕ) : ℚ) := by exact_mod_cast (by omega : j ≤ k - 1)
     have hpt : φ (c x + (j : ℤ) • v) i = x i + (j : ℚ) * φ v i := by
@@ -142,7 +141,7 @@ theorem not_integral_of_small {κ : Type*} {v : κ → ℚ} (h0 : v ≠ 0)
 /-! ## The torus lattice `ℤ^D + ℤ·u`, `D = n + 1` -/
 
 /-- `u = (1/q, 1/q², …, 1/q^D)`. -/
-def u (q n : ℕ) : Fin (n + 1) → ℚ := fun i => 1 / (q : ℚ) ^ (i.val + 1)
+noncomputable def u (q n : ℕ) : Fin (n + 1) → ℚ := fun i => 1 / (q : ℚ) ^ (i.val + 1)
 
 /-- Points of `Λ = ℤ^D + ℤ·u`. -/
 def InLattice (q n : ℕ) (x : Fin (n + 1) → ℚ) : Prop :=
@@ -157,7 +156,7 @@ theorem pow_mul_u {q n : ℕ} (hq : q ≠ 0) (i : Fin (n + 1)) :
   field_simp
 
 /-- Coordinates of `Λ` in the basis `e₀, …, e_{D-2}, u`. -/
-def coord (q n : ℕ) : (Fin (n + 1) → ℤ) →+ (Fin (n + 1) → ℚ) where
+noncomputable def coord (q n : ℕ) : (Fin (n + 1) → ℤ) →+ (Fin (n + 1) → ℚ) where
   toFun c := fun i => (c (Fin.last n) : ℚ) * u q n i +
     if i = Fin.last n then 0 else (c i : ℚ)
   map_zero' := by funext i; simp
@@ -198,12 +197,13 @@ theorem mem_range_coord {q n : ℕ} (hq : q ≠ 0) (x : Fin (n + 1) → ℚ) :
 half-open box `B̃` of widths `≤ 1` hold more than `(k-1)^D` points of
 `Λ = ℤ^D + ℤ·u`. Then there are `m, d ∈ ℤ` with `d ≢ 0 (mod N)` such that, for
 every `j < k`, the representative `(m + j d)·u` of `m + j d ∈ ℤ/N` has a lift in
-`B̃`: the cell contains a `k`-term progression of `ℤ/N` with nonzero step. -/
+`B̃`, and the `k` terms are distinct in `ℤ/N` (`N ∤ (i - j) d` for `j < i < k`):
+the cell contains a `k`-term progression of `ℤ/N`. -/
 theorem cyclic_cell_lemma (q n k : ℕ) (hq : q ≠ 0) (hk : 2 ≤ k)
     (a w : Fin (n + 1) → ℚ) (hw : ∀ i, w i ≤ 1)
     (P : Finset (Fin (n + 1) → ℚ)) (hPΛ : ∀ p ∈ P, InLattice q n p)
     (hPB : ∀ p ∈ P, InBox a w p) (hcard : (k - 1) ^ (n + 1) < P.card) :
-    ∃ m d : ℤ, ¬ ((q : ℤ) ^ (n + 1) ∣ d) ∧
+    ∃ m d : ℤ, (∀ i j : ℕ, j < i → i < k → ¬ ((q : ℤ) ^ (n + 1) ∣ ((i : ℤ) - j) * d)) ∧
       ∀ j : ℕ, j < k → ∃ z : Fin (n + 1) → ℤ,
         InBox a w ((((m + j * d : ℤ)) : ℚ) • u q n + fun i => (z i : ℚ)) := by
   have hcard' : (k - 1) ^ Fintype.card (Fin (n + 1)) < P.card := by simpa using hcard
@@ -212,15 +212,25 @@ theorem cyclic_cell_lemma (q n k : ℕ) (hq : q ≠ 0) (hk : 2 ≤ k)
   obtain ⟨m, zx, hx⟩ := (mem_range_coord hq _).1 ⟨x, rfl⟩
   obtain ⟨d, zv, hvd⟩ := (mem_range_coord hq _).1 ⟨v, rfl⟩
   refine ⟨m, d, ?_, ?_⟩
-  · rintro ⟨t, rfl⟩
-    apply not_integral_of_small hv0 hv1
-    intro i
-    refine ⟨t * (q : ℤ) ^ (n - i.val) + zv i, ?_⟩
-    rw [hvd]
-    have h := pow_mul_u hq i
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-    push_cast
-    linear_combination (t : ℚ) * h
+  · -- `s = i - j ∈ [1, k-1]`: `s φ v` is nonzero and small, hence not in `ℤ^D`.
+    rintro i j hji hik ⟨t, ht⟩
+    have hsd : ((i - j : ℕ) : ℚ) * d = (q : ℚ) ^ (n + 1) * t := by
+      rw [Nat.cast_sub hji.le]; exact_mod_cast ht
+    have hsk : ((i - j : ℕ) : ℚ) ≤ ((k - 1 : ℕ) : ℚ) := by exact_mod_cast (by omega)
+    have hs0 : ((i - j : ℕ) : ℚ) ≠ 0 := by exact_mod_cast (by omega : i - j ≠ 0)
+    apply not_integral_of_small (v := ((i - j : ℕ) : ℚ) • coord q n v)
+      (smul_ne_zero hs0 hv0)
+    · intro l
+      have := hv1 l
+      simp only [Pi.smul_apply, smul_eq_mul, abs_mul, Nat.abs_cast]
+      nlinarith [abs_nonneg (coord q n v l)]
+    · intro l
+      refine ⟨t * (q : ℤ) ^ (n - l.val) + ((i - j : ℕ) : ℤ) * zv l, ?_⟩
+      rw [hvd]
+      have h := pow_mul_u hq l
+      simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+      push_cast
+      linear_combination (u q n l) * hsd + (t : ℚ) * h
   · intro j hj
     refine ⟨zx + (j : ℤ) • zv, ?_⟩
     have := hbox j hj
