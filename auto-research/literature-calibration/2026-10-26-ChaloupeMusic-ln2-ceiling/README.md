@@ -18,8 +18,8 @@ r^{α k ln k} = exp(α k ln k ln r) = k^{(α ln 2) k log₂ r},
 ```
 
 so a bound `W_r(k) ≥ r^{α k ln k}` gives this repository's form
-`W_r(k) > k^{c k ⌊log₂ r⌋}` for every `c < α ln 2` (strict, since
-`⌊log₂ r⌋ ≤ log₂ r`).
+`W_r(k) > k^{c k ⌊log₂ r⌋}` for every `c < α ln 2` (strict because
+`c < α ln 2`; the floor only helps, since `⌊log₂ r⌋ ≤ log₂ r`).
 
 ## Where the literature stands, in this normalization
 
@@ -94,7 +94,7 @@ of colors, so with this `4`-coloring it gives `W_{4^m}(k) > (2W_2(k) − 2)^m
 `c_unif ≤ c_2`: the case `r = 2` of the uniform statement. ∎
 
 So the uniform question is the two-color question, up to a factor 3
-unconditionally, and exactly in its cyclic form. Fox–Hunter's Theorem 2 and
+unconditionally, and from below by its cyclic form. Fox–Hunter's Theorem 2 and
 Corollary 5.1 do not move `c_unif`: their range never contains `r = 2`. The
 pinned manuscript says as much ("The bound here holds uniformly down to two
 colors", with the crossover at `ε = 1/2`), and so does PR #16, *Remark
@@ -129,7 +129,8 @@ parameters into Theorem 5."* Proposition 2 produces that set for every
 
 Reading. A uniform coefficient above `ln 2 ≈ 0.693` would settle a
 construction Fox and Hunter state they do not know how to make, and by their
-last sentence improve their Theorem 2. Between `1/8` and `ln 2` no
+last sentence improve their Theorem 2; for `r = 2^m` it would already beat
+their Theorem 2 directly, `r^{(1+δ)k ln k}` against `r^{(1−ε)k ln k}`. Between `1/8` and `ln 2` no
 obstruction is known from the literature: the `1/8` ceilings of PR #16, and
 the obstructions of PR #14 behind them, bound the current template, not the
 problem. In these units the conditional `1/9` is `16.0 %` of `ln 2`, the
@@ -142,11 +143,11 @@ For a fixed `0 < c < ln 2` and any `η > 0`, Fox–Hunter's Corollary 5.1 with
 r^{(c/ln 2)k ln k} = k^{c k log₂ r} ≥ k^{c k ⌊log₂ r⌋}` for all large `k`
 and every `r ≥ (ln k)^{2+α}`.
 
-| `c` | Fox–Hunter reach `c` once `r ≥ (ln k)^{e}`, any `e >` |
+| `c` | Fox–Hunter reach `c` once `r ≥ (ln k)^{e}`, any `e > 2/(1 − c/ln 2)` ≈ |
 |---|---|
-| `1/16` | `2.198` |
-| `1/9` | `2.382` |
-| `1/8` | `2.440` |
+| `1/16` | `2.19821` |
+| `1/9` | `2.38180` |
+| `1/8` | `2.44003` |
 
 Their thresholds in `k` are not explicit, so this is an asymptotic statement
 only; against the explicit thresholds of PR #15 (`2^{960}`, `2^{739}`) no
@@ -156,9 +157,12 @@ through their Lemma 6.2; that is a remark, not a stated theorem.
 
 ## What the literature leaves open
 
-Fox–Hunter's products come in two forms. Lemma 4.2 (used for Theorem 1)
-keeps three colors and gains a factor exponential in `k` per step. Lemma 4.3,
-through Theorem 5, gains about `k^{Θ(k)}` per step but spends colors:
+Fox–Hunter's products come in two forms. Lemma 4.2 keeps the number of
+colors fixed (three in Theorem 4, hence Theorem 1) and gains a factor
+exponential in `k` per step. Lemma 4.3, through Theorem 5, gains about
+`(2m)^{k/3}` per step, with `m = ⌈6 r^{2/k} ln r ln k⌉` in Corollary 5.1:
+`exp(Θ(k ln ln k))` for `r ≤ k^{O(1)}`, `k^{Θ(k)}` only when `m = k^{Θ(1)}`.
+It spends colors:
 Theorem 5 assumes `4ms ≤ r`, so it does not act at `r = 2` or `3`, where
 Proposition 1 pins `c_unif`. Whether a variant of Lemma 4.3 can act on a
 two-color input such as the source's cyclic coloring is not addressed in

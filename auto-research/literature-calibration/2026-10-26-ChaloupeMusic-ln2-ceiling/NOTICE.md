@@ -5,7 +5,7 @@ and through it the OpenAI manuscript *Quantitative Superexponential Bounds
 for van der Waerden Numbers* pinned in `source-manifest.json` (digit product,
 Proposition 7.1; cyclic two-color theorem; introduction). External papers,
 read on 2026-10-26: Fox–Hunter, arXiv 2606.02541v1, read in full for §1,
-Corollary 2.1, Theorem 5, Corollary 5.1 and §6 (Lemmas 6.1–6.2), quoted;
+Corollary 2.1, §4 (Lemmas 4.2–4.3), Theorem 5, Corollary 5.1 and §6 (Lemmas 6.1–6.2), quoted;
 Elsholtz–Hunter–Proske–Sauermann, arXiv 2406.12290v1, Theorem 1.1;
 Campos–Fox–Schildkraut, arXiv 2608.20824; Kim, arXiv 2610.32000; and
 Blankenship–Cummings–Taranchuk, arXiv 1705.09673, abstracts only. Hunter,
