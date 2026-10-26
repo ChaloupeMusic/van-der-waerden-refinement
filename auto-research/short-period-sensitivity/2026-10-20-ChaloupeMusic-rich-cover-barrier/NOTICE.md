@@ -13,6 +13,8 @@ written by a concurrent session of the same sprint (rich-side barrier note);
 the band-rigidity analysis, the tube lemma, the reduction to (G_θ), the
 Dirichlet certificate and the measurements are new here. The track and the
 sensitivity analysis it extends are `2026-10-20-erwan-binding-lever`.
+Proposition 5′ (weaker hypothesis (G♭), face count of wrap patterns, the
+rank-≥ 4 lemma, check 6) was added by a later session of the same project.
 
 AI assistance: the analysis, the verifier and the text were prepared with
 Claude (Anthropic), in several coordinated sessions. Not independently

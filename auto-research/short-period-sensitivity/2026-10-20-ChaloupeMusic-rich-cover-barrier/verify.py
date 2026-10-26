@@ -237,6 +237,68 @@ def check_bookkeeping(a=Q(49, 100), b=Q(97, 200), c=Q(13, 100), theta=Q(13, 100)
             "repeated_box_fraction_below_3/4": r0, "regime1": r1, "regime2": r2, "regime3": r3,
             "regime3_margin_in_units_of_k_log_k": str(((k / 2 * logp - lhs3) / (k * L)).quantize(Decimal("1e-6")))}
 
+# ---------------------------------------------------------------- check 6
+def check_flat_reduction(a=Q(49, 100), b=Q(97, 200), c=Q(13, 100), theta=Q(13, 100),
+                         delta=Q(1, 2000), log10k=400):
+    """Proposition 5' (weaker hypothesis): bookkeeping at one sample point.
+    For |S| >= s0 the count uses S0 subset S of size sigma = min(|S|, floor(delta k)),
+    positions k^sigma, wrap patterns <= (4 sigma^2 (k+4)^2)^D (faces of a line
+    arrangement, one per coordinate), and the tube (1 + 4q sqrt D)^d. Checks:
+    (i)  rank >= 4 + floor((1+b+delta) sigma D/(c k)) suffices for s0 <= sigma < delta k;
+    (ii) deficit <= theta D on sets of size floor(delta k) suffices for |S| >= delta k;
+    (iii) rank >= 4 alone suffices up to sigma4, and the rank-3 exceptions
+         (some g <= k/(s0-1) with ||g y~(d)|| < 1/(s0-1)) are a vanishing fraction."""
+    assert c > b / 4 and theta < 2 - (delta + b / 2) / c
+    getcontext().prec = 500
+    L = Decimal(log10k) * Decimal(10).ln()
+    k = Decimal(10) ** log10k
+    D = (Decimal(a.numerator) / a.denominator * L).exp()
+    bb, cc, th, de = (Decimal(x.numerator) / x.denominator for x in (b, c, theta, delta))
+    logq_lo = cc * k / D * L                                 # q >= k^{ck/D}
+    logq_hi = logq_lo + (2 * k * k).ln()                     # q <= 2k^2 k^{ck/D}
+    tube = logq_hi + (4 * D.sqrt()).ln() + 1                 # >= ln(1 + 4q sqrt D)
+    s0 = int((4 - 2 / L) * D / bb)
+    sig1 = (de * k).to_integral_value(rounding="ROUND_FLOOR")
+    def margin(sigma, s, d):                                 # RHS - LHS, must be >= 0
+        lhs = Decimal(4).ln() + sigma * L + D * (4 * sigma * sigma * (k + 4) ** 2).ln() \
+            + d * tube - 2 * D * logq_lo
+        return -bb * s * L - lhs
+    x = (1 + bb + de) * D / (cc * k)
+    def need_i(sigma):
+        return 2 * D - 1 - (x * sigma).to_integral_value(rounding="ROUND_FLOOR")
+    grid = [Decimal(s0)]
+    while grid[-1] * 2 < sig1:
+        grid.append(grid[-1] * 2)
+    grid.append(sig1 - 1)
+    worst_i = min(margin(sg, sg, need_i(sg)) / (k * L) for sg in grid)
+    ok_i = all(margin(sg, sg, need_i(sg)) >= 0 for sg in grid)
+    # (ii): worst |S| = k/2 with S0 of size sig1 and deficit theta D
+    m2 = margin(sig1, k / 2, (th * D).to_integral_value(rounding="ROUND_FLOOR"))
+    ok_ii = m2 >= 0
+    # (iii): largest sigma for which deficit 2D-1 (rank 4) passes: bisection
+    lo, hi = Decimal(s0), sig1
+    assert margin(lo, lo, 2 * D - 1) >= 0
+    for _ in range(2000):
+        if hi - lo <= 1:
+            break
+        mid = ((lo + hi) / 2).to_integral_value(rounding="ROUND_FLOOR")
+        if margin(mid, mid, 2 * D - 1) >= 0:
+            lo = mid
+        else:
+            hi = mid
+    sigma4 = lo
+    # rank-3 exceptions: fraction <= (k/(s0-1)) (2/(s0-1) + 1/q)^D
+    exc = (k / (s0 - 1)).ln() + D * ((Decimal(2) / (s0 - 1)).ln() + Decimal("1e-99"))
+    ok_iii = sigma4 >= s0 and exc < -L
+    assert ok_i and ok_ii and ok_iii
+    return {"a": str(a), "b": str(b), "c": str(c), "theta": str(theta), "delta": str(delta),
+            "log10_k": log10k, "regime_i_on_dyadic_grid": ok_i, "regime_ii": ok_ii,
+            "rank4_suffices_up_to_sigma4": ok_iii,
+            "sigma4_times_D_over_ck": str((sigma4 * D / (cc * k)).quantize(Decimal("1e-6"))),
+            "log10_rank3_exception_fraction_below": "%.4e" % float(exc / Decimal(10).ln()),
+            "regime_i_min_margin_in_units_of_k_log_k": "%.3e" % float(worst_i),
+            "regime_ii_margin_in_units_of_k_log_k": str((m2 / (k * L)).quantize(Decimal("1e-6")))}
+
 def main():
     res = {
         "1_linear_rigidity_fails": [check_linear_rigidity_fails(4, 120, 1),
@@ -248,6 +310,7 @@ def main():
                        deficit_search(8, 400, 40, 14, "generic")],
         "4_small_instances": check_small_instances(),
         "5_bookkeeping": check_bookkeeping(),
+        "6_flat_reduction": check_flat_reduction(),
     }
     for d in res["3_deficits"]:
         if d["mode"] == "generic":

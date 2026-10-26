@@ -139,5 +139,20 @@
     "regime3_margin_in_units_of_k_log_k": "0.000600",
     "repeated_box_fraction_below_3/4": true,
     "theta": "13/100"
+  },
+  "6_flat_reduction": {
+    "a": "49/100",
+    "b": "97/200",
+    "c": "13/100",
+    "delta": "1/2000",
+    "log10_k": 400,
+    "log10_rank3_exception_fraction_below": "-1.9662e+198",
+    "rank4_suffices_up_to_sigma4": true,
+    "regime_i_min_margin_in_units_of_k_log_k": "1.646e-199",
+    "regime_i_on_dyadic_grid": true,
+    "regime_ii": true,
+    "regime_ii_margin_in_units_of_k_log_k": "0.000100",
+    "sigma4_times_D_over_ck": "0.673400",
+    "theta": "13/100"
   }
 }
