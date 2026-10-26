@@ -1,4 +1,4 @@
-# Rich-side barrier for cover bounds: c ≤ b/4, conditional on a rank statement
+# Rich-side barrier for cover bounds: c ≤ b/4, conditional on a rank statement (G♭)
 
 **Status:** research note (conditional barrier, with exact certificates and a
 scoped measurement). The hypothesis is weakened to (G♭), whose small-set half
@@ -90,7 +90,8 @@ Write `rank_J(P)` for the rank of the rows `r_t`, `t ∈ J`.
    vectors, so their real null space has a rational basis: every rank deficit
    comes from integer relations `Σ_i (x_i + t y_i) w_{t,i} = c₀ + c₁t + c₂t²`
    on `J`. Moreover, with `V = span(w_{·,1}|_J, …, w_{·,D}|_J, 1, t) ⊂ R^J` and
-   `T = diag(t)`, the column space is `V + TV`, hence
+   `T = diag(t)` (after the translation `t → t + 1`, which leaves the rank
+   invariant and makes `T` injective), the column space is `V + TV`, hence
    `2D + 3 − rank_J = 2d₁ − 1 + dim(V ∩ TV)`, where `d₁ = D + 2 − dim V` counts
    the relations `⟨g, w_t⟩` affine in `t` on `J` (`g ∈ Z^D`, any height) and
    `dim(V ∩ TV) ≥ 1` (it contains `t`). Pure relations cost exactly 2 each;
@@ -131,7 +132,7 @@ against `2D log q`. ∎
    `gcd(g, N) = 1`, such `d` are at most `(k/s₀)(2q/(s₀−1) + 1)^D`, a
    fraction `≤ (k/s₀)(2/(s₀−1) + 1/q)^D = o(1)` of all progressions. Removing
    them, `rank_J ≥ 4` for every `|J| ≥ s₀`, which is all that (i) asks for
-   `|J| ≤ σ₄ ≈ ck/((1+b)D)`.
+   `|J| ≤ σ₄ = ck/((1+b+δ)D)`.
 
 So (i) is **proved** on `s₀ ≤ |J| ≤ σ₄` (sets of up to `≈ k^{1−a}`
 positions). What remains open is (i) on `σ₄ < |J| < δk` and (ii): a deficit
@@ -193,8 +194,8 @@ repeated-box fraction at `a = 49/100, b = 97/200, c = 13/100,
 θ = 13/100, k = 10^400` (margin `6·10⁻⁴` in units of `k log k`, which is
 `2c − b/2 − θc`). Check 6 replays Proposition 5′ at the same point with
 `δ = 1/2000`: (i) on a dyadic grid of `|J|` from `s₀` to `δk`, (ii) at
-`|J| = δk` (margin `10⁻⁴`), the threshold `σ₄ ≈ 0.6734 ck/D = ck/((1+b)D)`
-up to which rank 4 suffices, and the rank-3 exception fraction
+`|J| = δk` (margin `10⁻⁴`), the threshold `σ₄ = ck/((1+b+δ)D) ≈ 0.6732 ck/D`
+up to which (i) asks only rank 4, and the rank-3 exception fraction
 (`< 10^{−1.9·10^{198}}`).
 
 ## What is not claimed

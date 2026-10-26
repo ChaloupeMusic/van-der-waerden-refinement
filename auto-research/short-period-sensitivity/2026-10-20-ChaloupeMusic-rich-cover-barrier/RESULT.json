@@ -152,7 +152,7 @@
     "regime_i_on_dyadic_grid": true,
     "regime_ii": true,
     "regime_ii_margin_in_units_of_k_log_k": "0.000100",
-    "sigma4_times_D_over_ck": "0.673400",
+    "sigma4_times_D_over_ck": "0.673174",
     "theta": "13/100"
   }
 }

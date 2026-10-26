@@ -246,7 +246,7 @@ def check_flat_reduction(a=Q(49, 100), b=Q(97, 200), c=Q(13, 100), theta=Q(13, 1
     arrangement, one per coordinate), and the tube (1 + 4q sqrt D)^d. Checks:
     (i)  rank >= 4 + floor((1+b+delta) sigma D/(c k)) suffices for s0 <= sigma < delta k;
     (ii) deficit <= theta D on sets of size floor(delta k) suffices for |S| >= delta k;
-    (iii) rank >= 4 alone suffices up to sigma4, and the rank-3 exceptions
+    (iii) (i) asks only rank >= 4 up to sigma4 = ck/((1+b+delta)D), and the rank-3 exceptions
          (some g <= k/(s0-1) with ||g y~(d)|| < 1/(s0-1)) are a vanishing fraction."""
     assert c > b / 4 and theta < 2 - (delta + b / 2) / c
     getcontext().prec = 500
@@ -276,17 +276,8 @@ def check_flat_reduction(a=Q(49, 100), b=Q(97, 200), c=Q(13, 100), theta=Q(13, 1
     m2 = margin(sig1, k / 2, (th * D).to_integral_value(rounding="ROUND_FLOOR"))
     ok_ii = m2 >= 0
     # (iii): largest sigma for which deficit 2D-1 (rank 4) passes: bisection
-    lo, hi = Decimal(s0), sig1
-    assert margin(lo, lo, 2 * D - 1) >= 0
-    for _ in range(2000):
-        if hi - lo <= 1:
-            break
-        mid = ((lo + hi) / 2).to_integral_value(rounding="ROUND_FLOOR")
-        if margin(mid, mid, 2 * D - 1) >= 0:
-            lo = mid
-        else:
-            hi = mid
-    sigma4 = lo
+    sigma4 = (cc * k / ((1 + bb + de) * D)).to_integral_value(rounding="ROUND_FLOOR")
+    assert need_i(sigma4) == 2 * D - 1 and margin(sigma4, sigma4, 2 * D - 1) >= 0
     # rank-3 exceptions: fraction <= (k/(s0-1)) (2/(s0-1) + 1/q)^D
     exc = (k / (s0 - 1)).ln() + D * ((Decimal(2) / (s0 - 1)).ln() + Decimal("1e-99"))
     ok_iii = sigma4 >= s0 and exc < -L
