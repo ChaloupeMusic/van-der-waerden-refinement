@@ -124,8 +124,10 @@ Assume `λ ≤ q/(400k³)`, `D ≥ 2`, `p ≤ 1/2`. For every outer coloring `c*
 Consequently either kind of criterion can conclude only if
 
 ```
-k(p + p²) > ln E − ln(k ln(1/p) + ln 2),    ln E ≥ ln q − ln λ − 3 ln k − ln 65.
+k(p + p²) > ln E − ln(k ln(1/p) + ln 2),    ln E ≥ ln q − ln λ − 3 ln k − ln 67.
 ```
+
+The last bound uses `⌊x⌋ ≥ 0.96x` for `x = q/(64k³λ) ≥ 6.25`.
 
 On the exponent scale (`ln q ≈ c k^{1−a} ln k`, `ln λ = k^{a+o(1)}`,
 `pk = k^{1−b}`, `a < 1/2`), this is **`b < a`**, strict as in P1.
@@ -152,7 +154,8 @@ Z(−p) = (1 − x)^E + (1 − y)^E − 1 ≤ e^{−Ex} − Ey/2,
 ```
 
 using `1 − e^{−t} ≥ t/2` for `t = Ey ≤ 1`. This is `≤ 0` as soon as
-`Ex ≥ ln(2/(Ey))`, which follows from `Ex ≥ k ln(1/p) + ln 2`. Outside
+`Ex ≥ ln(2/(Ey))`, which follows from `Ex ≥ k ln(1/p) + ln 2`. If instead
+`Ey > 1`, then `Z ≤ e^{−Ex} + e^{−1} − 1 < 0` directly, since `Ex ≥ ln 2`. Outside
 Shearer's region there is a space with dependency graph `K_{E,E}` on these
 events in which they cannot all be avoided (Shearer 1985). Extending it by
 the other events, independently and with their probabilities, gives a space

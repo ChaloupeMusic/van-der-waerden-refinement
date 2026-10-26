@@ -256,7 +256,7 @@ print(f'5. toy L={L}, p=1/4: canonical Z_K(L,L) = {float(Z):.4f} <= 0 (fails); '
 # ---------------------------------------------------------------- 6. exponents
 def lll_margin(kexp10, a, b, c, m_=Decimal('0.99')):
     """ln E - ln(k ln(1/p) + ln 2) - k(p + p^2), with
-    ln E >= ln q - ln lam - 3 ln k - ln 65, ln q = c k^(1-a) ln k, p = k^(-b),
+    ln E >= ln q - ln lam - 3 ln k - ln 67, ln q = c k^(1-a) ln k, p = k^(-b),
     and ln lam bounded as in single-label-obstructions (Rosser-Schoenfeld,
     h_0 = (k^a + 1)(ln k + 1)^2, M = k^m + 1).  Positive: no graph-only or
     variable-only criterion certifies.  Also checks lam <= q/(400 k^3)."""
@@ -268,7 +268,7 @@ def lll_margin(kexp10, a, b, c, m_=Decimal('0.99')):
     loglam = Decimal('1.25506') * h0 / h0.ln() * (2 * (k_ ** m_ + 1) + 2).ln()
     check(loglam <= logq - Decimal(400).ln() - 3 * lk, f'exponent: lam > q/(400k^3) at k=1e{kexp10}')
     p_ = k_ ** (-b)
-    lnE = logq - loglam - 3 * lk - Decimal(65).ln()
+    lnE = logq - loglam - 3 * lk - Decimal(67).ln()
     return lnE - (k_ * b * lk + Decimal(2).ln()).ln() - k_ * (p_ + p_ * p_)
 
 
@@ -326,7 +326,7 @@ summary = {
     },
     'theorem': {
         'variable_only_criteria_fail_if': 'E (1-p)^k >= 1',
-        'graph_only_criteria_fail_if': 'E (1-p)^k >= k ln(1/p) + ln 2  (and E p^k <= 1)',
+        'graph_only_criteria_fail_if': 'E (1-p)^k >= k ln(1/p) + ln 2',
         'necessary_for_either': 'k (p + p^2) > ln E - ln(k ln(1/p) + ln 2)',
         'exponent_scale': 'b < a',
         'family': 'canonical: one event per progression and color, on its own keys',

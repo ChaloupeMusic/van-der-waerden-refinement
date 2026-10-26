@@ -30,7 +30,7 @@
   "theorem": {
     "exponent_scale": "b < a",
     "family": "canonical: one event per progression and color, on its own keys",
-    "graph_only_criteria_fail_if": "E (1-p)^k >= k ln(1/p) + ln 2  (and E p^k <= 1)",
+    "graph_only_criteria_fail_if": "E (1-p)^k >= k ln(1/p) + ln 2",
     "necessary_for_either": "k (p + p^2) > ln E - ln(k ln(1/p) + ln 2)",
     "variable_only_criteria_fail_if": "E (1-p)^k >= 1"
   }
