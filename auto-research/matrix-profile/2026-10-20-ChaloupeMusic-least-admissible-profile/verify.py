@@ -456,7 +456,10 @@ def main():
         check(got == want, "pinned base file " + rel)
     report["pinned_base_files_ok"] = hashes
     man = json.loads((PKG / "MANIFEST.json").read_text())
-    listed = sorted(p.name for p in PKG.iterdir() if p.is_file() and p.name != "MANIFEST.json")
+    # lean/.lake holds the local Lake build (Mathlib), never part of the package
+    listed = sorted(p.relative_to(PKG).as_posix() for p in PKG.rglob("*")
+                    if p.is_file() and p.name != "MANIFEST.json"
+                    and ".lake" not in p.relative_to(PKG).parts)
     check(sorted(man) == listed, "manifest lists exactly the package files")
     for name, want in man.items():
         check(sha256(PKG / name) == want, "manifest hash " + name)
