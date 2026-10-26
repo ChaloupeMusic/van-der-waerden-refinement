@@ -38,7 +38,8 @@ What is checked:
      h0 = D ceil(ln k)^2, ln q = c k ln k / D) and for the source
      (c = 1e-5, D = ceil(k^(1/10)), h0 = D^2), at k = 2^739, 2^1024, 2^4096:
      ln Y0 (Lemma R scale), the prime condition of Lemma E
-     (theta((k-1)/2) - theta(h0) > ln q, via Rosser-Schoenfeld), the
+     (theta((k-1)/(l-1)) - theta(h0) > ln q, via Rosser-Schoenfeld, at
+     l = 3 and at the worst useful l = p0(k) - 1), the
      Behrend density against 1/(2k), the Kelley-Meka / Bloom-Sisask
      critical constant ln(2k)/(ln Y0)^(1/9), the bound p0(k) on useful l,
      and the Rankin/O'Bryant density at every l < p0(k).
@@ -321,6 +322,8 @@ def numerics(log2k, a=None, c=None, source=False):
     behrend = 2 * (2 * LN2 * lnY).sqrt()                   # -ln(Behrend density) at scale Y0
     km_crit = ln2k / lnY ** (D_(1) / 9)                    # KM applies if c_KM exceeds this
     pp = p0(lnk)
+    xw = (k_ - 1) / (pp - 2)                              # worst useful l = p0 - 1: x = (k-1)/(l-1)
+    prime_gap_worst = xw * (1 - 1 / xw.ln()) - D_('1.01624') * h0
     # Rankin/O'Bryant: -ln density >= n 2^((n-1)/2) (ln Y)^(1/n) - ln(ln Y)/(2n) - C_l, n = ceil(log2 l)
     nmax = max(2, math.ceil(math.log2(pp)))
     rankin = min(n * D_(2) ** (D_(n - 1) / 2) * lnY ** (D_(1) / n) - lnY.ln() / (2 * n)
@@ -329,6 +332,7 @@ def numerics(log2k, a=None, c=None, source=False):
     return {'ln_q_log2': float(lnq.ln() / LN2), 'ln_Y0_log2': float(lnY.ln() / LN2),
             'h0_log2': float(h0.ln() / LN2),
             'prime_condition_margin_log2': float((prime_gap / lnq).ln() / LN2),
+            'prime_condition_margin_worst_l_log2': float((prime_gap_worst / lnq).ln() / LN2),
             'behrend_minus_ln_density_log2': float(behrend.ln() / LN2),
             'ln_2k_log2': float(ln2k.ln() / LN2),
             'km_critical_constant_log2': float(km_crit.ln() / LN2),
@@ -354,6 +358,7 @@ for name, row in table.items():
     if isinstance(row, str):
         continue
     check(row['prime_condition_margin_log2'] > 0, f'{name}: prime condition of Lemma E fails')
+    check(row['prime_condition_margin_worst_l_log2'] > 0, f'{name}: (S3) fails at l = p0 - 1')
     check(row['ln_Y0_log2'] > row['ln_2k_log2'], f'{name}: Y0 not long')
     check(row['behrend_minus_ln_density_log2'] > row['ln_2k_log2'] + 5,
           f'{name}: Behrend density not far below 1/(2k)')
@@ -369,7 +374,8 @@ for name, row in table.items():
           f'{row["behrend_minus_ln_density_log2"]} vs log2 ln 2k = {row["ln_2k_log2"]}; '
           f'KM critical constant 2^{row["km_critical_constant_log2"]}; p0 = {row["p0"]}; '
           f'log2 Rankin exponent = {row["rankin_min_exponent_log2"]}; log2 l_random = '
-          f'{row["random_split_l_log2"]}; prime margin 2^{row["prime_condition_margin_log2"]}')
+          f'{row["random_split_l_log2"]}; prime margin 2^{row["prime_condition_margin_log2"]} (l = 3), '
+          f'2^{row["prime_condition_margin_worst_l_log2"]} (l = p0 - 1)')
 
 # ------------------------------------------------------------------- summary
 OUT['fails'] = len(FAIL)

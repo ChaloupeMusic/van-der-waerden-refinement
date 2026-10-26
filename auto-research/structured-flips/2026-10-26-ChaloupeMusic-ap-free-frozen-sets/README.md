@@ -1,19 +1,26 @@
 # AP-free frozen key sets cannot carry door 1
 
 **Status:** negative result (structural research note), with proofs and exact
-finite checks. No new bound is claimed. The note closes the deterministic
-"AP-sparse" route to door 1 (Behrend, Salem–Spencer, Elkin, and any set
-without 3-term progressions) unconditionally for `k` large. For forbidden
-lengths `4 ≤ ℓ < p₀(k) = O(log k / log log k)` it reduces the route to an
-off-diagonal van der Waerden bound that is open, and shows that every known
-construction fails it. Longer forbidden lengths cannot give (II).
+finite checks. No new bound is claimed. What is closed, for `k` large, is
+the **index-side** AP-sparse route to door 1: no `X` satisfying (I) can keep
+the index set `I_X(P)` free of 3-term progressions on every rich `P`. That is
+the reading in which Behrend, Salem–Spencer or Elkin sets would give (II).
+Also closed: every band rule that forbids the quadratic band triple (Q),
+which is not a 3-AP of `ℤ`. **Band-side** 3-AP-free sets (a Behrend set in
+the band coordinate of each box) are closed only under Proposition 4, which
+assumes flatness of the fibre weights and is conditional. For index-side
+forbidden lengths `4 ≤ ℓ < p₀(k) = O(log k / log log k)` the note reduces
+the route to an off-diagonal van der Waerden bound that is open, and shows
+that every known construction fails it. Longer forbidden lengths cannot give
+(II).
 
 **Base commit:** `63bef9ca996786a41169de4a0c3d6b3b47b0fe96`, on top of the
 local branch `pr/exits-past-1-8` (`83b872a`).
 
 **Depends on:** `structured-flips/2026-10-20-ChaloupeMusic-single-label-lenses`
 (Lemma 1, the exact lens, and Lemma R, the scale `Y₀` of single-label fibre
-pieces). It uses the source's *Outer-color dichotomy* (Section 5) as is.
+pieces). It uses the template's sharpened dichotomy
+(`sharpened-region-proof.md`, `short-period-runs-proof.md`) as is.
 
 ## Reproduce
 
@@ -61,8 +68,14 @@ These are the source's notations, also used by the team's template:
 `N = q^D`, `x_i(n) = n/q^i`, `y_i = λx_i`, the meshes `U` and `V`, labels
 `L(n)` and keys `κ(n) = (V-box, ⌊‖qỹ(n)‖²⌋)`. The note uses four properties:
 
-* (S1) **dichotomy**: every progression is rich (case (i)) or affine (case
-  (ii)). Every version in this repository keeps it;
+* (S1) **dichotomy**: a progression that is not rich (case (i)) has
+  `ỹ(n_j) = A + jw` with `|w_i| < 1/(k−1)` for every `i`. This is the
+  sharpened dichotomy of the template (`sharpened-region-proof.md`, "The
+  new dichotomy constant", restated in `short-period-runs-proof.md`, "The
+  shape of a non-rich progression", where `k|w_i| ≤ 4MH/h < 1/2`). The
+  template does not require the path `A + jw` to stay in the
+  representative cube. The source's dichotomy (Section 5) is the
+  case `a = 1/10`;
 * (S2) every prime factor of `λ` is at most `h₀`. This is true of the
   primorial-type dilation of Section 2. Also `h₀ < (k−1)/2`, and
   `q` is a power of a prime `P > k`;
@@ -88,7 +101,7 @@ In particular `|S_J| ≥ ⌊|J|/k⌋` (disjoint windows of step 1).
 ### Lemma E (embedding a fibre pattern into a rich progression)
 
 Assume (S1)–(S3). Let `J` be a fibre piece of `r`, and let `m + iδ ∈ S_J`
-for `0 ≤ i < ℓ`, with `δ ≥ 1` and `ℓ ≥ 2`. Then there are a prime
+for `0 ≤ i < ℓ`, with `δ ≥ 1` and `ℓ ≥ 3`. Then there are a prime
 `h ∈ (h₀, (k−1)/(ℓ−1)]` and a **rich** progression `P` such that
 
 ```
@@ -107,12 +120,17 @@ Write `w` for the centred residue of `λe` mod `q`. It is `(λδ + tq)/h`
 reduced, where `t ∈ {1, …, h−1}` is the unique residue with
 `h | λδ + tq` (`t = 0` would mean `h | λδ`). Hence
 `|w| ≥ (q − λδ)/h`. The `ℓ` points lie in one `V` cell of width at most
-`2H`, so `λδ ≤ 2Hq < q/2`, and `|w| ≥ q/(2h) ≥ q/(k−1)`. If `ỹ(n_j)` were
-`A + jB` with all values in `[−1/2, 1/2)`, then `(k−1)|B_D| < 1`. But
-`B_D ≡ λe/q (mod 1)` forces `|B_D| ≥ |w|/q ≥ 1/(k−1)`. So `P` is not in
-case (ii), and by (S1) it is rich. ∎
+`2H`, so `λδ ≤ 2Hq < q/2`. Since `ℓ ≥ 3`, `h ≤ (k−1)/2`, and so
+`|w| ≥ q/(2h) ≥ q/(k−1)`. If `P` were not rich, (S1) would give
+`ỹ(n_j) = A + jw'` with `|w'_D| < 1/(k−1)`. But `w'_D ≡ y_D(d) = λe/q
+(mod 1)`, so `|w'_D| ≥ |w|/q ≥ 1/(k−1)`. Hence `P` is rich. ∎
 
-### Theorem 2 (3-AP-free mechanisms are closed)
+For `ℓ = 2`, `h` may reach `k − 1` and the inequality fails. Only `ℓ ≥ 3`
+is used below. A second argument, noted by the referee, works for every
+`ℓ`: the step in `y_D` is `t/h + λδ/(hq)`, so no label returns within fewer
+than `h > h₀` steps.
+
+### Theorem 2 (index-side 3-AP-free mechanisms are closed)
 
 Let `c_KM > 0` be the constant of the Kelley–Meka bound, in Bloom–Sisask's
 form: every 3-AP-free `A ⊂ [M]` has
@@ -136,7 +154,10 @@ Then every `X` satisfying the hitting half of (I) has:
 
    (Lemma 1 of the lens note). So no band rule that forbids this quadratic
    triple, which is the polynomial variant of Salem–Spencer adapted to
-   `⌊t₀ + t₁j + t₂j²⌋`, satisfies (I).
+   `⌊t₀ + t₁j + t₂j²⌋`, satisfies (I). The triple (Q) is not a 3-AP of
+   `ℤ`: its two gaps differ by `2λ²δ²` up to the integer parts. So (2)
+   does **not** exclude a band set `X_B` without 3-APs. That case is
+   Proposition 4's, under its flatness hypothesis.
 
 *Proof.* By (H), `|S_J| ≥ ⌊|J|/k⌋ ≥ |J|/(2k)`. By (KM),
 `exp(−c_KM (log |J|)^{1/9}) < 1/(2k)`, so `S_J` contains a 3-AP
@@ -148,15 +169,17 @@ for `a < 1/2`. In the source, `log Y₀ ≍ 10^{−5} k^{9/10} log k`. Either wa
 `(log Y₀)^{1/9}` grows like a power of `k`, so (KM) holds for every `k`
 beyond a threshold that depends only on `c_KM`. `c_KM` is not explicit in
 the literature. At the computed points, (KM) holds as soon as `c_KM`
-exceeds the critical value below. (S3) holds there with a large margin:
+exceeds the critical value below. (S3) holds there with a large margin,
+both at `ℓ = 3` and at the worst useful length `ℓ = p₀(k) − 1` of
+Theorem 3:
 
-| point | `log₂ ln Y₀` | critical `c_KM` | `log₂(θ-margin / ln q)` |
-|---|---|---|---|
-| `k = 2^739`, `a = 0.3`, `c = 1/9` | 523.1 | `2^{−49.1}` | 214.9 |
-| `k = 2^739`, `a = 0.49`, `c = 1/9` | 382.0 | `2^{−33.4}` | 355.3 |
-| `k = 2^1024`, `a = 0.45`, `c = 1/4` | 570.7 | `2^{−53.9}` | 452.3 |
-| `k = 2^4096`, `a = 0.49`, `c = 1/9` | 2097.3 | `2^{−221.6}` | 1997.7 |
-| `k = 2^739`, source | 657.5 | `2^{−64.1}` | 80.5 |
+| point | `log₂ ln Y₀` | critical `c_KM` | `log₂(θ-margin / ln q)`, `ℓ = 3` | same, `ℓ = p₀ − 1` |
+|---|---|---|---|---|
+| `k = 2^739`, `a = 0.3`, `c = 1/9` | 523.1 | `2^{−49.1}` | 214.9 | 209.4 |
+| `k = 2^739`, `a = 0.49`, `c = 1/9` | 382.0 | `2^{−33.4}` | 355.3 | 349.8 |
+| `k = 2^1024`, `a = 0.45`, `c = 1/4` | 570.7 | `2^{−53.9}` | 452.3 | 446.5 |
+| `k = 2^4096`, `a = 0.49`, `c = 1/9` | 2097.3 | `2^{−221.6}` | 1997.7 | 1990.3 |
+| `k = 2^739`, source | 657.5 | `2^{−64.1}` | 80.5 | 75.1 |
 
 All 21 points are in `RESULT.json`. The template is modelled by
 `D = ⌈k^a⌉`, `h₀ = D⌈ln k⌉²`, `ln q = ck ln k/D`, and
@@ -164,7 +187,8 @@ All 21 points are in `RESULT.json`. The template is modelled by
 
 **Densities, as the brief asks.** (H) forces relative density at least
 `1/(2k)` on every fibre piece. The team's guess `ρ_AP ≈ log q/k` is not
-needed and is not proved. A Behrend set at scale `Y₀` has density
+needed and is not proved. These are densities of the pullback `S_J`, not
+of band sets. A Behrend-type `S_J` at scale `Y₀` has density
 `exp(−2√(2 ln 2 · ln Y₀))`. At `k = 2^739`, `a = 0.3`, that is
 `exp(−2^{262.8})`, against `1/(2k) = exp(−2^{9.0})`. Kelley–Meka shows that
 no 3-AP-free set does better than `exp(−c_KM k^{(1−a)/9 + o(1)})`, which is
@@ -272,8 +296,8 @@ saturated or untouched blocks. A digit construction in base
 3. The split formulation of `W(3, k)` for `k = 3..6`, exhaustive.
 4. Digit sets: `p`-AP-free for every shift (`p = 3, 5, 7`), and averages
    exact.
-5. Exact numerics, Decimal to 60 digits: `ln Y₀`, (S3) through
-   Rosser–Schoenfeld (`θ(x) > x(1 − 1/ln x)` for `x ≥ 41`,
+5. Exact numerics, Decimal to 60 digits: `ln Y₀`, (S3) at `ℓ = 3` and at
+   `ℓ = p₀(k) − 1`, through Rosser–Schoenfeld (`θ(x) > x(1 − 1/ln x)` for `x ≥ 41`,
    `θ(x) < 1.01624x`), Behrend against `1/(2k)`, the critical `c_KM`,
    `p₀(k)`, the Rankin/O'Bryant exponent and the random-split threshold.
    This covers 18 template points (`a ∈ {0.3, 0.45, 0.49}`,
@@ -284,7 +308,11 @@ saturated or untouched blocks. A digit construction in base
 * No bound changes. 1/9 and every `c < 1/8` stand as they are.
 * Theorem 2 depends on the Kelley–Meka / Bloom–Sisask theorem, which is
   cited and not reproved. Its threshold on `k` is ineffective until `c_KM`
-  is made explicit.
+  is made explicit. The Bloom–Sisask bound also holds only for `M` beyond
+  its own threshold, another ineffective constant.
+* Band-side 3-AP-free sets are not closed unconditionally. Theorem 2 closes
+  the index-side reading and the quadratic triple (Q). A Behrend set in the
+  band coordinate is closed only under Proposition 4.
 * The window `4 ≤ ℓ < p₀(k)` is open. Only "no known construction works" is
   shown there, and that is not an impossibility theorem.
 * Proposition 4 is conditional on flatness of the fibre weights, which is not
