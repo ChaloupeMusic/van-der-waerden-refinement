@@ -1,13 +1,16 @@
 import CellLemma
 
-#print axioms CellLemma.InBox
-#print axioms CellLemma.pigeon_residues
-#print axioms CellLemma.segment_in_box
-#print axioms CellLemma.cell_lemma
-#print axioms CellLemma.not_integral_of_small
-#print axioms CellLemma.u
-#print axioms CellLemma.InLattice
-#print axioms CellLemma.pow_mul_u
-#print axioms CellLemma.coord
-#print axioms CellLemma.mem_range_coord
-#print axioms CellLemma.cyclic_cell_lemma
+-- `#print axioms` on every constant of the `CellLemma` namespace, auxiliary
+-- `_proof_*` and compiler constants included, so that no declaration added
+-- later escapes the audit (model: the referee's AllAxioms-L.lean).
+open Lean Elab Command in
+elab "#audit_ns" : command => do
+  let env ← getEnv
+  let mut names := #[]
+  for (n, _) in env.constants.toList do
+    if (`CellLemma).isPrefixOf n then names := names.push n
+  logInfo m!"{names.size} constants"
+  for n in names.qsort (·.toString < ·.toString) do
+    elabCommand (← `(#print axioms $(mkIdent n)))
+
+#audit_ns
