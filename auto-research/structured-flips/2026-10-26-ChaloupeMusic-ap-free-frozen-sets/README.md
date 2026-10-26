@@ -132,8 +132,9 @@ than `h > h₀` steps.
 
 ### Theorem 2 (index-side 3-AP-free mechanisms are closed)
 
-Let `c_KM > 0` be the constant of the Kelley–Meka bound, in Bloom–Sisask's
-form: every 3-AP-free `A ⊂ [M]` has
+Let `c_KM > 0` be the constant of the Kelley–Meka bound (arXiv:2302.05537),
+in the form of Bloom–Sisask (arXiv:2309.02353), which gives the exponent 1/9:
+every 3-AP-free `A ⊂ [M]` has
 `|A| ≤ M exp(−c_KM (log M)^{1/9})`. Assume (S1)–(S3) with `ℓ = 3`, and a
 fibre piece `J` with
 

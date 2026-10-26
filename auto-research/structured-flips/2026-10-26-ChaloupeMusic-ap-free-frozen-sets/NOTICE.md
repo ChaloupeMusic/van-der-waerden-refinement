@@ -15,7 +15,10 @@ conditions (I) and (II)) is due to radar-1a and radar-7b. Lemma 1 (exact
 lens) and Lemma R (fibre pieces) are those of the companion contribution
 `2026-10-20-ChaloupeMusic-single-label-lenses`; the mesh and label code of
 `verify.py` is transcribed from its verifier. Cited, not reproved: Kelley and
-Meka (3-AP-free sets, 2023) with the exponent 1/9 of Bloom and Sisask;
+Meka, *Strong bounds for 3-progressions* (arXiv:2302.05537), with the
+exponent 1/9 of Bloom and Sisask, *An improvement to the Kelley–Meka bounds
+on three-term arithmetic progressions* (arXiv:2309.02353; not their earlier
+arXiv:2302.07211);
 Behrend (1946); Rankin (1961) in O'Bryant's form (2011); Rosser and
 Schoenfeld (1962) for the bounds on θ and π; the values of W(3, k) for
 k ≤ 6 are recomputed by the verifier. The referee of the sprint (radar-cc)
