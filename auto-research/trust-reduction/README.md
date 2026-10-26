@@ -8,8 +8,6 @@ coefficient does not need it.
 
 Open questions:
 
-- A complete write-up of the rich-event chain (PRs #4, #6, #7) at the level of
-  the source, which would carry the same treatment from `1/16` up to `1/9`.
 - A Lean statement of the parameter transfer (the side-condition table).
 
 Related tracks, in open PRs #13–#18: `independent-audit`, `short-period-sensitivity`.
@@ -19,3 +17,4 @@ Related tracks, in open PRs #13–#18: `independent-audit`, `short-period-sensit
 | Date | Handle | Result | Status | PR |
 |---|---|---|---|---|
 | 2026-10-26 | ChaloupeMusic | every c < 1/16 (explicit 1/17) from the source's lemmas alone; (O), (R), (P2) proved, (K) not used | research note | — |
+| 2026-10-26 | ChaloupeMusic | every c < 1/8 (explicit 1/9) from the source's lemmas alone; rich chain (K) of PRs #4, #6, #7 proved, repairs K1, K2 | research note | — |
