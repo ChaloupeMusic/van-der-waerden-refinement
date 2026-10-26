@@ -316,6 +316,14 @@ All in exact rationals. Labels match `RESULT.json`.
 Grid checks are evidence for the theorems, not their proofs; the certificates in B and the
 witnesses in E are complete for what they state.
 
+## Lean
+
+`lean/` checks the profile side in Lean 4.21 with Mathlib: Theorem 1 (i) and (ii), Corollary 2
+including `kappa_a -> 3/(2 Gamma(4/3))` (through Euler's limit formula in Mathlib) and the
+bracket for every `N`, the `t = 4/5` witnesses of Corollary 3, and the `P_o` side of K1 to K5.
+No `sorry` and no axiom beyond Lean's three standard ones, on every declaration. The tensor
+side of Theorem 4 is not formalized. `lean/README.md` maps each statement to its Lean name.
+
 ## Relation to earlier work
 
 * `research-note.tex`, Theorem "barrier": `P_*` shows that the listed constraints admit
@@ -339,4 +347,5 @@ witnesses in E are complete for what they state.
 is made beyond the scope statement of Corollary 3. Theorem 4 covers five named families; other
 valid constraints (for example laser-method degenerations into fully independent blocks,
 whose symmetrized form carries a factor `M^(1/t)`) are not examined here. Human mathematical
-review, formal verification and literature priority are not established.
+review and literature priority are not established; formal verification covers the profile side
+only (`lean/`).
