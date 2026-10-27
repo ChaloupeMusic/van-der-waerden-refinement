@@ -213,7 +213,7 @@ def pente():
                                     viole = True
     exige(vus > 1000, "too few level classes")
     controle("tenfold-smaller slope bound fails somewhere", viole)
-    # the integer-slope version (A0 of 7474d6f) is false on the single-period instance
+    # the integer-slope version (A0 of the first draft) is false on the single-period instance
     D, k = 8, 1000
     A, B = tirage(D, 1, periode=5)
     W = roues(A, B, k)
