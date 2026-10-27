@@ -170,6 +170,8 @@ necessary. Meshes coarser than the source's, with `m = ⌈kR⌉`, `⌈R⌉` or
 is recorded in `RESULT.json`. The mutant without the box shows that some
 mesh is needed.
 
+Last, `verify.py` checks `MANIFEST.json`: every listed file must have its recorded sha256, and `--write` records the new hash of `RESULT.json` only when every other check passes. A file changed by one byte fails.
+
 The axiom audit runs `#print axioms` on every constant whose name starts with
 `KeyMultiplicity`. A private or `_root_` declaration would escape that filter;
 there is none. The audit of `lemma3` and `hm_bridge` is transitive anyway, so

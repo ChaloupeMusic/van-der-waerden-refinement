@@ -347,12 +347,25 @@ for name, scale in [('k', Decimal(k)), ('1', Decimal(1)), ('1/4', Decimal('0.25'
 OUT['coarser_meshes_three_times'] = coarse
 print(f'   coarser meshes, progressions with a key three times out of 1000: {coarse}')
 
+# 6. MANIFEST.json: every listed file has its recorded sha256.  RESULT.json
+# is checked after --write, which records its new hash.
+manifest = json.loads((HERE / 'MANIFEST.json').read_text())
+for name, h in sorted(manifest.items()):
+    if name != 'RESULT.json':
+        f = HERE / name
+        check(f.exists() and hashlib.sha256(f.read_bytes()).hexdigest() == h, f'MANIFEST: {name}')
+
 if '--write' in sys.argv:
     if FAIL:
         print(f'{len(FAIL)} failure(s): RESULT.json not written')
         sys.exit(1)
     (HERE / 'RESULT.json').write_text(json.dumps(OUT, indent=2, ensure_ascii=False) + '\n')
+    manifest['RESULT.json'] = hashlib.sha256((HERE / 'RESULT.json').read_bytes()).hexdigest()
+    (HERE / 'MANIFEST.json').write_text(json.dumps(manifest, indent=2) + '\n')
 check(json.loads((HERE / 'RESULT.json').read_text()) == OUT, 'RESULT.json differs')
+check(hashlib.sha256((HERE / 'RESULT.json').read_bytes()).hexdigest() == manifest.get('RESULT.json'),
+      'MANIFEST: RESULT.json')
+print('6. MANIFEST.json: every listed file matches its recorded sha256')
 if FAIL:
     print(f'{len(FAIL)} failure(s)')
     sys.exit(1)
