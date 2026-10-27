@@ -25,7 +25,7 @@ the `o(1)` terms of Theorem 4 to be made explicit. `r` is a parameter, with
 the better lower bound `(1 − 1/r)^k` for `r ≥ 3` found by U2's
 contradictor. The `o(1)` terms are made explicit at eight values of `k`, on
 a grid of `D` (checks 3 and 3b), not for every `k`. The contradictor of the
-first delivery (`9695303`) found no blocking gap. Its points (the
+first draft found no blocking gap. Its points (the
 hypotheses `D < h₀ < 2M < k`, the scope of the title, the threshold, the
 grid, the verifier) are applied.
 

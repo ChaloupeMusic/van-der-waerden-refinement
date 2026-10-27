@@ -61,7 +61,7 @@ IN_TREE = {
         'log|𝒦| ≤ D ln(2|V|) + ln(Dq²/4 + 1)', '**Lemma B1 (density).**',
         'Let `δ_X = |κ^{−1}(X)|/N` be the density of `X` among positions, and `η = 2/λ + k²/N`.'],
     SF + '2026-10-27-ChaloupeMusic-one-eighth-barrier': [
-        '> **Fixed `a`.**', 'are **not covered**', '**Proposition 1 (K1).**', '**Proposition 2 (K3).**'],
+        '> **Fixed `a`.**', 'with `ln E = o(ln q)` are **not covered by the proofs of this', '**Proposition 1 (K1).**', '**Proposition 2 (K3).**'],
     SF + '2026-10-26-ChaloupeMusic-exact-door-one-condition': [
         '**Proposition 5 (first moment of a random-like `X`).**'],
 }
