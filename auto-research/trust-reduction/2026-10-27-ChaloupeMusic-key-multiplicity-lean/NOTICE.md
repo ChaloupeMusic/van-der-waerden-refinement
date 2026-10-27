@@ -26,7 +26,7 @@ Credits:
   abstraction, for mutants, and for the degenerate progressions to be
   excluded explicitly.
 
-Review history: radar-89's contradicteur rebuilt `dfe73ea` from scratch
+Review history: radar-89's contradicteur rebuilt the first draft from scratch
 (same 57 constants, same axioms) and found nothing blocking. Applied:
 * the bound is now exercised. The earlier toys never showed a key twice: on
   the exhaustive ones every term is alone in its box. Random short steps
