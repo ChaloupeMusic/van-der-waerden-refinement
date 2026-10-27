@@ -4,9 +4,8 @@ Pinned sources: this repository at `63bef9ca996786a41169de4a0c3d6b3b47b0fe96`
 and, through it, the OpenAI manuscript *Quantitative Superexponential Bounds
 for van der Waerden Numbers* pinned in `source-manifest.json` (commit
 `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`). The note reads
-`2026-10-27-ChaloupeMusic-key-measurable-colorings` (commit
-`f97079b`) and `2026-10-27-ChaloupeMusic-more-keys` (commit `24c3f4a`),
-both in this PR.
+`2026-10-27-ChaloupeMusic-key-measurable-colorings` and
+`2026-10-27-ChaloupeMusic-more-keys`, both in this PR.
 
 Credits: the construction, keys and flips are the source's. The digit
 transversal and its hitting proof are radar-63's (S6-63), re-proved by the

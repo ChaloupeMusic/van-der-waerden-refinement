@@ -11,7 +11,7 @@ linear form of the base-`q` digits modulo `M`, unless `M ≥ N^{1−o(1)}`. No
 new bound is claimed, and no `c > 1/8`.
 
 **Base commit:** `63bef9ca996786a41169de4a0c3d6b3b47b0fe96`, through
-`pr/door-one` (`00375ff`) and `key-measurable-colorings` (`f97079b`).
+`pr/door-one` (`00375ff`) and `key-measurable-colorings` (this PR).
 
 **Sources:** `2026-10-27-ChaloupeMusic-key-measurable-colorings` (Theorem 1,
 Proposition 3, the digit sets of its (D)); `2026-10-26-ChaloupeMusic-ap-free-frozen-sets`
@@ -117,8 +117,8 @@ the `e^{H′}` key words (C1), and it saturates none, since
 `e^{H′}ρ^{k/2} → 0` (radar-63's remark; Theorem C of `more-keys` with
 `κ = 1 − a` says the same). This establishes (I′) on the single-label blocks
 only. A proper coloring of **all** slow words also needs the argument on the
-color word given in `key-measurable-colorings` (`0906b91`) and in radar-d9's
-(D) note (`4fdfa81`, Proposition 7 (2)), which this note does not reprove.
+color word given in `key-measurable-colorings` (this PR) and in radar-d9's
+(D) note (`slow-word-transversal-density`, Proposition 7 (2)), which this note does not reprove.
 With that argument, `k^{−a}` is the right order for (D), with a random
 witness and no deterministic one.
 

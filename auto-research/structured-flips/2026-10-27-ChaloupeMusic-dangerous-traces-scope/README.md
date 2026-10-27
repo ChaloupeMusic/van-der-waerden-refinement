@@ -5,8 +5,8 @@ the open question (Q-S1b) of `2026-10-27-ChaloupeMusic-colour-correlated-rules` 
 whether every frozen set `X` passing (I′) realises many distinct **dangerous** traces on one label word or
 one pattern. No lower bound on that count is proved here, in either regime.
 
-**Base commit:** `pr/door-one` (`00375ff`) on `63bef9c`, through the local commit `3033e8f`
-(`colour-correlated-rules`).
+**Base commit:** `pr/door-one` (`00375ff`) on `63bef9c`, through
+`colour-correlated-rules` (this PR).
 
 ## Setting
 
@@ -78,7 +78,7 @@ closure must therefore use the fine alternations of `T_L`, at scale `ℓ_* = q^{
 length `q^2/(80k^2)`.
 
 **The dense form of Theorem B (radar-3a, a sketch here).** radar-3a has committed it as Corollary B′ of
-`colour-correlated-rules` (`171dd54`, in this PR), refereed after this note was written. Each row of `S_all(W)` and
+`colour-correlated-rules` (in this PR), refereed after this note was written. Each row of `S_all(W)` and
 `S_out(W)` is cut into consecutive pieces. A row shorter than `2M` stays whole, and the others give pieces of
 length `M` to `2M`. So each piece has length between `δM − 1` and `2M` and distinct labels, and a word has
 at most `2k` pieces. A trace is dense when it has density at least `ε/4` on a piece, or at least `ε/8` on a

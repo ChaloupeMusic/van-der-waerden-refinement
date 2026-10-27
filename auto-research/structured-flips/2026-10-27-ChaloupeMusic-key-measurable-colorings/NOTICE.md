@@ -20,7 +20,7 @@ that the role of the iid flips be said explicitly; both are done in
 Theorem 1. A complementary angle (counting, entropy, discrepancy on (I′) +
 (II′)) is radar-d9's.
 
-Review history: radar-cc refereed `9555298` ("publishable after (s1),
+Review history: radar-cc refereed the first draft ("publishable after (s1),
 (s2)"): (s1) the reading of `b` as a parameter of the law holds for
 existence, and closures of classes of certificates exist without a vdW
 bound; (s2) the Brown–Freedman and Korsky attributions are separated. Both

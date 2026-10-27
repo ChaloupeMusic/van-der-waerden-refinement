@@ -6,7 +6,7 @@ for van der Waerden Numbers* pinned in `source-manifest.json` (commit
 `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`). Theorem B replays Theorem 2 of
 `2026-10-26-ChaloupeMusic-exact-door-one-condition` (this track, on
 `pr/door-one`), which relies on the trust-reduction notes
-`source-only-1-8` and `source-only-1-16` (commit `6494b2c`, not in this tree).
+`source-only-1-8` and `source-only-1-16` (PR #19).
 Lemma C and Theorem 1 are from the single-label obstructions note
 (`short-period-sensitivity`, PR #14); Lemma R from
 `2026-10-20-ChaloupeMusic-single-label-lenses`; Proposition 5′ and (G♭) from

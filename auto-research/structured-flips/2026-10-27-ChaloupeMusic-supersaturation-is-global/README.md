@@ -9,7 +9,7 @@ depending on `Y` (as P1a chooses its line), is allowed. Only the range must be l
 closure and no new bound is claimed.
 
 **Base commit:** `63bef9ca996786a41169de4a0c3d6b3b47b0fe96`, through `pr/door-one` (`00375ff`) and the
-local commit `9555298` (`key-measurable-colorings`).
+note `key-measurable-colorings` (this PR).
 
 ## Setting
 

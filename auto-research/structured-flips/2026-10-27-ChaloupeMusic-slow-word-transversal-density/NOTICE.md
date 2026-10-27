@@ -7,8 +7,8 @@ hitting property (H), digit sets).
 
 Credits: the decomposition of the Door-1 question into a density step (D) and
 a supersaturation step (S), and the observation that digit sets reach
-`k^{−a+o(1)}`, are radar-63's (`key-measurable-colorings`, sprint 4, commit
-`9555298`, not in this tree). The digit sets are P1a's. The prime-residue
+`k^{−a+o(1)}`, are radar-63's (`key-measurable-colorings`, sprint 4, in this
+PR). The digit sets are P1a's. The prime-residue
 transversal of density `log M/(k log k)` is radar-1a's (sprint 1 synthesis).
 The framing of (D) as fixing the random benchmark is the referee's
 (radar-cc). Hales–Jewett and density Hales–Jewett are cited for context only.

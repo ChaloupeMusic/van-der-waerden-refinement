@@ -327,7 +327,7 @@ has probability at most `(1−ρ)^{k/2−1} + ρ^{k/2−1}`. Summing over at mos
 `e^H` words gives `e^{H − (1+δ)H(1 − o(1))} + e^{H} ρ^{k/2−1} → 0`.
 (2) The event `Y_P = {c₀ ≠ β} ∩ P` also depends on the colour word of `c₀`,
 which the key word does not fix. It is paid in two parts, as in
-`key-measurable-colorings` (radar-63, commit `0906b91`, after the
+`key-measurable-colorings` (radar-63, in this PR, after the
 referee's (s3)). In case (ii), the run codes fix the colour of every
 `s`-heavy label, and the event prescribes `Y` on at least `k/2 − 1`
 distinct keys; the factor `exp(O(D ln³ k))` is already in `H`. In case (i),
