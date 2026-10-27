@@ -1,6 +1,6 @@
 {
-  "anchors_in_tree": 88,
-  "anchors_pinned_checked_only_with_git": 33,
+  "anchors_in_tree": 92,
+  "anchors_pinned_checked_only_with_git": 29,
   "control_A2_block_exponent": 0.9878,
   "frozen_sections": [
     "## 2. The statement",
@@ -53,10 +53,6 @@
       "commit": "cd1de3807cd1813cf640cda037869f2c30ff5541",
       "pr": "#14"
     },
-    "auto-research/structured-flips/2026-10-27-ChaloupeMusic-line-witnesses": {
-      "commit": "8b5472d49829957b3f18ff36f8525167b9b372cd",
-      "pr": "sprint 5, unpublished"
-    },
     "auto-research/trust-reduction/2026-10-26-ChaloupeMusic-source-only-1-16": {
       "commit": "84ed864cc8c25113a80e33644992878c740fc332",
       "pr": "#19"
@@ -72,7 +68,6 @@
     "auto-research/short-period-sensitivity/2026-10-20-ChaloupeMusic-single-label-obstructions": "173b414d6a458ca38f2e7611d37478bae2451039571546b152886f67ea20808b",
     "auto-research/short-period-sensitivity/2026-10-20-erwan-binding-lever": "bb7b9da942e40bedb73bf276566a97066e8e4590e2f7bb07a17f14adb151d028",
     "auto-research/short-period-sensitivity/2026-10-26-ChaloupeMusic-local-lemma-hub": "6149aca0a8c6acf2af65fe0073189cde5ba221e42edb5546351a60d858edfd35",
-    "auto-research/structured-flips/2026-10-27-ChaloupeMusic-line-witnesses": "9cf68ad0ad4da0c7f29272937f045c76170b7afebb01e3b0f643a3c48290003c",
     "auto-research/trust-reduction/2026-10-26-ChaloupeMusic-source-only-1-16": "4d049caaeb9640fddaed46cfe2d28a03de76d847fe94ea1ec74b0036ef9281f5",
     "auto-research/trust-reduction/2026-10-26-ChaloupeMusic-source-only-1-8": "fb34b82a8d65a3847aa88a102408e7dbe2fffb743492b1d5036f28c6efdc2a53"
   },

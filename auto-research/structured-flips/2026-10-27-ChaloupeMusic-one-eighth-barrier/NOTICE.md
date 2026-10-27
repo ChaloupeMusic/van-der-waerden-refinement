@@ -9,9 +9,9 @@ Pinned sources. This repository at `061401f` (PR #22,
   `local-lemma-hub`;
 * PR #19, `research/trust-reduction` at `84ed864`: `source-only-1-16`,
   `source-only-1-8`;
-* PR #21, `research/rich-cover` at `98e6d36`: `rich-cover-barrier`;
-* sprint 5, branch of piste T6 at `8b5472d` (refereed publishable, not yet
-  published): `line-witnesses`.
+* PR #21, `research/rich-cover` at `98e6d36`: `rich-cover-barrier`.
+
+`line-witnesses` is in this PR, and is checked in the tree.
 
 Their README hashes are recorded in `RESULT.json`. Through them, the
 OpenAI manuscript *Quantitative Superexponential Bounds for van der Waerden

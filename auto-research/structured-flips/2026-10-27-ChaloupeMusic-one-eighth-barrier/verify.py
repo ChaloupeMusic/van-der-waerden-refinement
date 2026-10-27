@@ -119,6 +119,10 @@ IN_TREE = {
         '**Corollary 1 (the S6-63 candidate).**',
         '## Theorem 2 (rules linear in the digits need a modulus of size N)',
         '## Lemma W (where (II′) can fail at all)'],
+    SF + '2026-10-27-ChaloupeMusic-line-witnesses': [
+        '**Theorem A (no line witnesses).**', '**Corollary A2 (scope of arguments).**',
+        'The P1a route with witnesses off the lines stays open.',
+        'Such an argument is excluded, unconditionally for an upper bound on `𝒞`, and under'],
     'auto-research/template-ceilings/2026-10-20-ChaloupeMusic-outside-template-ceilings': [
         '## The one exception, stated exactly', '**No-go for one named class.**',
         '## The torus uncertainty principle'],
@@ -152,11 +156,6 @@ OUT_OF_TREE = {
     TR + '2026-10-26-ChaloupeMusic-source-only-1-8': (
         '84ed864cc8c25113a80e33644992878c740fc332', '#19',
         ['**Theorem 9.**', '## 8. Region, supremum, explicit choice']),
-    SF + '2026-10-27-ChaloupeMusic-line-witnesses': (
-        '8b5472d49829957b3f18ff36f8525167b9b372cd', 'sprint 5, unpublished',
-        ['**Theorem A (no line witnesses).**', '**Corollary A2 (scope of arguments).**',
-         'The P1a route with witnesses off the lines stays open.',
-         'Such an argument is excluded, unconditionally for an upper bound on `𝒞`, and under']),
     TR + '2026-10-26-ChaloupeMusic-source-only-1-16': (
         '84ed864cc8c25113a80e33644992878c740fc332', '#19',
         ['**Lemma 3.**', '**Proposition 5.**', '**Theorem 6.**', '**Theorem 8.**',
@@ -177,8 +176,6 @@ README_SHA = {
         'fb34b82a8d65a3847aa88a102408e7dbe2fffb743492b1d5036f28c6efdc2a53',
     TR + '2026-10-26-ChaloupeMusic-source-only-1-16':
         '4d049caaeb9640fddaed46cfe2d28a03de76d847fe94ea1ec74b0036ef9281f5',
-    SF + '2026-10-27-ChaloupeMusic-line-witnesses':
-        '9cf68ad0ad4da0c7f29272937f045c76170b7afebb01e3b0f643a3c48290003c',
 }
 
 # ------------------------------------------------------------ 0. the statement
@@ -215,7 +212,7 @@ OUT['statement_sentences'] = len(STATEMENT)
 # frozen sections: header line up to the next '## ' header, whitespace-normalised
 FROZEN = {
     '## 2. The statement': '4e19d6e92c07516e7ef631eeae64cb088521dc2078b27398b0c977ad4faa4523',
-    '## 4. The ledger of closed routes': '4463d154c47a9d9e4adc0036847ddc56dd33491c0e7ccce39fcc14c55bb985d9',
+    '## 4. The ledger of closed routes': 'a3bc2225927bc857e144cd4fa56b50f1cac0fed9f18f5e127b379b09bbd2129f',
     '## What is not claimed': '30e69851afbc93820815262e0964e6702fedf335115a8e851054455f535c5f5e',
 }
 _text = (HERE / 'README.md').read_text()

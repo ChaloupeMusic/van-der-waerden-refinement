@@ -11,9 +11,8 @@ numbers (§ 1, Scope).
 
 **Base commit:** `061401f` (PR #22, `research/door-one-continued`), which
 contains the notes of PRs #16, #20 and #22. The notes of PRs #14, #19 and #21
-are not in this tree, nor is `line-witnesses` (sprint 5, refereed
-publishable, not yet published). They are cited at the pinned heads listed
-in `NOTICE.md`.
+are not in this tree. They are cited at the pinned heads listed in
+`NOTICE.md`. `line-witnesses` is in this PR.
 
 ## Reproduce
 
@@ -385,7 +384,7 @@ plus a supersaturation step (S). This is not a necessity (§ (D)/(S) of
 | (D), witness | random key sets are proper at `k^{−a+o(1)}`; no deterministic proper witness is known | `slow-word-transversal-density`, Prop. 7; `digit-transversals-saturate`, Cor. 1 (#22) |
 | (S), range | any proof, adaptive or not, has a range of more than `2^{k/2−3}` witnesses; fixed lines or pieces cannot prove it | `supersaturation-is-global`, Prop. 1, Cor. 1′, Prop. 2 (#22) |
 | (S), below `1/8` | some proper `Y` has no induced class at all (inherits the template's conditional status) | `supersaturation-is-global`, Prop. 3 (#22) |
-| line witnesses | for fixed `a < 1/2` and fixed `c`, and every `c₀`, a uniform `Y` makes no progression of a line `r + q^{D−1}ℤ` monochromatic, with probability `1 − e^{−(ln 2/2 − o(1))k}`; an argument whose final witness is a line progression (the Lemma E case of the P1a route) proves no upper bound on `𝒞(c₀)`, and no (S) under Prop. 2.2 of `key-measurable-colorings` | `line-witnesses`, Thm A, Cor. A2 (sprint 5, unpublished) |
+| line witnesses | for fixed `a < 1/2` and fixed `c`, and every `c₀`, a uniform `Y` makes no progression of a line `r + q^{D−1}ℤ` monochromatic, with probability `1 − e^{−(ln 2/2 − o(1))k}`; an argument whose final witness is a line progression (the Lemma E case of the P1a route) proves no upper bound on `𝒞(c₀)`, and no (S) under Prop. 2.2 of `key-measurable-colorings` | `line-witnesses`, Thm A, Cor. A2 (this PR) |
 
 ## 5. What is open, as published
 
@@ -455,9 +454,8 @@ plus a supersaturation step (S). This is not a necessity (§ (D)/(S) of
 1. **Every reference.** For each note cited, every statement named in § 2
    to § 4 must occur, verbatim, in the README of that note. This gives 121
    anchors in 24 notes.
-   * The 88 anchors of the 16 notes in this tree are always checked.
-   * The 33 anchors of the 8 notes of PRs #14, #19 and #21 and of
-     `line-witnesses` are checked only
+   * The 92 anchors of the 17 notes in this tree are always checked.
+   * The 29 anchors of the 7 notes of PRs #14, #19 and #21 are checked only
      with `--git`, at their pinned commits, and their README hashes are
      compared with those recorded. With `--git`, an unreachable commit is a
      failure. The output and `RESULT.json` give the two counts separately.

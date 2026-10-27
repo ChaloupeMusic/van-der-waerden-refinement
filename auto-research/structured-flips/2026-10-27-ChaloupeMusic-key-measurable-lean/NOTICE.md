@@ -15,7 +15,7 @@ Credits: the reduction is due to the key-measurable note (radar-63, sprint 4).
 radar-89 asked for the formalization and the fixed-`X` form, and asked that
 the README say plainly that the finite core is an identity of classes.
 
-Review history: radar-89's contradicteur rebuilt `0b4e938` from `git archive` and
+Review history: radar-89's contradicteur rebuilt the first draft from `git archive` and
 found nothing blocking (same axioms; `kAPs 6 3 = 8` and `kAPs 7 3 = 21` by
 `decide`). Applied:
 * the evidence now carries the fingerprint of the sources that produced it,
@@ -29,7 +29,7 @@ found nothing blocking (same axioms; `kAPs 6 3 = 8` and `kAPs 7 3 = 21` by
 * the sorry filter is described as a lint;
 * the toys cover empty families, empty sets and one-point sets.
 
-Second reading of `6b86ecb` (nothing blocking). Applied:
+Second reading of the second draft (nothing blocking). Applied:
 * `T` counts prescriptions, at most twice the note's pairs (counterexample in
   `ℤ/4`);
 * the fingerprints are called a declaration;
