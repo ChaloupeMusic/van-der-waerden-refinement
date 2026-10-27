@@ -6,7 +6,7 @@ and C, Lemma D1, Proposition E). `exact-door-one-condition` (Theorem 2) and `ap-
 template points).
 
 **Credits.** S1b and its open question are due to another session of the same sprint (radar-3a), as are
-the dense form of Theorem B (Corollary B′, `171dd54`, cited as a sketch, not yet refereed), the uniform run bound read off Theorem C, and the sharpened warning on
+the dense form of Theorem B (Corollary B′, `171dd54`, cited as a sketch, refereed since), the uniform run bound read off Theorem C, and the sharpened warning on
 pulverisation in § 2. This package adds Proposition 1 and the scale statements.
 
 **AI assistance.** Prepared with Claude (Anthropic), one session among several coordinating on this
